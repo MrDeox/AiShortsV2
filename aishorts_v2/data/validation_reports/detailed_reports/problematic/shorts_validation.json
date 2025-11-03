@@ -1,0 +1,310 @@
+{
+  "timestamp": "2025-11-04T00:29:54.694832",
+  "script_title": "Roteiro com Problemas",
+  "platform": "shorts",
+  "overall_score": 35.833,
+  "quality_level": "poor",
+  "is_approved": false,
+  "structure_validation": {
+    "score": 40,
+    "is_valid": false,
+    "issues": [
+      {
+        "code": "STRUCTURE_MISSING_SECTION",
+        "message": "Seção obrigatória 'conclusion' não encontrada",
+        "severity": "error",
+        "section": "conclusion",
+        "field": null,
+        "suggestion": "Adicione uma seção 'conclusion' ao roteiro",
+        "position": null,
+        "details": null
+      },
+      {
+        "code": "SECTION_EMPTY",
+        "message": "Seção 'hook' está vazia",
+        "severity": "error",
+        "section": "hook",
+        "field": null,
+        "suggestion": "Adicione conteúdo à seção 'hook'",
+        "position": null,
+        "details": null
+      },
+      {
+        "code": "DEVELOPMENT_NO_FACTS",
+        "message": "Seção de desenvolvimento carece de fatos ou dados",
+        "severity": "warning",
+        "section": "development",
+        "field": null,
+        "suggestion": "Adicione números, estatísticas ou fatos relevantes",
+        "position": null,
+        "details": null
+      },
+      {
+        "code": "DEVELOPMENT_REPETITIVE",
+        "message": "Seção de desenvolvimento é muito repetitiva",
+        "severity": "warning",
+        "section": "development",
+        "field": null,
+        "suggestion": "Varie o vocabulário e evite repetições",
+        "position": null,
+        "details": null
+      }
+    ],
+    "suggestions": [
+      "Reorganize as seções na ordem: Hook → Desenvolvimento → Conclusão"
+    ]
+  },
+  "content_validation": {
+    "score": 70,
+    "is_valid": true,
+    "issues": [
+      {
+        "code": "CONTENT_REPETITIVE",
+        "message": "Palavras muito repetidas: spam",
+        "severity": "warning",
+        "section": null,
+        "field": null,
+        "suggestion": "Varie o vocabulário para evitar repetições",
+        "position": null,
+        "details": null
+      },
+      {
+        "code": "CONTENT_THEME_MISMATCH",
+        "message": "Conteúdo não reflete claramente o tema/categoria",
+        "severity": "warning",
+        "section": null,
+        "field": null,
+        "suggestion": "Garanta que o conteúdo esteja alinhado com a categoria 'ThemeCategory.SCIENCE'",
+        "position": null,
+        "details": null
+      }
+    ],
+    "suggestions": []
+  },
+  "platform_validation": {
+    "score": 0,
+    "is_valid": false,
+    "issues": [
+      {
+        "code": "PLATFORM_CHARS_TOO_SHORT",
+        "message": "Texto muito curto (65 chars) para shorts (min: 200)",
+        "severity": "warning",
+        "section": null,
+        "field": null,
+        "suggestion": "Expanda o conteúdo do roteiro",
+        "position": null,
+        "details": null
+      },
+      {
+        "code": "PLATFORM_BANNED_WORDS",
+        "message": "Palavras proibidas encontradas: spam",
+        "severity": "error",
+        "section": "all",
+        "field": null,
+        "suggestion": "Remova palavras proibidas para a plataforma",
+        "position": null,
+        "details": null
+      },
+      {
+        "code": "PLATFORM_HOOK_DURATION_MISMATCH",
+        "message": "Hook representa 0.0% (esperado: 20.0%)",
+        "severity": "warning",
+        "section": "hook",
+        "field": null,
+        "suggestion": "Ajuste a duração do hook para melhor engajamento",
+        "position": null,
+        "details": null
+      },
+      {
+        "code": "PLATFORM_DEVELOPMENT_DURATION_MISMATCH",
+        "message": "Desenvolvimento representa 100.0% (esperado: 65.0%)",
+        "severity": "warning",
+        "section": "development",
+        "field": null,
+        "suggestion": "Ajuste a duração do desenvolvimento",
+        "position": null,
+        "details": null
+      },
+      {
+        "code": "PLATFORM_MISSING_ENGAGEMENT",
+        "message": "Faltam frases de engajamento recomendadas para shorts",
+        "severity": "warning",
+        "section": null,
+        "field": null,
+        "suggestion": "Adicione frases como: Descubra, Vamos explorar, Você sabia que",
+        "position": null,
+        "details": null
+      }
+    ],
+    "suggestions": []
+  },
+  "quality_metrics": {
+    "clarity_score": 1.0,
+    "engagement_score": 0.0,
+    "retention_score": 0.0,
+    "clarity_issues": [],
+    "engagement_issues": [
+      {
+        "code": "ENGAGEMENT_LOW_PATTERNS",
+        "message": "Poucos elementos de engajamento (encontrados: 0)",
+        "severity": "warning",
+        "section": null,
+        "field": null,
+        "suggestion": "Adicione mais perguntas, elementos emocionais e storytelling",
+        "position": null,
+        "details": null
+      }
+    ],
+    "retention_issues": [
+      {
+        "code": "RETENTION_LOW_PATTERNS",
+        "message": "Poucos elementos de retenção (encontrados: 0)",
+        "severity": "warning",
+        "section": null,
+        "field": null,
+        "suggestion": "Adicione cliffhangers, estruturação clara e elementos de antecipação",
+        "position": null,
+        "details": null
+      }
+    ]
+  },
+  "all_issues": [
+    {
+      "code": "STRUCTURE_MISSING_SECTION",
+      "message": "Seção obrigatória 'conclusion' não encontrada",
+      "severity": "error",
+      "section": "conclusion",
+      "field": null,
+      "suggestion": "Adicione uma seção 'conclusion' ao roteiro",
+      "position": null,
+      "details": null
+    },
+    {
+      "code": "SECTION_EMPTY",
+      "message": "Seção 'hook' está vazia",
+      "severity": "error",
+      "section": "hook",
+      "field": null,
+      "suggestion": "Adicione conteúdo à seção 'hook'",
+      "position": null,
+      "details": null
+    },
+    {
+      "code": "DEVELOPMENT_NO_FACTS",
+      "message": "Seção de desenvolvimento carece de fatos ou dados",
+      "severity": "warning",
+      "section": "development",
+      "field": null,
+      "suggestion": "Adicione números, estatísticas ou fatos relevantes",
+      "position": null,
+      "details": null
+    },
+    {
+      "code": "DEVELOPMENT_REPETITIVE",
+      "message": "Seção de desenvolvimento é muito repetitiva",
+      "severity": "warning",
+      "section": "development",
+      "field": null,
+      "suggestion": "Varie o vocabulário e evite repetições",
+      "position": null,
+      "details": null
+    },
+    {
+      "code": "CONTENT_REPETITIVE",
+      "message": "Palavras muito repetidas: spam",
+      "severity": "warning",
+      "section": null,
+      "field": null,
+      "suggestion": "Varie o vocabulário para evitar repetições",
+      "position": null,
+      "details": null
+    },
+    {
+      "code": "CONTENT_THEME_MISMATCH",
+      "message": "Conteúdo não reflete claramente o tema/categoria",
+      "severity": "warning",
+      "section": null,
+      "field": null,
+      "suggestion": "Garanta que o conteúdo esteja alinhado com a categoria 'ThemeCategory.SCIENCE'",
+      "position": null,
+      "details": null
+    },
+    {
+      "code": "PLATFORM_CHARS_TOO_SHORT",
+      "message": "Texto muito curto (65 chars) para shorts (min: 200)",
+      "severity": "warning",
+      "section": null,
+      "field": null,
+      "suggestion": "Expanda o conteúdo do roteiro",
+      "position": null,
+      "details": null
+    },
+    {
+      "code": "PLATFORM_BANNED_WORDS",
+      "message": "Palavras proibidas encontradas: spam",
+      "severity": "error",
+      "section": "all",
+      "field": null,
+      "suggestion": "Remova palavras proibidas para a plataforma",
+      "position": null,
+      "details": null
+    },
+    {
+      "code": "PLATFORM_HOOK_DURATION_MISMATCH",
+      "message": "Hook representa 0.0% (esperado: 20.0%)",
+      "severity": "warning",
+      "section": "hook",
+      "field": null,
+      "suggestion": "Ajuste a duração do hook para melhor engajamento",
+      "position": null,
+      "details": null
+    },
+    {
+      "code": "PLATFORM_DEVELOPMENT_DURATION_MISMATCH",
+      "message": "Desenvolvimento representa 100.0% (esperado: 65.0%)",
+      "severity": "warning",
+      "section": "development",
+      "field": null,
+      "suggestion": "Ajuste a duração do desenvolvimento",
+      "position": null,
+      "details": null
+    },
+    {
+      "code": "PLATFORM_MISSING_ENGAGEMENT",
+      "message": "Faltam frases de engajamento recomendadas para shorts",
+      "severity": "warning",
+      "section": null,
+      "field": null,
+      "suggestion": "Adicione frases como: Descubra, Vamos explorar, Você sabia que",
+      "position": null,
+      "details": null
+    }
+  ],
+  "suggestions": [
+    "Garanta que o conteúdo esteja alinhado com a categoria 'ThemeCategory.SCIENCE'",
+    "Adicione frases como: Descubra, Vamos explorar, Você sabia que",
+    "Revise a estrutura do roteiro, garantindo que todas as seções estejam presentes e bem organizadas",
+    "Ajuste a duração do desenvolvimento",
+    "Adicione uma seção 'conclusion' ao roteiro",
+    "Remova palavras proibidas para a plataforma",
+    "Ajuste a duração do hook para melhor engajamento",
+    "Varie o vocabulário e evite repetições",
+    "Adicione números, estatísticas ou fatos relevantes",
+    "Ajuste o roteiro para atender melhor aos requisitos da plataforma (duração, formato, elementos específicos)",
+    "Expanda o conteúdo do roteiro",
+    "Varie o vocabulário para evitar repetições",
+    "Adicione conteúdo à seção 'hook'"
+  ],
+  "summary": {
+    "platform": "shorts",
+    "overall_score": 35.833,
+    "quality_level": "poor",
+    "is_approved": false,
+    "total_issues": 11,
+    "critical_issues": 3,
+    "total_suggestions": 13,
+    "structure_score": 40,
+    "content_score": 70,
+    "platform_score": 0
+  }
+}
