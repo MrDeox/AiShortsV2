@@ -24,12 +24,14 @@ class VideoSearcher:
     - Cache de resultados
     """
     
-    def __init__(self, video_database: Optional[List[Dict]] = None):
+    def __init__(self, video_database: Optional[List[Dict]] = None, 
+                 use_clip_scorer: bool = True):
         """
         Inicializa o buscador de vídeos.
         
         Args:
             video_database: Banco de dados de vídeos com metadados
+            use_clip_scorer: Se deve usar CLIP scorer para scoring avançado
         """
         self.logger = logging.getLogger(__name__)
         
@@ -42,6 +44,18 @@ class VideoSearcher:
         # Configurações
         self.similarity_threshold = 0.7
         self.max_results = 10
+        self.use_clip_scorer = use_clip_scorer
+        
+        # Inicializar CLIP scorer
+        self.clip_scorer = None
+        if use_clip_scorer:
+            try:
+                from .clip_relevance_scorer import CLIPRelevanceScorer
+                self.clip_scorer = CLIPRelevanceScorer()
+                self.logger.info("CLIP scorer integrado com sucesso")
+            except Exception as e:
+                self.logger.warning(f"CLIP scorer não disponível: {e}")
+                self.use_clip_scorer = False
         
         self.logger.info("VideoSearcher inicializado com sucesso")
     
@@ -98,6 +112,100 @@ class VideoSearcher:
             self.logger.error(f"Erro na busca por keywords: {e}")
             return []
     
+    def search_with_clip_scoring(self, text: str, limit: int = None) -> List[Dict]:
+        """
+        Busca vídeos usando scoring CLIP real texto-vídeo.
+        
+        Args:
+            text: Texto do roteiro para análise
+            limit: Limite de resultados
+            
+        Returns:
+            Lista de vídeos ordenados por relevância CLIP
+        """
+        if not text or not self.use_clip_scorer or self.clip_scorer is None:
+            return []
+        
+        limit = limit or self.max_results
+        
+        try:
+            # Usar CLIP scorer para ranking
+            ranked_videos = self.clip_scorer.rank_videos_by_relevance(text, self.video_database)
+            
+            # Aplicar filtro de qualidade adicional
+            quality_filtered = self.filter_by_quality(ranked_videos)
+            
+            # Aplicar limite
+            results = quality_filtered[:limit]
+            
+            # Adicionar informações de scoring
+            for result in results:
+                result['match_type'] = 'clip_semantic'
+                result['scoring_method'] = 'clip'
+            
+            self.logger.info(f"Busca CLIP: {len(results)} resultados encontrados")
+            return results
+            
+        except Exception as e:
+            self.logger.error(f"Erro na busca CLIP: {e}")
+            return []
+
+    def search_by_script_with_clip(self, script_analysis: Dict[str, Any], 
+                                  prefer_clip: bool = True,
+                                  include_categories: List[str] = None) -> List[Dict]:
+        """
+        Busca vídeos baseada em roteiro com scoring CLIP real.
+        
+        Args:
+            script_analysis: Análise semântica do roteiro
+            prefer_clip: Preferir busca com CLIP
+            include_categories: Categorias para incluir na busca
+            
+        Returns:
+            Lista de vídeos ordenados por relevância multicritério
+        """
+        try:
+            all_results = []
+            
+            # 1. Busca com CLIP se disponível e preferido
+            if prefer_clip and self.use_clip_scorer:
+                text = self._extract_text_from_analysis(script_analysis)
+                if text:
+                    clip_results = self.search_with_clip_scoring(text)
+                    for result in clip_results:
+                        result['search_method'] = 'clip'
+                    all_results.extend(clip_results)
+            
+            # 2. Busca por palavras-chave (fallback)
+            keywords = script_analysis.get('keywords', [])
+            if keywords:
+                keyword_results = self.search_by_keywords(keywords)
+                for result in keyword_results:
+                    result['search_method'] = 'keywords'
+                all_results.extend(keyword_results)
+            
+            # 3. Busca semântica com embeddings se disponível
+            if 'embedding' in script_analysis and not prefer_clip:
+                embedding = script_analysis['embedding']
+                if embedding is not None:
+                    semantic_results = self.search_by_semantic(np.array(embedding))
+                    for result in semantic_results:
+                        result['search_method'] = 'semantic'
+                    all_results.extend(semantic_results)
+            
+            # 4. Combinar e remover duplicatas
+            combined_results = self._combine_results(all_results)
+            
+            # 5. Aplicar scoring multicritério final
+            final_results = self._apply_multicriteria_scoring(combined_results, script_analysis)
+            
+            self.logger.info(f"Busca roteiro com CLIP: {len(final_results)} vídeos selecionados")
+            return final_results
+            
+        except Exception as e:
+            self.logger.error(f"Erro na busca por roteiro com CLIP: {e}")
+            return []
+
     def search_by_semantic(self, query_embedding: np.ndarray, limit: int = None) -> List[Dict]:
         """
         Busca vídeos por similaridade semântica.
@@ -444,14 +552,93 @@ class VideoSearcher:
         
         return results
     
+    def _extract_text_from_analysis(self, script_analysis: Dict[str, Any]) -> str:
+        """Extrai texto da análise do roteiro."""
+        try:
+            # Tentar obter texto completo do roteiro
+            theme_title = script_analysis.get('theme_title', '')
+            theme_keywords = script_analysis.get('theme_keywords', [])
+            
+            text_parts = []
+            if theme_title:
+                text_parts.append(theme_title)
+            if theme_keywords:
+                text_parts.extend(theme_keywords)
+            
+            # Se não há informações suficientes, usar keywords
+            if not text_parts:
+                keywords = script_analysis.get('keywords', [])
+                text_parts.extend(keywords)
+            
+            return ' '.join(text_parts)
+            
+        except Exception as e:
+            self.logger.error(f"Erro ao extrair texto da análise: {e}")
+            return ""
+    
+    def _apply_multicriteria_scoring(self, results: List[Dict], 
+                                   script_analysis: Dict[str, Any]) -> List[Dict]:
+        """Aplica scoring multicritério aos resultados."""
+        try:
+            if not self.clip_scorer:
+                return self._rank_final_results(results, script_analysis)
+            
+            scored_results = []
+            
+            for result in results:
+                # Score base
+                relevance_score = result.get('relevance_score', 0)
+                
+                # Métricas de qualidade
+                quality_metrics = {
+                    'views': result.get('views', 0),
+                    'likes': result.get('likes', 0),
+                    'duration': result.get('duration', 300)
+                }
+                
+                # Calcular score multicritério
+                multi_score = self.clip_scorer.calculate_multicriteria_score(
+                    result,
+                    relevance_score,
+                    quality_metrics
+                )
+                
+                # Adicionar scores ao resultado
+                result.update(multi_score)
+                scored_results.append(result)
+            
+            # Ordenar por score final
+            scored_results.sort(key=lambda x: x.get('final_score', 0), reverse=True)
+            
+            return scored_results
+            
+        except Exception as e:
+            self.logger.error(f"Erro no scoring multicritério: {e}")
+            return self._rank_final_results(results, script_analysis)
+
     def get_search_stats(self) -> Dict[str, Any]:
         """Retorna estatísticas do sistema de busca."""
-        return {
+        stats = {
             'database_size': len(self.video_database),
             'cache_size': len(self.embedding_cache),
             'similarity_threshold': self.similarity_threshold,
-            'max_results': self.max_results
+            'max_results': self.max_results,
+            'use_clip_scorer': self.use_clip_scorer
         }
+        
+        # Estatísticas do CLIP scorer
+        if self.clip_scorer:
+            clip_stats = self.clip_scorer.get_performance_stats()
+            stats['clip_stats'] = clip_stats
+        
+        return stats
+    
+    def cleanup(self):
+        """Limpeza de recursos."""
+        if self.clip_scorer:
+            self.clip_scorer.cleanup()
+        
+        self.logger.info("VideoSearcher finalizado")
 
 
 # Exemplo de uso

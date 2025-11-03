@@ -324,12 +324,13 @@ class SemanticAnalyzer:
             self.logger.error(f"Erro ao categorizar conteúdo: {e}")
             return {'UNKNOWN': 1.0}
     
-    def get_semantic_embedding(self, text: str) -> Optional[np.ndarray]:
+    def get_semantic_embedding(self, text: str, use_clip: bool = True) -> Optional[np.ndarray]:
         """
-        Gera embedding semântico do texto.
+        Gera embedding semântico do texto usando CLIP se disponível.
         
         Args:
             text: Texto para processar
+            use_clip: Se deve usar CLIP quando disponível
             
         Returns:
             Array numpy com embedding ou None se falhar
@@ -338,43 +339,70 @@ class SemanticAnalyzer:
             return None
         
         try:
-            # Extrair características básicas do texto
-            keywords = self.extract_keywords(text, max_keywords=20)
-            tone_scores = self.analyze_tone(text)
-            category_scores = self.categorize_content(text)
+            # Tentar usar CLIP se disponível e solicitado
+            if use_clip:
+                clip_embedding = self._get_clip_embedding(text)
+                if clip_embedding is not None:
+                    return clip_embedding
             
-            # Criar vetor de características
-            features = []
-            
-            # Adicionar palavras-chave como one-hot
-            all_category_keywords = set()
-            for keywords_set in self.category_keywords.values():
-                all_category_keywords.update(keywords_set)
-            
-            for keyword in all_category_keywords:
-                features.append(1.0 if keyword in keywords else 0.0)
-            
-            # Adicionar scores de tom
-            features.extend([
-                tone_scores['positive'],
-                tone_scores['negative'],
-                tone_scores['neutral']
-            ])
-            
-            # Adicionar scores de categoria
-            for category in self.category_keywords.keys():
-                features.append(category_scores.get(category, 0.0))
-            
-            # Normalizar vetor
-            embedding = np.array(features, dtype=np.float32)
-            if np.linalg.norm(embedding) > 0:
-                embedding = embedding / np.linalg.norm(embedding)
-            
-            return embedding
+            # Fallback para embedding básico
+            return self._get_basic_embedding(text)
             
         except Exception as e:
             self.logger.error(f"Erro ao gerar embedding: {e}")
+            return self._get_basic_embedding(text)
+    
+    def _get_clip_embedding(self, text: str) -> Optional[np.ndarray]:
+        """Gera embedding usando CLIP se disponível."""
+        try:
+            # Lazy import para evitar dependência obrigatória
+            from .clip_relevance_scorer import CLIPRelevanceScorer
+            
+            # Usar instância global ou criar nova
+            if not hasattr(self, '_clip_scorer'):
+                self._clip_scorer = CLIPRelevanceScorer()
+            
+            return self._clip_scorer.get_text_embedding(text)
+            
+        except Exception as e:
+            self.logger.debug(f"CLIP não disponível para embedding: {e}")
             return None
+    
+    def _get_basic_embedding(self, text: str) -> np.ndarray:
+        """Gera embedding básico usando características manuais."""
+        # Extrair características básicas do texto
+        keywords = self.extract_keywords(text, max_keywords=20)
+        tone_scores = self.analyze_tone(text)
+        category_scores = self.categorize_content(text)
+        
+        # Criar vetor de características
+        features = []
+        
+        # Adicionar palavras-chave como one-hot
+        all_category_keywords = set()
+        for keywords_set in self.category_keywords.values():
+            all_category_keywords.update(keywords_set)
+        
+        for keyword in all_category_keywords:
+            features.append(1.0 if keyword in keywords else 0.0)
+        
+        # Adicionar scores de tom
+        features.extend([
+            tone_scores['positive'],
+            tone_scores['negative'],
+            tone_scores['neutral']
+        ])
+        
+        # Adicionar scores de categoria
+        for category in self.category_keywords.keys():
+            features.append(category_scores.get(category, 0.0))
+        
+        # Normalizar vetor
+        embedding = np.array(features, dtype=np.float32)
+        if np.linalg.norm(embedding) > 0:
+            embedding = embedding / np.linalg.norm(embedding)
+        
+        return embedding
     
     def process_script(self, script) -> Dict[str, Any]:
         """

@@ -25,6 +25,15 @@ class TextStyle(Enum):
     TECHNICAL_MONO = "technical_mono"
     PLAYFUL_ROUND = "playful_round"
     SCIENTIFIC_BOLD = "scientific_bold"
+    # Fontes Premium
+    MONTSERRAT_BOLD = "montserrat_bold"
+    MONTSERRAT_SEMI_BOLD = "montserrat_semi_bold"
+    OPEN_SANS_REGULAR = "open_sans_regular"
+    OPEN_SANS_SEMI_BOLD = "open_sans_semi_bold"
+    INTER_MEDIUM = "inter_medium"
+    INTER_SEMI_BOLD = "inter_semi_bold"
+    ROBOTO_MEDIUM = "roboto_medium"
+    POPPINS_SEMI_BOLD = "poppins_semi_bold"
 
 @dataclass
 class TextOverlay:
@@ -324,7 +333,7 @@ class VisualTemplateGenerator:
                 TextOverlay(
                     text="",
                     position="center",
-                    style=TextStyle.ORGANIC_SANS,
+                    style=TextStyle.MODERN_SANS,
                     color="#228B22",
                     font_size=38,
                     duration=4.5,
@@ -344,6 +353,286 @@ class VisualTemplateGenerator:
             duration=4.5
         )
         templates.append(nature_content)
+        
+        # =================== TEMPLATES PROFISSIONAIS ===================
+        
+        # PROFESSIONAL_STYLE - SPACE
+        space_professional = VisualTemplate(
+            name="space_professional",
+            category="SPACE",
+            template_type=TemplateType.CONTENT_SLIDE,
+            background_color="#0f1419",
+            text_overlays=[
+                TextOverlay(
+                    text="",
+                    position="top",
+                    style=TextStyle.MONTSERRAT_SEMI_BOLD,
+                    color="#ffffff",
+                    font_size=42,
+                    duration=4.0,
+                    animation="slide_down",
+                    fade_in=0.8,
+                    fade_out=0.8
+                ),
+                TextOverlay(
+                    text="",
+                    position="center",
+                    style=TextStyle.OPEN_SANS_REGULAR,
+                    color="#64b5f6",
+                    font_size=36,
+                    duration=4.0,
+                    animation="fade",
+                    fade_in=1.2,
+                    fade_out=0.6
+                ),
+                TextOverlay(
+                    text="",
+                    position="bottom",
+                    style=TextStyle.INTER_MEDIUM,
+                    color="#e0e0e0",
+                    font_size=28,
+                    duration=3.5,
+                    animation="slide_up",
+                    fade_in=1.0,
+                    fade_out=1.0
+                )
+            ],
+            transitions=["dissolve", "smooth_slide"],
+            duration=4.5,
+            audio_cue="professional_ambient"
+        )
+        templates.append(space_professional)
+        
+        # PROFESSIONAL_STYLE - ANIMALS  
+        animals_professional = VisualTemplate(
+            name="animals_professional",
+            category="ANIMALS",
+            template_type=TemplateType.CONTENT_SLIDE,
+            background_color="#1a1a1a",
+            text_overlays=[
+                TextOverlay(
+                    text="",
+                    position="top",
+                    style=TextStyle.POPPINS_SEMI_BOLD,
+                    color="#ff8a65",
+                    font_size=44,
+                    duration=3.8,
+                    animation="slide_right",
+                    fade_in=0.7,
+                    fade_out=0.7
+                ),
+                TextOverlay(
+                    text="",
+                    position="center",
+                    style=TextStyle.OPEN_SANS_SEMI_BOLD,
+                    color="#81c784",
+                    font_size=38,
+                    duration=3.8,
+                    animation="zoom",
+                    fade_in=1.1,
+                    fade_out=0.5
+                ),
+                TextOverlay(
+                    text="",
+                    position="bottom",
+                    style=TextStyle.INTER_MEDIUM,
+                    color="#ffffff",
+                    font_size=30,
+                    duration=3.3,
+                    animation="slide_up",
+                    fade_in=0.9,
+                    fade_out=0.9
+                )
+            ],
+            transitions=["smooth_transition", "fade"],
+            duration=4.2
+        )
+        templates.append(animals_professional)
+        
+        # PROFESSIONAL_STYLE - SCIENCE
+        science_professional = VisualTemplate(
+            name="science_professional",
+            category="SCIENCE",
+            template_type=TemplateType.CONTENT_SLIDE,
+            background_color="#212121",
+            text_overlays=[
+                TextOverlay(
+                    text="",
+                    position="top",
+                    style=TextStyle.MONTSERRAT_BOLD,
+                    color="#90caf9",
+                    font_size=46,
+                    duration=4.2,
+                    animation="slide_left",
+                    fade_in=0.6,
+                    fade_out=0.6
+                ),
+                TextOverlay(
+                    text="",
+                    position="center",
+                    style=TextStyle.INTER_SEMI_BOLD,
+                    color="#4fc3f7",
+                    font_size=40,
+                    duration=4.2,
+                    animation="data_stream",
+                    fade_in=1.0,
+                    fade_out=0.4
+                ),
+                TextOverlay(
+                    text="",
+                    position="bottom",
+                    style=TextStyle.ROBOTO_MEDIUM,
+                    color="#e0e0e0",
+                    font_size=32,
+                    duration=3.8,
+                    animation="slide_down",
+                    fade_in=0.8,
+                    fade_out=0.8
+                )
+            ],
+            transitions=["tech_wipe", "smooth_slide"],
+            duration=4.5
+        )
+        templates.append(science_professional)
+        
+        # PROFESSIONAL_STYLE - HISTORY
+        history_professional = VisualTemplate(
+            name="history_professional",
+            category="HISTORY",
+            template_type=TemplateType.CONTENT_SLIDE,
+            background_color="#2c2622",
+            text_overlays=[
+                TextOverlay(
+                    text="",
+                    position="top",
+                    style=TextStyle.MONTSERRAT_SEMI_BOLD,
+                    color="#d7ccc8",
+                    font_size=43,
+                    duration=4.0,
+                    animation="elegant_fade",
+                    fade_in=1.2,
+                    fade_out=0.8
+                ),
+                TextOverlay(
+                    text="",
+                    position="center",
+                    style=TextStyle.OPEN_SANS_SEMI_BOLD,
+                    color="#bcaaa4",
+                    font_size=37,
+                    duration=4.0,
+                    animation="vintage_slide",
+                    fade_in=1.5,
+                    fade_out=0.6
+                ),
+                TextOverlay(
+                    text="",
+                    position="bottom",
+                    style=TextStyle.INTER_MEDIUM,
+                    color="#8d6e63",
+                    font_size=29,
+                    duration=3.6,
+                    animation="slide_up",
+                    fade_in=1.0,
+                    fade_out=1.0
+                )
+            ],
+            transitions=["sepia_sweep", "elegant_transition"],
+            duration=4.3
+        )
+        templates.append(history_professional)
+        
+        # PROFESSIONAL_STYLE - NATURE
+        nature_professional = VisualTemplate(
+            name="nature_professional",
+            category="NATURE",
+            template_type=TemplateType.CONTENT_SLIDE,
+            background_color="#1b5e20",
+            text_overlays=[
+                TextOverlay(
+                    text="",
+                    position="top",
+                    style=TextStyle.POPPINS_SEMI_BOLD,
+                    color="#a5d6a7",
+                    font_size=45,
+                    duration=4.1,
+                    animation="organic_flow",
+                    fade_in=0.9,
+                    fade_out=0.9
+                ),
+                TextOverlay(
+                    text="",
+                    position="center",
+                    style=TextStyle.OPEN_SANS_REGULAR,
+                    color="#81c784",
+                    font_size=39,
+                    duration=4.1,
+                    animation="natural_fade",
+                    fade_in=1.3,
+                    fade_out=0.5
+                ),
+                TextOverlay(
+                    text="",
+                    position="bottom",
+                    style=TextStyle.INTER_MEDIUM,
+                    color="#ffffff",
+                    font_size=31,
+                    duration=3.7,
+                    animation="gentle_slide",
+                    fade_in=1.1,
+                    fade_out=0.9
+                )
+            ],
+            transitions=["organic_dissolve", "nature_blend"],
+            duration=4.4
+        )
+        templates.append(nature_professional)
+        
+        # End card profissional
+        professional_end = VisualTemplate(
+            name="professional_end",
+            category="PROFESSIONAL",
+            template_type=TemplateType.END_CARD,
+            background_color="#000000",
+            text_overlays=[
+                TextOverlay(
+                    text="Acompanhe para mais conteúdo premium!",
+                    position="center",
+                    style=TextStyle.MONTSERRAT_SEMI_BOLD,
+                    color="#ffffff",
+                    font_size=40,
+                    duration=3.5,
+                    animation="professional_fade",
+                    fade_in=0.8,
+                    fade_out=0.8
+                ),
+                TextOverlay(
+                    text="@aishorts",
+                    position="bottom",
+                    style=TextStyle.INTER_MEDIUM,
+                    color="#ff6b6b",
+                    font_size=32,
+                    duration=3.5,
+                    animation="slide_up",
+                    fade_in=1.0,
+                    fade_out=0.6
+                ),
+                TextOverlay(
+                    text="💎",  # Watermark/Badge profissional
+                    position="top_right",
+                    style=TextStyle.POPPINS_SEMI_BOLD,
+                    color="#ffd700",
+                    font_size=24,
+                    duration=3.5,
+                    animation="subtle_zoom",
+                    fade_in=0.5,
+                    fade_out=0.5,
+                    custom_position=(0.85, 0.15)
+                )
+            ],
+            transitions=["premium_fade", "elegant_zoom"],
+            duration=3.5
+        )
+        templates.append(professional_end)
         
         # =================== END CARDS ===================
         
@@ -388,7 +677,14 @@ class VisualTemplateGenerator:
             "SCIENCE": ["#2c3e50", "#3498db", "#ecf0f1", "#34495e", "#1abc9c"],
             "HISTORY": ["#8B4513", "#D2B48C", "#F5F5DC", "#654321", "#CD853F"],
             "NATURE": ["#228B22", "#90EE90", "#98FB98", "#006400", "#ADFF2F"],
-            "GENERAL": ["#2c3e50", "#3498db", "#ffffff", "#ecf0f1", "#95a5a6"]
+            "GENERAL": ["#2c3e50", "#3498db", "#ffffff", "#ecf0f1", "#95a5a6"],
+            # Paletas Profissionais
+            "SPACE_PROFESSIONAL": ["#0f1419", "#64b5f6", "#ffffff", "#e0e0e0", "#1976d2"],
+            "ANIMALS_PROFESSIONAL": ["#1a1a1a", "#ff8a65", "#81c784", "#ffffff", "#4caf50"],
+            "SCIENCE_PROFESSIONAL": ["#212121", "#90caf9", "#4fc3f7", "#e0e0e0", "#2196f3"],
+            "HISTORY_PROFESSIONAL": ["#2c2622", "#d7ccc8", "#bcaaa4", "#8d6e63", "#5d4037"],
+            "NATURE_PROFESSIONAL": ["#1b5e20", "#a5d6a7", "#81c784", "#ffffff", "#2e7d32"],
+            "PROFESSIONAL": ["#000000", "#ffffff", "#ff6b6b", "#ffd700", "#2c3e50"]
         }
     
     def _initialize_transition_effects(self) -> Dict[str, List[str]]:
@@ -399,7 +695,14 @@ class VisualTemplateGenerator:
             "SCIENCE": ["dissolve", "wipe", "slide", "glitch", "data_stream"],
             "HISTORY": ["sepia", "fade", "slide", "old_film", "vintage"],
             "NATURE": ["fade", "dissolve", "slide", "flow", "organic"],
-            "GENERAL": ["fade", "slide", "zoom", "dissolve"]
+            "GENERAL": ["fade", "slide", "zoom", "dissolve"],
+            # Efeitos Profissionais
+            "SPACE_PROFESSIONAL": ["dissolve", "smooth_slide", "professional_fade", "data_zoom", "tech_transition"],
+            "ANIMALS_PROFESSIONAL": ["smooth_transition", "fade", "engaging_slide", "vibrant_zoom", "playful_fade"],
+            "SCIENCE_PROFESSIONAL": ["tech_wipe", "smooth_slide", "data_stream", "scientific_fade", "tech_zoom"],
+            "HISTORY_PROFESSIONAL": ["sepia_sweep", "elegant_transition", "vintage_fade", "historic_slide", "classic_zoom"],
+            "NATURE_PROFESSIONAL": ["organic_dissolve", "nature_blend", "flowing_fade", "natural_slide", "eco_zoom"],
+            "PROFESSIONAL": ["premium_fade", "elegant_zoom", "corporate_slide", "smooth_transition", "professional_wipe"]
         }
     
     def get_template(self, category: str, template_type: TemplateType, 
@@ -464,7 +767,14 @@ class VisualTemplateGenerator:
             "SCIENCE": TextStyle.SCIENTIFIC_BOLD,
             "HISTORY": TextStyle.ELEGANT_SERIF,
             "NATURE": TextStyle.MODERN_SANS,
-            "GENERAL": TextStyle.MODERN_SANS
+            "GENERAL": TextStyle.MODERN_SANS,
+            # Mapeamento para estilos profissionais
+            "SPACE_PROFESSIONAL": TextStyle.MONTSERRAT_SEMI_BOLD,
+            "ANIMALS_PROFESSIONAL": TextStyle.POPPINS_SEMI_BOLD,
+            "SCIENCE_PROFESSIONAL": TextStyle.MONTSERRAT_BOLD,
+            "HISTORY_PROFESSIONAL": TextStyle.MONTSERRAT_SEMI_BOLD,
+            "NATURE_PROFESSIONAL": TextStyle.POPPINS_SEMI_BOLD,
+            "PROFESSIONAL": TextStyle.MONTSERRAT_SEMI_BOLD
         }
         
         # Selecionar cor (primeira cor da paleta)
@@ -558,15 +868,7 @@ class VisualTemplateGenerator:
         # Retornar segunda cor da paleta (geralmente mais clara)
         return palette[1] if len(palette) > 1 else palette[0]
 
-# Classe complementar para diferentes estilos de fonte
-class TextStyle(Enum):
-    """Estilos de texto expandidos."""
-    MODERN_SANS = "modern_sans"
-    ELEGANT_SERIF = "elegant_serif"
-    TECHNICAL_MONO = "technical_mono"
-    PLAYFUL_ROUND = "playful_round"
-    SCIENTIFIC_BOLD = "scientific_bold"
-    ORGANIC_SANS = "organic_sans"
+# Fontes premium adicionadas anteriormente
 
 # Instância global do gerador
 template_generator = VisualTemplateGenerator()
