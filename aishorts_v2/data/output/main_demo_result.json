@@ -1,15 +1,15 @@
 {
   "themes": [
     {
-      "content": "**\"¿OCTOPUS QUE USAM COBERTURAS COCONUTE COMO ALMOÇARIAS? Isso não é brincadeira: é adaptação evolutiva!\"**  \n\n- Combina surpresa (comportamento incomum), ciência (estudo comprovado), e fascínio (raridade do uso de ferramentas em invertebrados).",
-      "category": "animals",
+      "content": "**Tema:** \"No Forfatellum, no nordeste da França, o pôr do sol aponta para o LESTE devido à sua topografia única. A luz do sol é refletida por colinas e vales, desafiando a lógica de que o sol sempre se põe no oeste.\"  \n\n*(Gancho com fato Surpreendente + Explicação geográfica direta e Fascinante para aventureiros.)*",
+      "category": "geography",
       "quality_score": 0.72,
-      "response_time": 9.817198991775513,
-      "timestamp": "2025-11-03T23:54:58.922498",
+      "response_time": 10.451840162277222,
+      "timestamp": "2025-11-04T02:29:45.225988",
       "usage": {
-        "prompt_tokens": 340,
-        "completion_tokens": 1049,
-        "total_tokens": 1389
+        "prompt_tokens": 343,
+        "completion_tokens": 1171,
+        "total_tokens": 1514
       },
       "metrics": {
         "length_ok": false,
@@ -18,23 +18,23 @@
         "category_relevant": true,
         "criteria_scores": [
           {
-            "criterion": "Comportamento animal real e documentado",
+            "criterion": "Informação geográfica precisa",
             "score": 0.7
           },
           {
-            "criterion": "Surpreendente sobre capacidades animais",
+            "criterion": "Revela aspectos Surpreendentes do planeta",
             "score": 0.8
           },
           {
-            "criterion": "Educativo sobre vida selvagem",
+            "criterion": "Desperta curiosidade sobre lugares",
             "score": 0.7
           },
           {
-            "criterion": "Gera admiração pela natureza",
+            "criterion": "Impressiona quem ama viajar",
             "score": 0.7
           },
           {
-            "criterion": "Fascina tanto cientistas quanto crianças",
+            "criterion": "Educativo sobre nossa Terra",
             "score": 0.7
           }
         ],
@@ -42,59 +42,59 @@
       }
     },
     {
-      "content": "**Tema:** *\"O Pescado que Estupe Prey com um Som Sônico — Louder Than a Grenade!\"*  \n\n**Explique:** Quando o *pistol shrimp* aperta suas pinças, cria uma explosão de pressão que emite um som de 218 decibéis — poderosa o suficiente para estunar presas. Perfeito para visualizar (a explosão + a reação do peixe).",
-      "category": "nature",
-      "quality_score": 0.7,
-      "response_time": 6.382939577102661,
-      "timestamp": "2025-11-03T23:55:05.305711",
+      "content": "**Tema:** \"Neutron stars estão 'ficcando' com padrões de pulso imprevisíveis — e os cientistas não sabem por quê.\"",
+      "category": "space",
+      "quality_score": 0.72,
+      "response_time": 9.527151823043823,
+      "timestamp": "2025-11-04T02:29:54.753441",
       "usage": {
-        "prompt_tokens": 342,
-        "completion_tokens": 673,
-        "total_tokens": 1015
+        "prompt_tokens": 345,
+        "completion_tokens": 1014,
+        "total_tokens": 1359
       },
       "metrics": {
-        "length_ok": false,
+        "length_ok": true,
         "has_question_mark": false,
         "is_interrogative": false,
         "category_relevant": true,
         "criteria_scores": [
           {
-            "criterion": "Fenômeno natural real",
+            "criterion": "Informação astronomicamente precisa",
             "score": 0.7
           },
           {
-            "criterion": "Visualmente impressionante",
+            "criterion": "Impressionante sobre nossa posição cósmica",
             "score": 0.7
           },
           {
-            "criterion": "Comportamento ou característica única",
+            "criterion": "Fascina tanto leigos quanto astrônomos",
             "score": 0.7
           },
           {
-            "criterion": "Cientificamente preciso",
-            "score": 0.7
+            "criterion": "Revela aspectos Surpreendentes do cosmos",
+            "score": 0.8
           },
           {
-            "criterion": "Gera admiração imediata",
+            "criterion": "Desperta curiosidade sobre o espaço",
             "score": 0.7
           }
         ],
-        "overall_quality": 0.7
+        "overall_quality": 0.72
       }
     },
     {
-      "content": "**\"Você aprendeu algo novo e agora vê ele por toda parte — isso é seu cérebro atrapalhando!\"**  \n\n**Explicação rápida:** Após notar algo recentemente, seu cérebro aumenta a atenção e a retenção de memória, criando a ilusão de que o elemento está em todo lugar. Isso é chamado de \"efeito Baader-Meinhof\" e mostra como nossa percepção é manipulada por processos automáticos.",
+      "content": "**Tema:**  \n\"Seu cérebro inventa detalhes de memórias que nunca ocorreram? Pesquisas mostram que perguntas后事件 podem alterar até os detalhes mais específicos, como se fosse real.\"",
       "category": "psychology",
       "quality_score": 0.72,
-      "response_time": 8.075305700302124,
-      "timestamp": "2025-11-03T23:55:13.381357",
+      "response_time": 10.274850130081177,
+      "timestamp": "2025-11-04T02:30:05.028574",
       "usage": {
         "prompt_tokens": 337,
-        "completion_tokens": 925,
-        "total_tokens": 1262
+        "completion_tokens": 1136,
+        "total_tokens": 1473
       },
       "metrics": {
-        "length_ok": false,
+        "length_ok": true,
         "has_question_mark": false,
         "is_interrogative": false,
         "category_relevant": true,
@@ -125,15 +125,15 @@
     }
   ],
   "best_theme": {
-    "content": "**\"¿OCTOPUS QUE USAM COBERTURAS COCONUTE COMO ALMOÇARIAS? Isso não é brincadeira: é adaptação evolutiva!\"**  \n\n- Combina surpresa (comportamento incomum), ciência (estudo comprovado), e fascínio (raridade do uso de ferramentas em invertebrados).",
-    "category": "animals",
+    "content": "**Tema:** \"No Forfatellum, no nordeste da França, o pôr do sol aponta para o LESTE devido à sua topografia única. A luz do sol é refletida por colinas e vales, desafiando a lógica de que o sol sempre se põe no oeste.\"  \n\n*(Gancho com fato Surpreendente + Explicação geográfica direta e Fascinante para aventureiros.)*",
+    "category": "geography",
     "quality_score": 0.72,
-    "response_time": 9.817198991775513,
-    "timestamp": "2025-11-03T23:54:58.922498",
+    "response_time": 10.451840162277222,
+    "timestamp": "2025-11-04T02:29:45.225988",
     "usage": {
-      "prompt_tokens": 340,
-      "completion_tokens": 1049,
-      "total_tokens": 1389
+      "prompt_tokens": 343,
+      "completion_tokens": 1171,
+      "total_tokens": 1514
     },
     "metrics": {
       "length_ok": false,
@@ -142,53 +142,53 @@
       "category_relevant": true,
       "criteria_scores": [
         {
-          "criterion": "Comportamento animal real e documentado",
+          "criterion": "Informação geográfica precisa",
           "score": 0.7
         },
         {
-          "criterion": "Surpreendente sobre capacidades animais",
+          "criterion": "Revela aspectos Surpreendentes do planeta",
           "score": 0.8
         },
         {
-          "criterion": "Educativo sobre vida selvagem",
+          "criterion": "Desperta curiosidade sobre lugares",
           "score": 0.7
         },
         {
-          "criterion": "Gera admiração pela natureza",
+          "criterion": "Impressiona quem ama viajar",
           "score": 0.7
         },
         {
-          "criterion": "Fascina tanto cientistas quanto crianças",
+          "criterion": "Educativo sobre nossa Terra",
           "score": 0.7
         }
       ],
       "overall_quality": 0.72
     }
   },
-  "total_time": 24.276344060897827,
+  "total_time": 30.254802227020264,
   "generation_stats": {
     "total_attempts": 3,
     "successful_generations": 3,
     "failed_generations": 0,
     "categories_used": [
-      "nature",
       "psychology",
-      "animals"
+      "geography",
+      "space"
     ],
     "quality_scores": [
       0.72,
-      0.7,
+      0.72,
       0.72
     ],
     "response_times": [
-      9.817198991775513,
-      6.382939577102661,
-      8.075305700302124
+      10.451840162277222,
+      9.527151823043823,
+      10.274850130081177
     ],
-    "avg_quality_score": 0.7133333333333333,
-    "min_quality_score": 0.7,
+    "avg_quality_score": 0.7200000000000001,
+    "min_quality_score": 0.72,
     "max_quality_score": 0.72,
-    "avg_response_time": 8.091814756393433
+    "avg_response_time": 10.084614038467407
   },
-  "timestamp": "2025-11-03T23:55:13.381553"
+  "timestamp": "2025-11-04T02:30:05.028780"
 }

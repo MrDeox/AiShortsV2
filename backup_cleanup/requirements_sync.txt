@@ -1,0 +1,32 @@
+# Dependências para Sistema de Sincronização Áudio-Vídeo
+# AiShorts v2.0 - Módulo de Sincronização TTS-Vídeo
+
+# === ANÁLISE DE ÁUDIO E BEAT DETECTION ===
+librosa>=0.10.0              # Análise de áudio, beat detection, feature extraction
+soundfile>=0.12.0            # Leitura/escrita de arquivos de áudio
+numpy>=1.21.0                 # Computação numérica para processamento de sinal
+scipy>=1.9.0                  # Processamento de sinais e científica
+
+# === EDIÇÃO E PROCESSAMENTO DE VÍDEO ===
+moviepy>=1.0.3                # Edição de vídeo programática
+imageio>=2.22.0               # Leitura de imagens e vídeos
+imageio-ffmpeg>=0.4.8         # Suporte a codecs de vídeo
+
+# === DEPENDÊNCIAS DO SISTEMA TTS ===
+torch>=2.0.0                  # Framework ML para Kokoro TTS
+torchaudio>=2.0.0             # Processamento de áudio no PyTorch
+
+# === UTILITÁRIOS E INFRAESTRUTURA ===
+pathlib                    # Manipulação de caminhos (built-in)
+dataclasses               # Estruturas de dados (built-in Python 3.7+)
+typing                    # Type hints (built-in)
+logging                   # Sistema de logs (built-in)
+json                      # Manipulação JSON (built-in)
+
+# === DEPENDÊNCIAS OPCIONAIS PARA MELHORIA ===
+# matplotlib>=3.5.0           # Visualização de waveforms e análises
+# seaborn>=0.11.0            # Visualizações estatísticas
+# plotly>=5.10.0             # Gráficos interativos para análises
+
+# === INSTALAÇÃO ===
+# pip install -r requirements_sync.txt

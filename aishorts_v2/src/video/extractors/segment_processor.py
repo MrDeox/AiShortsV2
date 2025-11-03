@@ -11,7 +11,7 @@ from pathlib import Path
 
 from loguru import logger
 
-from ...utils.exceptions import (
+from aishorts_v2.src.utils.exceptions import (
     VideoProcessingError,
     VideoUnavailableError,
     ErrorHandler

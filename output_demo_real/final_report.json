@@ -1,0 +1,25 @@
+{
+  "demo_info": {
+    "name": "Demo End-to-End Real - AiShorts v2.0",
+    "timestamp": "2025-11-04T02:28:00.216295",
+    "version": "2.0.0",
+    "real_youtube_content": true,
+    "production_ready": false
+  },
+  "pipeline_results": {
+    "error": {
+      "status": "failed",
+      "error": "Falha na inicialização dos módulos"
+    }
+  },
+  "quality_metrics": {
+    "pipeline_success_rate": 0.0,
+    "total_duration": 0.00154876708984375,
+    "successful_steps": 0,
+    "total_steps": 1,
+    "youtube_real_content": true,
+    "tts_real_audio": true,
+    "final_video_generated": false
+  },
+  "files_generated": [
+    

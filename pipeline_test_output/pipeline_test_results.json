@@ -1,0 +1,264 @@
+{
+  "timestamp": "2025-11-04T02:35:37.637296",
+  "tests": {
+    "MAIN_START_1762194937": {
+      "timestamp": "02:35:37",
+      "message": "🚀 Iniciando teste completo do pipeline",
+      "level": "INFO"
+    },
+    "MAIN_PHASE_1762194937": {
+      "timestamp": "02:35:37",
+      "message": "FASE 1: Testando Theme Generator isoladamente",
+      "level": "INFO"
+    },
+    "THEME_START_1762194937": {
+      "timestamp": "02:35:37",
+      "message": "Iniciando teste isolado do Theme Generator",
+      "level": "INFO"
+    },
+    "THEME_IMPORT_1762194937": {
+      "timestamp": "02:35:37",
+      "message": "Testando import do Theme Generator...",
+      "level": "INFO"
+    },
+    "THEME_IMPORT_1762194938": {
+      "timestamp": "02:35:38",
+      "message": "✅ Importou em 0.398s",
+      "level": "INFO"
+    },
+    "THEME_CONFIG_1762194938": {
+      "timestamp": "02:35:38",
+      "message": "✅ Config carregada em 0.000s",
+      "level": "INFO"
+    },
+    "THEME_DATA_1762194938": {
+      "timestamp": "02:35:38",
+      "message": "✅ Dados processados em 0.000s",
+      "level": "INFO"
+    },
+    "THEME_VALIDATION_1762194938": {
+      "timestamp": "02:35:38",
+      "message": "✅ Validação em 0.000s",
+      "level": "INFO"
+    },
+    "THEME_ANALYSIS_1762194938": {
+      "timestamp": "02:35:38",
+      "message": "✅ Análise em 0.000s",
+      "level": "INFO"
+    },
+    "THEME_SUCCESS_1762194938": {
+      "timestamp": "02:35:38",
+      "message": "✅ Theme Generator testado com sucesso!",
+      "level": "INFO"
+    },
+    "MAIN_PHASE_1762194938": {
+      "timestamp": "02:35:38",
+      "message": "FASE 2: Testando YouTube Extractor isoladamente",
+      "level": "INFO"
+    },
+    "YT_START_1762194938": {
+      "timestamp": "02:35:38",
+      "message": "Iniciando teste isolado do YouTube Extractor",
+      "level": "INFO"
+    },
+    "YT_IMPORT_1762194938": {
+      "timestamp": "02:35:38",
+      "message": "Testando import do YouTube Extractor...",
+      "level": "INFO"
+    },
+    "YT_IMPORT_1762194941": {
+      "timestamp": "02:35:41",
+      "message": "✅ Importou em 3.366s",
+      "level": "INFO"
+    },
+    "YT_INIT_1762194941": {
+      "timestamp": "02:35:41",
+      "message": "✅ Inicializou em 0.001s",
+      "level": "INFO"
+    },
+    "YT_CONFIG_1762194941": {
+      "timestamp": "02:35:41",
+      "message": "✅ Config verificada em 0.000s",
+      "level": "INFO"
+    },
+    "YT_METHODS_1762194941": {
+      "timestamp": "02:35:41",
+      "message": "✅ Métodos verificados em 0.001s",
+      "level": "INFO"
+    },
+    "YT_ERRORS_1762194941": {
+      "timestamp": "02:35:41",
+      "message": "Testando tratamento de erro...",
+      "level": "INFO"
+    },
+    "YT_ERRORS_1762194947": {
+      "timestamp": "02:35:47",
+      "message": "✅ Tratamento de erro em 6.001s",
+      "level": "INFO"
+    },
+    "YT_SUCCESS_1762194947": {
+      "timestamp": "02:35:47",
+      "message": "✅ YouTube Extractor testado com sucesso!",
+      "level": "INFO"
+    },
+    "MAIN_PHASE_1762194947": {
+      "timestamp": "02:35:47",
+      "message": "FASE 4: Gerando relatório final",
+      "level": "INFO"
+    },
+    "PIPE_START_1762194947": {
+      "timestamp": "02:35:47",
+      "message": "Iniciando teste de integração do pipeline",
+      "level": "INFO"
+    },
+    "PIPE_COMPAT_1762194947": {
+      "timestamp": "02:35:47",
+      "message": "YouTube Extractor: ✅ OK",
+      "level": "INFO"
+    },
+    "PIPE_FLOW_1762194947": {
+      "timestamp": "02:35:47",
+      "message": "✅ Fluxo de dados simulado",
+      "level": "INFO"
+    },
+    "PIPE_OUTPUT_1762194947": {
+      "timestamp": "02:35:47",
+      "message": "✅ 2 arquivos de output criados",
+      "level": "INFO"
+    },
+    "PIPE_SUCCESS_1762194947": {
+      "timestamp": "02:35:47",
+      "message": "✅ Integração testada - Score: 1.00",
+      "level": "INFO"
+    },
+    "REPORT_START_1762194947": {
+      "timestamp": "02:35:47",
+      "message": "Gerando relatório final de validação",
+      "level": "INFO"
+    }
+  },
+  "theme_generator": {
+    "status": "success",
+    "components_tested": [
+      "import",
+      "config",
+      "categories",
+      "data_structures",
+      "validation",
+      "analysis"
+    ],
+    "errors": [],
+    "performance": {
+      "import_time": 0.3984823226928711,
+      "config_time": 5.4836273193359375e-06,
+      "data_time": 1.8596649169921875e-05,
+      "validation_time": 0.00013971328735351562,
+      "analysis_time": 8.273124694824219e-05
+    },
+    "sample_analysis": {
+      "total_themes": 2,
+      "categories": {
+        "science": {
+          "count": 1,
+          "avg_quality": 0.9,
+          "avg_time": 1.2
+        },
+        "history": {
+          "count": 1,
+          "avg_quality": 0.9,
+          "avg_time": 1.2
+        }
+      },
+      "quality_stats": {
+        "avg_quality": 0.8500000000000001,
+        "min_quality": 0.8,
+        "max_quality": 0.9,
+        "std_quality": 0.04999999999999999
+      },
+      "performance_stats": {
+        "avg_time": 1.1,
+        "min_time": 1.0,
+        "max_time": 1.2
+      },
+      "best_themes": [
+        {
+          "content": "Como funcionava o calendário egípcio?",
+          "quality_score": 0.9,
+          "category": "history"
+        },
+        {
+          "content": "Por que o céu é azul?",
+          "quality_score": 0.8,
+          "category": "science"
+        }
+      ],
+      "patterns": [
+        "Categoria mais popular: science",
+        "Palavra mais comum em perguntas: 'por que'"
+      ]
+    },
+    "total_components": 6,
+    "total_performance_time": 0.3987288475036621
+  },
+  "youtube_extractor": {
+    "status": "success",
+    "components_tested": [
+      "import",
+      "initialization",
+      "config",
+      "directories",
+      "basic_methods",
+      "error_handling"
+    ],
+    "errors": [],
+    "performance": {
+      "import_time": 3.3658721446990967,
+      "init_time": 0.001161336898803711,
+      "config_time": 2.288818359375e-05,
+      "methods_time": 0.0006759166717529297,
+      "errors_time": 6.000637531280518
+    },
+    "total_components": 6,
+    "total_performance_time": 9.368369817733765
+  },
+  "pipeline_integration": {
+    "status": "success",
+    "integration_tests": [
+      "compatibility",
+      "data_flow",
+      "output_system"
+    ],
+    "errors": [],
+    "performance": {
+      "integration_time": 0.014282464981079102
+    },
+    "compatibility": {
+      "theme_generator": true,
+      "youtube_extractor": true,
+      "overall": true
+    },
+    "sample_data": {
+      "theme": {
+        "content": "Por que os flamingos são rosa?",
+        "category": "nature",
+        "quality_score": 0.85,
+        "response_time": 2.1,
+        "timestamp": "2025-11-04T02:35:47.436034",
+        "usage": null,
+        "metrics": null
+      },
+      "video_info": {
+        "title": "Flamingos Rosa - Curiosidades",
+        "description": "Um vídeo sobre flamingos...",
+        "duration": 180,
+        "categories": [
+          "nature",
+          "education"
+        ]
+      }
+    },
+    "output_files": 2,
+    "integration_score": 1.0
+  },
+  "summary": {}
+}
