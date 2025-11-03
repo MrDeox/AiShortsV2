@@ -841,3 +841,49 @@ class ScriptValidator:
             "position": issue.position,
             "details": issue.details
         }
+
+
+# Instância global do validador
+script_validator = ScriptValidator()
+
+if __name__ == "__main__":
+    # Teste do validador
+    print("=== Teste do Script Validator ===")
+    
+    try:
+        # Importar gerador de temas e roteiro
+        from src.generators.theme_generator import theme_generator, ThemeCategory
+        from src.generators.script_generator import script_generator
+        
+        # Gerar tema e roteiro para teste
+        print("1. Gerando tema e roteiro de teste...")
+        theme = theme_generator.generate_single_theme(ThemeCategory.SCIENCE)
+        script = script_generator.generate_single_script(theme)
+        
+        print(f"Roteiro: {script.title}")
+        
+        # Testar validação
+        print("\n2. Testando validação...")
+        
+        # Validar para TikTok
+        report_tiktok = script_validator.validate_script(script, PlatformType.TIKTOK)
+        print(f"Validação TikTok - Score: {report_tiktok.overall_score:.2f}")
+        print(f"Aprovado: {'Sim' if report_tiktok.is_approved else 'Não'}")
+        
+        # Validar para múltiplas plataformas
+        print("\n3. Validação multiplataforma...")
+        reports = script_validator.validate_multiple_platforms(script)
+        
+        for platform, report in reports.items():
+            print(f"  {platform.value}: {report.overall_score:.2f} ({'✅' if report.is_approved else '❌'})")
+        
+        # Salvar relatório
+        print("\n4. Salvando relatório...")
+        report_path = Path("validation_report.json")
+        script_validator.save_validation_report(report_tiktok, report_path)
+        print(f"Relatório salvo em: {report_path}")
+        
+    except Exception as e:
+        print(f"❌ Erro no teste: {e}")
+        import traceback
+        traceback.print_exc()

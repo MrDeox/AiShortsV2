@@ -1,0 +1,242 @@
+{
+  "theme": {
+    "content": "**Tema:** \"Ocos pode mudar de cor para falar com outros octópodes, compartilhando 'mensagens' específicas irritantes ou de cortejo?\"  \n\n**Explicação:** Baseado em pesquisas recentes, octópodes usam padrões de cor e textura para \"falar\" entre si, muito além do camuflage. Mostrar vídeos em close dos seus movimentos de pele geraria surpresa e engajamento visual.",
+    "category": "science",
+    "quality_score": 0.78,
+    "response_time": 23.317185878753662,
+    "timestamp": "2025-11-04T01:43:25.973318",
+    "usage": {
+      "prompt_tokens": 392,
+      "completion_tokens": 1393,
+      "total_tokens": 1785
+    },
+    "metrics": {
+      "length_ok": false,
+      "has_question_mark": false,
+      "is_interrogative": false,
+      "category_relevant": true,
+      "criteria_scores": [
+        {
+          "criterion": "Base científico verificável",
+          "score": 0.8
+        },
+        {
+          "criterion": "Surpreendente e Contra-intuitivo",
+          "score": 0.8
+        },
+        {
+          "criterion": "Fácil de explicar",
+          "score": 0.9
+        },
+        {
+          "criterion": "Gera curiosidade imediata",
+          "score": 0.7
+        },
+        {
+          "criterion": "Universalmente interessante",
+          "score": 0.7
+        }
+      ],
+      "overall_quality": 0.78
+    }
+  },
+  "script": {
+    "title": "Curiosidade: **Tema:** \"Ocos pode mudar...",
+    "theme": "GeneratedTheme(content='**Tema:** \"Ocos pode mudar de cor para falar com outros octópodes, compartilhando \\'mensagens\\' específicas irritantes ou de cortejo?\"  \\n\\n**Explicação:** Baseado em pesquisas recentes, octópodes usam padrões de cor e textura para \"falar\" entre si, muito além do camuflage. Mostrar vídeos em close dos seus movimentos de pele geraria surpresa e engajamento visual.', category=<ThemeCategory.SCIENCE: 'science'>, quality_score=0.78, response_time=23.317185878753662, timestamp=datetime.datetime(2025, 11, 4, 1, 43, 25, 973318), usage={'prompt_tokens': 392, 'completion_tokens': 1393, 'total_tokens': 1785}, metrics={'length_ok': False, 'has_question_mark': False, 'is_interrogative': False, 'category_relevant': True, 'criteria_scores': [{'criterion': 'Base científico verificável', 'score': 0.8}, {'criterion': 'Surpreendente e Contra-intuitivo', 'score': 0.8}, {'criterion': 'Fácil de explicar', 'score': 0.9}, {'criterion': 'Gera curiosidade imediata', 'score': 0.7}, {'criterion': 'Universalmente interessante', 'score': 0.7}], 'overall_quality': 0.78})",
+    "sections": [
+      "ScriptSection(name='hook', content='\"Você sabia que os octógpedes podem falar em cores? 😱 Já viu um mudar de azul para vermelho? 🌊 Eles usam isso pra... TER ODIOS ouerville com outro!\"', duration_seconds=0, purpose='Prender atenção', key_elements=[])",
+      "ScriptSection(name='development', content='O: \"Pesquisas recentesmostraram que não é só camuflage, né! Eles criam padrões únicos pra transmitir mensagens-specificas: cor irritante praجمهورية, tons românticos pra cortejo. Vem o close dos movimentos da pele deles? É como um cinza de alta tecnologia!\"', duration_seconds=0, purpose='Explicar e envolver', key_elements=[])",
+      "ScriptSection(name='conclusion', content='\"Esses obrigados são FANTÁSTICOS! 🐙💬 Comente qual cor você usaria pra irritar alguém ou bizudar.ático. Claro, seguem para mais zíperes surpreendentes? #CiênciaQueEmbarca #OctopusVibes\"', duration_seconds=65.0, purpose='Fechar e engajar', key_elements=[])",
+      "ScriptSection(name='conclusion', content='\"Esses obrigados são FANTÁSTICOS! 🐙💬 Comente qual cor você usaria pra irritar alguém ou bizudar.ático. Claro, seguem para mais zíperes surpreendentes? #CiênciaQueEmbarca #OctopusVibes\"', duration_seconds=65.0, purpose='Fechar e engajar', key_elements=[])"
+    ],
+    "total_duration": 130.0,
+    "quality_score": 0.85,
+    "engagement_score": 1.0,
+    "retention_score": 0.5,
+    "response_time": 8.224453926086426,
+    "timestamp": "2025-11-04 01:43:34.198889",
+    "usage": {
+      "prompt_tokens": 720,
+      "completion_tokens": 764,
+      "total_tokens": 1484
+    },
+    "metrics": {
+      "structure_score": 1.0,
+      "engagement_score": 1.0,
+      "retention_score": 0.5,
+      "overall_quality": 0.85,
+      "total_duration": 130.0,
+      "total_words": 112,
+      "theme_quality": 0.78
+    }
+  },
+  "validation_summary": {
+    "platform": "tiktok",
+    "overall_score": 50.417,
+    "quality_level": "poor",
+    "is_approved": false,
+    "total_issues": 9,
+    "critical_issues": 3,
+    "total_suggestions": 9,
+    "structure_score": 50,
+    "content_score": 85,
+    "platform_score": 0
+  },
+  "semantic_analysis": {
+    "keywords": [
+      "pra",
+      "você",
+      "cor",
+      "obrigados",
+      "são",
+      "fantásticos",
+      "comente",
+      "qual",
+      "usaria",
+      "irritar",
+      "alguém",
+      "bizudar",
+      "ático",
+      "claro",
+      "seguem"
+    ],
+    "tone": {
+      "positive": 0.5,
+      "negative": 0.0,
+      "neutral": 0.5
+    },
+    "category_info": [
+      "TECHNOLOGY",
+      0.01
+    ],
+    "semantic_embedding": "[0.         0.         0.         0.0247228  0.0232589  0.\n 0.         0.         0.         0.         0.         0.\n 0.         0.01818182 0.         0.         0.         0.02857143\n 0.         0.         0.         0.03030303 0.         0.\n 0.         0.         0.         0.         0.         0.02603648\n 0.         0.         0.         0.         0.         0.\n 0.         0.         0.02037265 0.         0.01639344 0.\n 0.         0.         0.         0.         0.         0.\n 0.         0.         0.         0.         0.         0.\n 0.         0.25       0.02220874 0.         0.01923077 0.\n 0.         0.         0.03225806 0.01785714 0.         0.\n 0.0807955  0.02040816 0.         0.         0.         0.\n 0.         0.03571429 0.14285714 0.         0.         0.01515152\n 0.         0.         0.         0.         0.01754386 0.\n 0.         0.0244152  0.07142857 0.         0.         0.\n 0.02080222 0.11287015 0.         0.         0.         0.\n 0.         0.         0.         1.09305211 0.         0.\n 0.         0.         0.         0.         0.05263158 0.\n 0.         0.         0.         0.         0.         0.\n 0.         0.         0.04455477 0.         0.0700812  0.\n 0.         0.         0.36458333 0.01694915 0.08007409 0.\n 0.         0.         0.         0.         0.0250384  0.\n 0.         0.         0.         0.02173913 0.         0.\n 0.         0.04545455 0.         0.2        0.         0.\n 0.         0.04       0.         0.         0.         0.\n 0.         0.02569489 0.         0.         0.         0.\n 0.         0.         0.         0.         0.         0.\n 0.         0.         0.         0.         0.         0.\n 0.         0.         0.         0.         0.08229167 0.\n 0.01724138 0.         0.         0.         0.         0.\n 0.         0.         0.         0.         0.         0.03448276\n 0.         0.         0.         0.         0.         0.05555556\n 0.02777778 0.0625     0.02102397 0.         0.         0.\n 0.         0.         0.         0.06679654 0.         0.02171893\n 0.         0.0241153  0.         0.         0.         0.\n 0.02702703 0.         0.         0.11111111 0.02148216 0.\n 0.         0.         0.         0.01886792 0.08333333 0.\n 0.52272727 0.         0.         0.         0.07631579 0.11538462\n 0.         0.         0.         0.         0.         0.01851852\n 0.         0.         0.         0.         0.         0.03703704\n 0.03846154 0.         0.02058516 0.         0.         0.\n 0.         0.         0.         0.         0.02353741 0.\n 0.025      0.         0.04604501 0.15833333 0.         0.\n 0.         0.         0.         0.16666667 0.         0.\n 0.         0.         0.         0.         0.         0.0212766\n 0.01960784 0.         0.         0.         0.         0.\n 0.04347826 0.04607843 0.         0.         0.02536232 0.\n 0.         0.         0.         0.         0.         0.\n 0.         0.         0.0227215  0.02564103 0.         0.02083333\n 0.         0.         0.         0.         0.         0.        ]"
+  },
+  "videos_found": [
+    {
+      "id": "video_004",
+      "title": "Inteligência Artificial: O Futuro da Tecnologia",
+      "description": "Explore como a IA está revolucionando diversos setores da sociedade moderna.",
+      "duration": 480,
+      "views": 800000,
+      "likes": 40000,
+      "upload_date": "2024-03-05",
+      "channel": "Tech Future",
+      "category": "TECHNOLOGY",
+      "tags": [
+        "IA",
+        "inteligência artificial",
+        "tecnologia",
+        "futuro",
+        "inovação"
+      ],
+      "quality_score": 0.72,
+      "semantic_score": 0.05072839407075168,
+      "keyword_score": 7.0
+    },
+    {
+      "id": "video_002",
+      "title": "Delfins em Ação: A Inteligência dos Mamíferos Marinhos",
+      "description": "Descubra a incrível inteligência e agilidade dos golfinhos em seu habitat natural.",
+      "duration": 450,
+      "views": 750000,
+      "likes": 35000,
+      "upload_date": "2024-02-20",
+      "channel": "Vida Selvagem",
+      "category": "ANIMALS",
+      "tags": [
+        "delfins",
+        "golfinhos",
+        "mamíferos",
+        "marinhos",
+        "inteligência"
+      ],
+      "quality_score": 0.6866666666666668,
+      "semantic_score": 0.09465269672857213,
+      "keyword_score": 5.5
+    },
+    {
+      "id": "video_003",
+      "title": "Floresta Amazônica: O Pulmão Verde do Mundo",
+      "description": "Uma viagem pela biodiversidade única da maior floresta tropical do planeta.",
+      "duration": 600,
+      "views": 1200000,
+      "likes": 60000,
+      "upload_date": "2024-01-10",
+      "channel": "Natureza Brasil",
+      "category": "NATURE",
+      "tags": [
+        "amazônia",
+        "floresta",
+        "biodiversidade",
+        "brasil",
+        "tropical"
+      ],
+      "quality_score": 0.8,
+      "semantic_score": 0.01979069715767164,
+      "keyword_score": 4.5
+    },
+    {
+      "id": "video_001",
+      "title": "Espaço: Uma Jornada Incrível pelo Universo",
+      "description": "Explore as maravilhas do espaço com imagens espetaculares de galáxias e planetas distantes.",
+      "duration": 300,
+      "views": 1000000,
+      "likes": 50000,
+      "upload_date": "2024-01-15",
+      "channel": "Ciência Espacial",
+      "category": "SPACE",
+      "tags": [
+        "espaço",
+        "universo",
+        "galáxias",
+        "estrelas",
+        "astronomia"
+      ],
+      "quality_score": 0.8,
+      "semantic_score": 0.01769153766503023,
+      "keyword_score": 1.5
+    },
+    {
+      "id": "video_005",
+      "title": "Golfinhos Brilhantes:.show de Inteligência Marina",
+      "description": "Veja golfinhos realizando truques incríveis e demonstrando sua incrível inteligência.",
+      "duration": 360,
+      "views": 950000,
+      "likes": 48000,
+      "upload_date": "2024-02-14",
+      "channel": "Oceanos Incríveis",
+      "category": "ANIMALS",
+      "tags": [
+        "golfinhos",
+        "inteligência",
+        "trucos",
+        "marinhos",
+        "show"
+      ],
+      "quality_score": 0.7821052631578949,
+      "semantic_score": 0.02092206206217228,
+      "keyword_score": 1.0
+    }
+  ],
+  "pipeline_time": 31.562198400497437,
+  "platform_config": {
+    "name": "TikTok",
+    "max_duration": 60,
+    "aspect_ratio": "9:16",
+    "resolution": "1080x1920",
+    "fps": 30,
+    "target_audience": "Jovens (16-30 anos)",
+    "content_style": "Viral, descontraído, tendências",
+    "hashtag_strategy": "Mix de trending + niche",
+    "best_posting_times": [
+      "19:00-22:00",
+      "12:00-14:00"
+    ],
+    "engagement_goals": [
+      "Views",
+      "Shares",
+      "Comments"
+    ]
+  },
+  "success": true
+}

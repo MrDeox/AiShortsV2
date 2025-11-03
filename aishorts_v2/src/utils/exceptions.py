@@ -76,6 +76,52 @@ class ValidationError(AiShortsError):
             "value": value
         })
 
+class YouTubeExtractionError(AiShortsError):
+    """Erro na extração do YouTube."""
+    
+    def __init__(self, message: str, video_url: Optional[str] = None, youtube_error: Optional[str] = None):
+        super().__init__(message, "YOUTUBE_EXTRACTION_ERROR", {
+            "video_url": video_url,
+            "youtube_error": youtube_error
+        })
+
+class VideoProcessingError(AiShortsError):
+    """Erro no processamento de vídeo."""
+    
+    def __init__(self, message: str, video_path: Optional[str] = None, ffmpeg_error: Optional[str] = None):
+        super().__init__(message, "VIDEO_PROCESSING_ERROR", {
+            "video_path": video_path,
+            "ffmpeg_error": ffmpeg_error
+        })
+
+class VideoUnavailableError(AiShortsError):
+    """Erro quando vídeo não está disponível."""
+    
+    def __init__(self, message: str, video_url: Optional[str] = None, unavailable_reason: Optional[str] = None):
+        super().__init__(message, "VIDEO_UNAVAILABLE_ERROR", {
+            "video_url": video_url,
+            "unavailable_reason": unavailable_reason
+        })
+
+class VideoTooShortError(AiShortsError):
+    """Erro quando vídeo é muito curto."""
+    
+    def __init__(self, message: str, video_url: Optional[str] = None, duration: Optional[float] = None, requested_duration: Optional[float] = None):
+        super().__init__(message, "VIDEO_TOO_SHORT_ERROR", {
+            "video_url": video_url,
+            "duration": duration,
+            "requested_duration": requested_duration
+        })
+
+class NetworkError(AiShortsError):
+    """Erro de conectividade de rede."""
+    
+    def __init__(self, message: str, url: Optional[str] = None, status_code: Optional[int] = None):
+        super().__init__(message, "NETWORK_ERROR", {
+            "url": url,
+            "status_code": status_code
+        })
+
 class ErrorHandler:
     """Handler centralizado para tratamento de erros."""
     
