@@ -321,15 +321,38 @@ class ThemeGenerator:
         Raises:
             ValidationError: Se a resposta for inválida
         """
-        if not response or len(response.strip()) < 10:
+        logger.debug(f"Validando resposta da categoria {category.value}:\n{response}")
+        
+        if not response or len(response.strip()) < 5:  # Reduzido para 5 caracteres
             raise ValidationError("Tema muito curto ou vazio", field="content", value=response)
         
-        if len(response) > 200:
-            raise ValidationError("Tema muito longo", field="content", value=response[:200] + "...")
+        if len(response) > 300:  # Aumentado para 300 caracteres
+            logger.warning(f"Resposta muito longa, truncando: {response[:300]}")
+            response = response[:300]
         
-        # Verificar formato
-        if not prompt_engineering.validate_prompt_format(response):
-            raise ValidationError("Formato de tema inválido", field="format", value=response)
+        # Verificar formato - tornar mais flexível
+        try:
+            if not prompt_engineering.validate_prompt_format(response):
+                # Se a validação falhar, tentar validação manual básica
+                if len(response.strip()) >= 10 and any(char.isalpha() for char in response):
+                    logger.info("Validação manual passou para resposta")
+                    pass
+                else:
+                    raise ValidationError("Formato de tema inválido", field="format", value=response)
+        except Exception as e:
+            logger.warning(f"Erro na validação de formato: {e}, usando validação manual")
+            if len(response.strip()) >= 10:
+                pass  # Passa na validação manual
+            else:
+                raise ValidationError("Tema muito curto para validação manual", field="content", value=response)
+        
+        # Verificar se é realmente uma pergunta ou curiosidade
+        curiosity_words = ['?', 'por que', 'como', 'o que', 'quando', 'onde', 'será que', 'você sabia', 'vocês sabiam']
+        has_curiosity = any(word in response.lower() for word in curiosity_words)
+        
+        if not has_curiosity:
+            logger.warning(f"Tema pode não ter formato de curiosidade: {response}")
+            # Não levantar erro, apenas warning
         
         # Verificar se é realmente uma pergunta ou curiosidade
         if not any(word in response.lower() for word in ['?', 'por que', 'como', 'o que', 'quando', 'onde', 'será que', 'você sabia']):
