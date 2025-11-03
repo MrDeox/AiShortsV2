@@ -1,0 +1,365 @@
+{
+  "_source_id": 50,
+  "sources": {
+    "APIs e Ferramentas para Extração de Clips do YouTube": {
+      "https://developers.google.com/youtube/v3/guides/quota_and_compliance_audits": {
+        "id": 1,
+        "publisher": "Google for Developers",
+        "url": "https://developers.google.com/youtube/v3/guides/quota_and_compliance_audits",
+        "title": "Quota and Compliance Audits | YouTube Data API",
+        "info": "Documentação oficial sobre limitações de quota da YouTube Data API v3 (10.000 unidades/dia), auditorias de conformidade e processos para extensão de quota"
+      },
+      "https://developers.google.com/youtube/terms/api-services-terms-of-service": {
+        "id": 2,
+        "publisher": "Google for Developers",
+        "url": "https://developers.google.com/youtube/terms/api-services-terms-of-service",
+        "title": "YouTube API Services Terms of Service",
+        "info": "Termos de serviço oficiais da YouTube API, incluindo restrições legais, limitações de uso, conformidade com leis e direitos de auditoria"
+      },
+      "https://developers.google.com/youtube/terms/developer-policies": {
+        "id": 3,
+        "publisher": "Google for Developers",
+        "url": "https://developers.google.com/youtube/terms/developer-policies",
+        "title": "YouTube API Services - Developer Policies",
+        "info": "Políticas de desenvolvedores detalhadas, incluindo proibições de download de conteúdo audiovisual, raspagem de dados e requisitos de conformidade"
+      },
+      "https://pypi.org/project/yt-dlp/": {
+        "id": 4,
+        "publisher": "Python Package Index",
+        "url": "https://pypi.org/project/yt-dlp/",
+        "title": "yt-dlp - PyPI",
+        "info": "Documentação da biblioteca yt-dlp versão 2025.10.22, recursos avançados para download de segmentos, suporte a milhares de sites e funcionalidades de recorte"
+      },
+      "https://pypi.org/project/pytube/": {
+        "id": 5,
+        "publisher": "Python Package Index",
+        "url": "https://pypi.org/project/pytube/",
+        "title": "pytube - PyPI",
+        "info": "Documentação da biblioteca pytube versão 15.0.0, ferramenta leve e independente para download de vídeos do YouTube com suporte a streams progressivas e DASH"
+      },
+      "https://support.google.com/youtube/answer/9783148?hl=en": {
+        "id": 6,
+        "publisher": "YouTube Help",
+        "url": "https://support.google.com/youtube/answer/9783148?hl=en",
+        "title": "Fair use on YouTube - Google Help",
+        "info": "Diretrizes oficiais sobre fair use, quatro fatores legais para uso educativo, limitações e iniciativas de proteção de fair use para criadores americanos"
+      },
+      "https://ffmpeg.org/ffmpeg.html": {
+        "id": 7,
+        "publisher": "FFmpeg Project",
+        "url": "https://ffmpeg.org/ffmpeg.html",
+        "title": "FFmpeg Documentation - Video Operations",
+        "info": "Documentação oficial sobre uso de FFmpeg para extrair segmentos de vídeo com timestamps específicos usando comandos -ss e -t"
+      }
+    },
+    "Plataformas Visuais - Requisitos Técnicos 2025": {
+      "https://help.instagram.com/1038071743007909": {
+        "id": 8,
+        "publisher": "Instagram Help Center",
+        "url": "https://help.instagram.com/1038071743007909",
+        "title": "Instagram Reel requirements",
+        "info": "Especificações técnicas oficiais para Instagram Reels incluindo aspect ratio (1.91:1 a 9:16), resolução mínima (720p), taxa de quadros (mínimo 30 FPS) e tamanho de foto de capa (420px por 654px)"
+      },
+      "https://riverside.com/blog/tiktok-video-size": {
+        "id": 9,
+        "publisher": "Riverside",
+        "url": "https://riverside.com/blog/tiktok-video-size",
+        "title": "TikTok Video Size Guide: Best Dimensions for 2025",
+        "info": "Especificações completas do TikTok incluindo aspect ratio recomendado (9:16), resolução (1080p), formatos (MP4, MOV), duração (1 segundo a 10 minutos), limitações de tamanho de arquivo (72MB Android, 287.6MB iOS) e codecs (H.264 vídeo, AAC áudio)"
+      },
+      "https://ads.tiktok.com/help/article/creative-best-practices?lang=en": {
+        "id": 10,
+        "publisher": "TikTok for Business",
+        "url": "https://ads.tiktok.com/help/article/creative-best-practices?lang=en",
+        "title": "Creative best practices for performance ads",
+        "info": "Melhores práticas criativas para TikTok incluindo orientações técnicas (vertical 9:16, resolução mínima 720p), estrutura de conteúdo (gancho nos primeiros 6 segundos, texto 5-10 palavras por segundo), elementos visuais e otimizações de engajamento"
+      },
+      "https://www.bigmotion.ai/blog/youtube-shorts-dimensions-in-2025": {
+        "id": 11,
+        "publisher": "BigMotion AI",
+        "url": "https://www.bigmotion.ai/blog/youtube-shorts-dimensions-in-2025",
+        "title": "YouTube Shorts Dimensions in 2025 - Everything You Need to Know",
+        "info": "Especificações técnicas do YouTube Shorts 2025 incluindo resolução ideal (1080x1920), aspect ratio (9:16), duração (15-60 segundos), formatos (MP4, MOV), codecs (H.264 vídeo, AAC/MP3 áudio), e orientações de visualização móvel"
+      },
+      "https://www.descript.com/blog/article/tiktok-video-size": {
+        "id": 12,
+        "publisher": "Descript",
+        "url": "https://www.descript.com/blog/article/tiktok-video-size",
+        "title": "TikTok Video Dimensions in 2025: The Complete Guide",
+        "info": "Especificações detalhadas do TikTok incluindo limitações técnicas (compressão automática para 4K+), formatos suportados (MOV, MPEG, AVI, 3GP, MP4), limitações de duração (3 segundos a 10 minutos) e detalhes sobre anúncios"
+      },
+      "https://onadverts.com/top-video-editing-trends-for-social-media-in-2025/": {
+        "id": 13,
+        "publisher": "Onadverts",
+        "url": "https://onadverts.com/top-video-editing-trends-for-social-media-in-2025/",
+        "title": "Top Video Editing Trends for Social Media in 2025",
+        "info": "Tendências de edição de vídeo para 2025 incluindo otimização de watch-time, padrões de edição, speed ramping interativo, overlays gráficos, soundscapes ASMR, e estratégias para maximizar engajamento com timing de 1-2 segundos para ganchos visuais"
+      },
+      "https://usevisuals.com/blog/instagram-reels-best-practices-2025": {
+        "id": 14,
+        "publisher": "UseVisuals",
+        "url": "https://usevisuals.com/blog/instagram-reels-best-practices-2025",
+        "title": "17+ Proven Instagram Reels Best Practices for 2025",
+        "info": "Melhores práticas para Instagram Reels incluindo duração otimizada (7-15 segundos para tendências, 30-60 segundos para tutoriais), transições suaves, elementos visuais (texto sobreposto, efeitos AR), ferramentas de edição (CapCut, InShot) e técnicas de engajamento"
+      },
+      "https://stackinfluence.com/video-content-optimization-in-2025/": {
+        "id": 15,
+        "publisher": "StackInfluence",
+        "url": "https://stackinfluence.com/video-content-optimization-in-2025/",
+        "title": "Video Content Optimization 2025: TikTok, Reels, Youtube",
+        "info": "Otimização de conteúdo para plataformas em 2025 incluindo hacks de algoritmo, duração ideal por plataforma (TikTok 15-60s, Instagram 15-30s), técnicas de SEO, uso de tendências, e estatísticas de engajamento específicas"
+      },
+      "https://motionapp.com/blog/best-dtc-meta-ad-hooks-2025": {
+        "id": 16,
+        "publisher": "Motion",
+        "url": "https://motionapp.com/blog/best-dtc-meta-ad-hooks-2025",
+        "title": "25 Video Ad Hooks that Convert in 2025",
+        "info": "25 técnicas de hooks visuais que convertem em 2025 incluindo gatilhos psicológicos, técnicas visuais (revelações com Post-It, reflexo em óculos), hooks interativos (pedra-papel-tesoura), storytelling (sequência de perseguição), e timing crítico (impacto em 3 segundos)"
+      },
+      "https://www.superside.com/blog/short-form-video-trends": {
+        "id": 17,
+        "publisher": "Superside",
+        "url": "https://www.superside.com/blog/short-form-video-trends",
+        "title": "7 Short-Form Video Trends to Maximize Impact in 2025",
+        "info": "7 tendências principais para vídeo curto em 2025 incluindo conteúdo UGC (40% mais ROI), otimização sem som (40% assistem Instagram sem som), conteúdo BTS (78% querem conexão), desafios de marca, vídeos de influenciadores, e tendências específicas por plataforma"
+      }
+    },
+    "Aspectos Legais e de Copyright para Uso de Conteúdo do YouTube": {
+      "https://support.google.com/youtube/answer/9783148?hl=en": {
+        "id": 18,
+        "publisher": "Google/YouTube",
+        "url": "https://support.google.com/youtube/answer/9783148?hl=en",
+        "title": "Fair use on YouTube - Google Help",
+        "info": "Definições de fair use, quatro fatores do uso justo, mitos e equívocos comuns, processo de disputa do Content ID para fair use"
+      },
+      "https://www.youtube.com/intl/en_us/howyoutubeworks/policies/copyright/": {
+        "id": 19,
+        "publisher": "YouTube",
+        "url": "https://www.youtube.com/intl/en_us/howyoutubeworks/policies/copyright/",
+        "title": "YouTube Copyright Rules & Policies",
+        "info": "Políticas oficiais de copyright do YouTube, ferramentas de gerenciamento de direitos autorais, ferramentas de Content ID, Copyright Match Tool e DMCA"
+      },
+      "https://support.google.com/youtube/answer/2797370?hl=en": {
+        "id": 20,
+        "publisher": "Google/YouTube",
+        "url": "https://support.google.com/youtube/answer/2797370?hl=en",
+        "title": "How Content ID works - YouTube Help",
+        "info": "Mecanismos de detecção do Content ID, ações pós-correspondência (bloquear, monetizar, rastrear), critérios de elegibilidade para detentores"
+      },
+      "https://support.google.com/youtube/answer/2797468?hl=en": {
+        "id": 21,
+        "publisher": "Google/YouTube",
+        "url": "https://support.google.com/youtube/answer/2797468?hl=en",
+        "title": "License types on YouTube - Google Help",
+        "info": "Tipos de licença YouTube (padrão vs Creative Commons), como aplicar licença CC BY, como creditar criadores, monetização de conteúdo CC"
+      },
+      "https://creativecommons.org/share-your-work/": {
+        "id": 22,
+        "publisher": "Creative Commons",
+        "url": "https://creativecommons.org/share-your-work/",
+        "title": "Share your work - Creative Commons",
+        "info": "Visão geral do sistema de licenças Creative Commons, ferramentas de compartilhamento, estatísticas de mais de 2.5 bilhões de obras licenciadas"
+      },
+      "https://filmora.wondershare.com/youtube-video-editing/standard-youtube-license-vs-cc.html": {
+        "id": 23,
+        "publisher": "Wondershare Filmora",
+        "url": "https://filmora.wondershare.com/youtube-video-editing/standard-youtube-license-vs-cc.html",
+        "title": "Standard YouTube License vs. Creative Commons[2025]",
+        "info": "Diferenças entre licença padrão do YouTube e Creative Commons, implicações para monetização, permissões para uso e edição"
+      },
+      "https://www.copyright.gov/fair-use/": {
+        "id": 24,
+        "publisher": "U.S. Copyright Office",
+        "url": "https://www.copyright.gov/fair-use/",
+        "title": "U.S. Copyright Office Fair Use Index",
+        "info": "Quatro fatores do fair use segundo a lei americana: propósito/caráter, natureza da obra, quantidade utilizada, efeito no mercado"
+      },
+      "https://creativecommons.org/share-your-work/cclicenses/": {
+        "id": 25,
+        "publisher": "Creative Commons",
+        "url": "https://creativecommons.org/share-your-work/cclicenses/",
+        "title": "About CC Licenses - Creative Commons",
+        "info": "Seis tipos de licenças CC: BY, BY-SA, BY-NC, BY-NC-SA, BY-ND, BY-NC-ND e CC0, permissões de uso comercial e condições específicas"
+      },
+      "https://support.google.com/youtube/answer/2797454?hl=en&co=GENIE.Platform%3DAndroid": {
+        "id": 26,
+        "publisher": "Google/YouTube",
+        "url": "https://support.google.com/youtube/answer/2797454?hl=en&co=GENIE.Platform%3DAndroid",
+        "title": "Dispute a Content ID claim - YouTube Help",
+        "info": "Processo de disputa de reivindicações de Content ID, prazos de resposta (30 dias para disputa, 7 dias para recurso), opções do reivindicante"
+      },
+      "https://www.foleon.com/blog/12-sites-for-free-stock-videos": {
+        "id": 27,
+        "publisher": "Foleon",
+        "url": "https://www.foleon.com/blog/12-sites-for-free-stock-videos",
+        "title": "12 Best Sites for Free Stock Videos",
+        "info": "Análise de 12 plataformas de stock de vídeo gratuito: Mixkit, Pexels, Videezy, Pixabay, Videvo, Stock Footage for Free, Coverr, Life of Vids, Vidsplay, Mazwai, Free Nature Stock, Motion Elements"
+      },
+      "https://www.pexels.com/search/videos/free%20for%20commercial%20use/": {
+        "id": 28,
+        "publisher": "Pexels",
+        "url": "https://www.pexels.com/search/videos/free%20for%20commercial%20use/",
+        "title": "Free For Commercial Use Videos - Pexels",
+        "info": "Informações sobre vídeos gratuitos para uso comercial no Pexels, estatísticas de 36.5K vídeos gratuitos para uso comercial"
+      },
+      "https://www.silvermansound.com/youtube-credits": {
+        "id": 29,
+        "publisher": "Silverman Sound Studios",
+        "url": "https://www.silvermansound.com/youtube-credits",
+        "title": "YouTube Credits Copyright Changes",
+        "info": "Mudanças nas diretrizes de atribuição do YouTube, obrigatoriedade de créditos na descrição, sistema Smart Content ID para detecção de créditos"
+      }
+    },
+    "Python Video Editing Libraries Research": {
+      "https://zulko.github.io/moviepy/": {
+        "id": 30,
+        "publisher": "MoviePy Documentation",
+        "url": "https://zulko.github.io/moviepy/",
+        "title": "MoviePy - Documentação Oficial",
+        "info": "Informações sobre MoviePy v2.0, biblioteca Python de código aberto para edição e manipulação de vídeo, licença MIT, compatível com Windows/Mac/Linux"
+      },
+      "https://github.com/aaurelions/short-video-maker": {
+        "id": 31,
+        "publisher": "GitHub",
+        "url": "https://github.com/aaurelions/short-video-maker",
+        "title": "Short Video Maker - Pipeline Automatizado",
+        "info": "Projeto Python para criação automatizada de vídeos curtos verticais para TikTok, YouTube Shorts e Instagram Reels usando MoviePy, FFmpeg e APIs de IA"
+      },
+      "https://cloudinary.com/guides/front-end-development/ffmpeg-python": {
+        "id": 32,
+        "publisher": "Cloudinary",
+        "url": "https://cloudinary.com/guides/front-end-development/ffmpeg-python",
+        "title": "Guia FFmpeg-python",
+        "info": "Guia completo sobre ffmpeg-python: funcionalidades, parâmetros CRF, comparação com FFmpeg nativo, otimizações de performance, aceleção GPU"
+      },
+      "https://c-nemri.medium.com/automate-your-reels-and-tiktoks-generation-using-python-faa4936159fe": {
+        "id": 33,
+        "publisher": "Medium",
+        "url": "https://c-nemri.medium.com/automate-your-reels-and-tiktoks-generation-using-python-faa4936159fe",
+        "title": "Automação de Reels e TikTok com Python",
+        "info": "Pipeline de automação usando Python, OpenAI para scripts, ElevenLabs para narração, D-ID para avatares virtuais, integração com TikTok/Instagram"
+      },
+      "https://github.com/jiaaro/pydub": {
+        "id": 34,
+        "publisher": "GitHub",
+        "url": "https://github.com/jiaaro/pydub",
+        "title": "PyDub - Biblioteca de Áudio",
+        "info": "Biblioteca Python para manipulação de áudio com interface simples, suporta múltiplos formatos via FFmpeg/Libav, 9.6k stars no GitHub"
+      },
+      "https://pysource.com/2024/10/15/increase-opencv-speed-by-2x-with-python-and-multithreading-tutorial/": {
+        "id": 35,
+        "publisher": "PySource",
+        "url": "https://pysource.com/2024/10/15/increase-opencv-speed-by-2x-with-python-and-multithreading-tutorial/",
+        "title": "Otimização OpenCV com Multithreading",
+        "info": "Técnicas de otimização de performance do OpenCV usando multithreading: melhorias de 2x na velocidade (300→500 FPS), buffer de quadros, execução paralela"
+      },
+      "https://stackoverflow.com/questions/77878556/is-there-a-way-to-properly-synchronize-audio-video-in-python": {
+        "id": 36,
+        "publisher": "Stack Overflow",
+        "url": "https://stackoverflow.com/questions/77878556/is-there-a-way-to-properly-synchronize-audio-video-in-python",
+        "title": "Sincronização de Áudio e Vídeo em Python",
+        "info": "Discussão sobre sincronização de áudio e vídeo usando PyDub, gTTS e GStreamer para pipelines de TTS, problemas de timing e soluções"
+      },
+      "https://sproutsocial.com/insights/social-media-video-specs-guide/": {
+        "id": 37,
+        "publisher": "Sprout Social",
+        "url": "https://sproutsocial.com/insights/social-media-video-specs-guide/",
+        "title": "Especificações de Vídeo para Mídias Sociais",
+        "info": "Especificações técnicas completas para TikTok (1080x1920, 9:16, até 10 min), Instagram Reels (até 3 min), YouTube Shorts (até 3 min), formatos, bitrates"
+      },
+      "https://moduledebug.com/2025/02/12/moviepy-python-library/": {
+        "id": 38,
+        "publisher": "Module Debug",
+        "url": "https://moduledebug.com/2025/02/12/moviepy-python-library/",
+        "title": "MoviePy Performance e Limitações",
+        "info": "Análise de performance do MoviePy: não adequado para tempo real, limitado pela velocidade FFmpeg/CPU, recomendado para processamento em lote"
+      },
+      "https://riverside.com/blog/tiktok-video-size": {
+        "id": 39,
+        "publisher": "Riverside",
+        "url": "https://riverside.com/blog/tiktok-video-size",
+        "title": "Especificações TikTok 2024/2025",
+        "info": "Especificações atualizadas do TikTok: H.264/AAC, 1080p máximo, compressão automática, 30-60fps, limites de tamanho por plataforma"
+      },
+      "https://cloudinary.com/guides/front-end-development/python-video-processing-6-useful-libraries-and-a-quick-tutorial": {
+        "id": 40,
+        "publisher": "Cloudinary",
+        "url": "https://cloudinary.com/guides/front-end-development/python-video-processing-6-useful-libraries-and-a-quick-tutorial",
+        "title": "Comparação Bibliotecas Python para Vídeo",
+        "info": "Comparação detalhada OpenCV, PyAV, MoviePy: características, casos de uso, vantagens/desvantagens, integrações, recomendações de uso"
+      }
+    },
+    "Estratégias de Matching entre Conteúdo de Roteiro e Material Visual": {
+      "https://medium.com/@VectorWorksAcademy/balancing-relevance-and-diversity-with-maximal-marginal-relevance-mmr-9c95b60551e0": {
+        "id": 41,
+        "publisher": "Medium - VectorWorks Academy",
+        "url": "https://medium.com/@VectorWorksAcademy/balancing-relevance-and-diversity-with-maximal-marginal-relevance-mmr-9c95b60551e0",
+        "title": "Balancing Relevance and Diversity with Maximal Marginal Relevance (MMR)",
+        "info": "Explicação detalhada do algoritmo MMR para equilibrar relevância e diversidade na seleção de conteúdo, fundamentais para evitar repetição visual"
+      },
+      "https://openai.com/index/clip/": {
+        "id": 42,
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/clip/",
+        "title": "CLIP: Connecting text and images",
+        "info": "Documentação oficial do CLIP, modelo fundamental para matching multimodal texto-imagem com capacidade de zero-shot learning e aprendizado contrastivo"
+      },
+      "https://developers.google.com/youtube/v3/docs/search/list": {
+        "id": 43,
+        "publisher": "Google Developers",
+        "url": "https://developers.google.com/youtube/v3/docs/search/list",
+        "title": "YouTube Data API v3 - Search: list method",
+        "info": "Documentação completa da API de busca do YouTube, incluindo parâmetros de filtragem, operadores booleanos, e capacidades de busca geográfica"
+      },
+      "https://shotstack.io/learn/best-stock-image-video-apis/": {
+        "id": 44,
+        "publisher": "Shotstack",
+        "url": "https://shotstack.io/learn/best-stock-image-video-apis/",
+        "title": "The best stock image and video footage APIs (2024)",
+        "info": "Comparação abrangente de APIs de mídia stock incluindo Shutterstock, Getty Images, Adobe Stock com análise de funcionalidades e preços"
+      },
+      "https://www.sciencedirect.com/science/article/pii/S1875952125001235": {
+        "id": 45,
+        "publisher": "ScienceDirect",
+        "url": "https://www.sciencedirect.com/science/article/pii/S1875952125001235",
+        "title": "Forecasting film audience ratings: A natural language processing approach",
+        "info": "Pesquisa sobre análise semântica de roteiros usando NLP, LIWC, análise de sentimentos e embeddings para extração de características linguísticas"
+      },
+      "https://www.researchgate.net/publication/391171678_Interactive_Video_Retrieval_System_for_AI_Challenge_2024_Using_CLIP_RAM_and_LLM-Enhanced_Tag_Matching": {
+        "id": 46,
+        "publisher": "ResearchGate",
+        "url": "https://www.researchgate.net/publication/391171678_Interactive_Video_Retrieval_System_for_AI_Challenge_2024_Using_CLIP_RAM_and_LLM-Enhanced_Tag_Matching",
+        "title": "Interactive Video Retrieval System using CLIP and LLM",
+        "info": "Sistema de recuperação de vídeo que combina CLIP, RAM++ e LLMs para matching texto-vídeo com correspondência de tags aprimorada"
+      },
+      "https://blog.fancy.tech/best-ai-powered-video-editing-tools-for-content-creators-in-2024/": {
+        "id": 47,
+        "publisher": "FancyTech",
+        "url": "https://blog.fancy.tech/best-ai-powered-video-editing-tools-for-content-creators-in-2024/",
+        "title": "Best AI-Powered Video Editing Tools For Content Creators in 2024",
+        "info": "Revisão de ferramentas de edição de vídeo com IA incluindo FancyTech, Adobe Premiere Pro, Final Cut Pro para automação de edição"
+      },
+      "https://www.plainlyvideos.com/blog/stock-video-api": {
+        "id": 48,
+        "publisher": "Plainly Videos",
+        "url": "https://www.plainlyvideos.com/blog/stock-video-api",
+        "title": "We reviewed the top 10 stock video footage APIs",
+        "info": "Análise comparativa detalhada de 10 APIs de vídeo stock incluindo Pexels, Adobe Stock, Shutterstock, Getty Images com pros, contras e preços"
+      },
+      "https://www.dafx.de/paper-archive/2024/papers/DAFx24_paper_23.pdf": {
+        "id": 49,
+        "publisher": "DAFx 2024",
+        "url": "https://www.dafx.de/paper-archive/2024/papers/DAFx24_paper_23.pdf",
+        "title": "A Real-Time Approach for Estimating Pulse Tracking Parameters for Beat-Synchronous Audio Effects",
+        "info": "Algoritmos de detecção de batida em tempo real usando Predominant Local Pulse (PLP) para sincronização automática de efeitos áudio-vídeo"
+      },
+      "https://eurasip.org/Proceedings/Eusipco/Eusipco2024/pdfs/0000636.pdf": {
+        "id": 50,
+        "publisher": "EURASIP",
+        "url": "https://eurasip.org/Proceedings/Eusipco/Eusipco2024/pdfs/0000636.pdf",
+        "title": "Scoring synchronization between music and motion: local Vs global approaches",
+        "info": "Métodos para pontuar sincronização entre música e movimento usando Gaussian, Sigmoid, DTW e estatísticas circulares para alinhamento audio-visual"
+      }
+    }
+  }
+}
