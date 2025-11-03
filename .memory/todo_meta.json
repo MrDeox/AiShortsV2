@@ -5,21 +5,21 @@
         "id": "1",
         "content": "Criar estrutura base do projeto AiShorts v2.0",
         "details": "1. Setup inicial do repositório\n2. Estrutura de pastas (src/, config/, tests/, docs/)\n3. Configuração de environment variables\n4. Setup básico de logging e error handling",
-        "status": "pending",
+        "status": "completed",
         "priority": "high"
       },
       "2": {
         "id": "2",
         "content": "Implementar integração com OpenRouter",
         "details": "1. Criar cliente OpenRouter\n2. Configurar modelo nvidia/nemotron-nano-9b-v2:free\n3. Implementar sistema de retries e rate limiting\n4. Error handling robusto",
-        "status": "pending",
+        "status": "completed",
         "priority": "high"
       },
       "3": {
         "id": "3",
         "content": "Desenvolver Gerador de Tema",
         "details": "1. Definir prompt engineering para temas de curiosidades\n2. Criar lógica de geração de temas\n3. Implementar validação e qualidade dos temas gerados\n4. Sistema de logging para análise de qualidade",
-        "status": "pending",
+        "status": "completed",
         "priority": "high"
       },
       "4": {

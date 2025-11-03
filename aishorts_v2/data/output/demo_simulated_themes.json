@@ -1,0 +1,111 @@
+{
+  "themes": [
+    {
+      "content": "Por que o gelo flutua na água sendo sólido?",
+      "category": "science",
+      "quality_score": 0.75,
+      "response_time": 1.0,
+      "timestamp": "2025-11-03T23:43:09.915470",
+      "usage": {
+        "total_tokens": 70,
+        "prompt_tokens": 50,
+        "completion_tokens": 20
+      },
+      "metrics": null
+    },
+    {
+      "content": "Como funcionava o calendário dos maias?",
+      "category": "history",
+      "quality_score": 0.78,
+      "response_time": 1.2,
+      "timestamp": "2025-11-03T23:43:09.915476",
+      "usage": {
+        "total_tokens": 75,
+        "prompt_tokens": 53,
+        "completion_tokens": 22
+      },
+      "metrics": null
+    },
+    {
+      "content": "Por que os flamingos são rosa?",
+      "category": "nature",
+      "quality_score": 0.81,
+      "response_time": 1.4,
+      "timestamp": "2025-11-03T23:43:09.915478",
+      "usage": {
+        "total_tokens": 80,
+        "prompt_tokens": 56,
+        "completion_tokens": 24
+      },
+      "metrics": null
+    },
+    {
+      "content": "Como seu celular calcula a rota mais rápida?",
+      "category": "technology",
+      "quality_score": 0.84,
+      "response_time": 1.6,
+      "timestamp": "2025-11-03T23:43:09.915480",
+      "usage": {
+        "total_tokens": 85,
+        "prompt_tokens": 59,
+        "completion_tokens": 26
+      },
+      "metrics": null
+    },
+    {
+      "content": "Como os golfinhos dormem sem se afogar?",
+      "category": "animals",
+      "quality_score": 0.87,
+      "response_time": 1.8,
+      "timestamp": "2025-11-03T23:43:09.915482",
+      "usage": {
+        "total_tokens": 90,
+        "prompt_tokens": 62,
+        "completion_tokens": 28
+      },
+      "metrics": null
+    }
+  ],
+  "best_theme": {
+    "content": "Como os golfinhos dormem sem se afogar?",
+    "category": "animals",
+    "quality_score": 0.87,
+    "response_time": 1.8,
+    "timestamp": "2025-11-03T23:43:09.915482",
+    "usage": {
+      "total_tokens": 90,
+      "prompt_tokens": 62,
+      "completion_tokens": 28
+    },
+    "metrics": null
+  },
+  "total_time": 7.5,
+  "generation_stats": {
+    "total_attempts": 7,
+    "successful_generations": 5,
+    "failed_generations": 2,
+    "categories_used": [
+      "science",
+      "history",
+      "nature",
+      "technology",
+      "animals"
+    ],
+    "avg_quality_score": 0.81,
+    "quality_scores": [
+      0.75,
+      0.78,
+      0.81,
+      0.84,
+      0.87
+    ],
+    "response_times": [
+      1.0,
+      1.2,
+      1.4,
+      1.6,
+      1.8
+    ]
+  },
+  "timestamp": "2025-11-03T23:43:09.915773"
+}
