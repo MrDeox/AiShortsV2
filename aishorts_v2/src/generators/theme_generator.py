@@ -273,7 +273,7 @@ class ThemeGenerator:
         
         logger.info(
             f"Geração concluída - {len(themes)}/{count} temas aceitos, "
-            f"Melhor score: {best_theme.quality_score:.2f if best_theme else 0:.2f}, "
+            f"Melhor score: {(best_theme.quality_score if best_theme else 0.0):.2f}, "
             f"Tempo total: {total_time:.2f}s"
         )
         

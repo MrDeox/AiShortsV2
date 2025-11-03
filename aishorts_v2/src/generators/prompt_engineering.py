@@ -264,6 +264,206 @@ Escolha uma das opções e crie o tema:""",
                     "Como uma língua ganhou 1 milhão de novas palavras em 50 anos",
                     "A cultura que resolve disputas com jogos em vez de brigas"
                 ]
+            ),
+            
+            ThemeCategory.SPACE: ThemePrompt(
+                category=ThemeCategory.SPACE,
+                system_message=base_system + """
+
+Área de foco: ESPAÇO E ASTRONOMIA
+- Fenômenos cósmicos impressionantes
+- Descobertas espaciais recentes
+- Mistérios do universo
+- Curiosidades sobre o cosmos""",
+                
+                user_prompt_template="""Crie um tema espacial que seja:
+
+1. Relacionado ao espaço, astronomia ou cosmos
+2. Impressionante sobre nossa galáxia
+3. Cientificamente preciso
+4. Fascinante para curiosos do espaço
+
+Foque em:
+- Descobertas espaciais recentes
+- Fenômenos cósmicos incríveis
+- Mistérios do universo
+- Curiosidades sobre planetas e estrelas
+
+Escolha uma das opções e crie o tema:""",
+                
+                quality_criteria=[
+                    "Informação astronomicamente precisa",
+                    "Impressionante sobre nossa posição cósmica",
+                    "Fascina tanto leigos quanto astrônomos",
+                    "Revela aspectos Surpreendentes do cosmos",
+                    "Desperta curiosidade sobre o espaço"
+                ],
+                
+                examples=[
+                    "Por que não sentimos que a Terra gira a 1000 km/h",
+                    "Como sabemos que o universo tem bilhões de anos",
+                    "O que aconteceria se você caísse em um buraco negro"
+                ]
+            ),
+            
+            ThemeCategory.ANIMALS: ThemePrompt(
+                category=ThemeCategory.ANIMALS,
+                system_message=base_system + """
+
+Área de foco: COMPORTAMENTO ANIMAL
+- Comportamentos surpreendentes de animais
+- Adaptações evolutivas incríveis
+- Vida secreta dos animais
+- Curiosidades sobre o reino animal""",
+                
+                user_prompt_template="""Crie um tema sobre animais que seja:
+
+1. Relacionado ao comportamento animal
+2. Surpreendente sobre como eles vivem
+3. Scientificamente documentado
+4. Fascinante para amantes de animais
+
+Foque em:
+- Comportamentos estranhos mas reais
+- Adaptações evolutivas impressionantes
+- Vida social dos animais
+- Habilidades surpreendentes de sobrevivência
+
+Escolha uma das opções e crie o tema:""",
+                
+                quality_criteria=[
+                    "Comportamento animal real e documentado",
+                    "Surpreendente sobre capacidades animais",
+                    "Educativo sobre vida selvagem",
+                    "Gera admiração pela natureza",
+                    "Fascina tanto cientistas quanto crianças"
+                ],
+                
+                examples=[
+                    "Como os polvos realmente pensam",
+                    "Por que alguns pássaros falam como humanos",
+                    "O que os gatos pensam quando nos olham"
+                ]
+            ),
+            
+            ThemeCategory.PSYCHOLOGY: ThemePrompt(
+                category=ThemeCategory.PSYCHOLOGY,
+                system_message=base_system + """
+
+Área de foco: MENTE E COMPORTAMENTO
+- Como nossa mente funciona
+- Comportamentos humanos Surpreendentes
+- Curiosidades psicológicas
+- Processos mentais que não conhecemos""",
+                
+                user_prompt_template="""Crie um tema psicológico que seja:
+
+1. Relacionado à mente e comportamento humano
+2. Revela como nossa mente funciona
+3. Baseado em pesquisa psicológica
+4. Fascinante sobre nossa própria mente
+
+Foque em:
+- Processos mentais automáticos
+- Comportamentos inconscientes
+- Curiosidades sobre memória e percepção
+- Como o cérebro nos surpreende
+
+Escolha uma das opções e crie o tema:""",
+                
+                quality_criteria=[
+                    "Baseado em pesquisa psicológica real",
+                    "Revela aspectos Surpreendentes da mente",
+                    "Faz sentido quando explicado",
+                    "Gera curiosidade sobre comportamento próprio",
+                    "Aceito pela comunidade científica"
+                ],
+                
+                examples=[
+                    "Por que não conseguimos fazer cócegas em nós mesmos",
+                    "Como nossa mente inventa memórias falsas",
+                    "Por que gostamos de certos cheiros desde pequenos"
+                ]
+            ),
+            
+            ThemeCategory.GEOGRAPHY: ThemePrompt(
+                category=ThemeCategory.GEOGRAPHY,
+                system_message=base_system + """
+
+Área de foco: GEOGRAFIA E LUGARES
+- Lugares Surpreendentes no planeta
+- Fenômenos geográficos incríveis
+- Curiosidades sobre nosso mundo
+- Localizações que desafiam crenças""",
+                
+                user_prompt_template="""Crie um tema geográfico que seja:
+
+1. Relacionado a lugares e fenômenos naturais
+2. Surpreendente sobre nosso planeta
+3. Factualmente preciso sobre localização
+4. Fascinante para aventureiros
+
+Foque em:
+- Lugares que parecem impossíveis
+- Fenômenos geográficos únicos
+- Curiosidades sobre nosso mundo
+- Localizações que desafiam intuição
+
+Escolha uma das opções e crie o tema:""",
+                
+                quality_criteria=[
+                    "Informação geográfica precisa",
+                    "Revela aspectos Surpreendentes do planeta",
+                    "Desperta curiosidade sobre lugares",
+                    "Impressiona quem ama viajar",
+                    "Educativo sobre nossa Terra"
+                ],
+                
+                examples=[
+                    "O lugar na Terra onde o tempo para quando o sol se põe",
+                    "Por que existe um lago cor-de-rosa no mundo",
+                    "Como uma montanha pode estar em dois países ao mesmo tempo"
+                ]
+            ),
+            
+            ThemeCategory.FOOD: ThemePrompt(
+                category=ThemeCategory.FOOD,
+                system_message=base_system + """
+
+Área de foco: ALIMENTOS E CULINÁRIA
+- Alimentos Surpreendentes do mundo
+- Curiosidades sobre o que comemos
+- Tradições culinárias incríveis
+- Cozinha que desafia crenças""",
+                
+                user_prompt_template="""Crie um tema sobre comida que seja:
+
+1. Relacionado a alimentos ou culinária
+2. Surpreendente sobre o que comemos
+3. Culturalmente interessante
+4. Fascinante para foodies
+
+Foque em:
+- Alimentos que parecem ficção mas são reais
+- Curiosidades sobre ingredientes
+- Tradições culinárias Surpreendentes
+- Como diferentes culturas cozinham
+
+Escolha uma das opções e crie o tema:""",
+                
+                quality_criteria=[
+                    "Informação sobre alimentos precisa",
+                    "Revela curiosidades culinárias",
+                    "Culturalmente informativa",
+                    "Desperta interesse por gastronomia",
+                    "Educa sobre diversidade alimentar"
+                ],
+                
+                examples=[
+                    "Por queitamos-lesteuaco quando comemos chile",
+                    "O animal que os chineses chamam de 'tigre com patas de macaco'",
+                    "Como uma fruta pode crescer em três continentes ao mesmo tempo"
+                ]
             )
         }
         

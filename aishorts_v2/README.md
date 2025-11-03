@@ -41,9 +41,9 @@ aishorts-v2/
 
 ## 🚀 Status do Projeto
 
-- [x] **Estrutura Base** - Setup completo com pastas e configurações
-- [ ] **Integração OpenRouter** - Cliente para modelo nvidia/nemotron-nano-9b-v2:free
-- [ ] **Gerador de Tema** - Primeiro módulo do pipeline
+- [x] **Estrutura Base** - Setup completo com pastas e configurações ✅
+- [x] **Integração OpenRouter** - Cliente para modelo nvidia/nemotron-nano-9b-v2:free ✅
+- [x] **Gerador de Tema** - Primeiro módulo do pipeline ✅
 - [ ] **Sistema de Testes** - Validação e qualidade
 - [ ] **Documentação** - Preparação para próximos módulos
 
@@ -68,6 +68,18 @@ aishorts-v2/
 4. **Teste a configuração:**
    ```bash
    python src/config/settings.py
+   ```
+
+5. **Execute o demo principal (com API real):**
+   ```bash
+   python main_demo.py
+   ```
+
+6. **Execute os testes:**
+   ```bash
+   python test_structure.py
+   python test_openrouter.py
+   python test_theme_generator.py
    ```
 
 ## 📋 Próximos Passos

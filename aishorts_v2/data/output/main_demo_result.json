@@ -1,0 +1,194 @@
+{
+  "themes": [
+    {
+      "content": "**\"¿OCTOPUS QUE USAM COBERTURAS COCONUTE COMO ALMOÇARIAS? Isso não é brincadeira: é adaptação evolutiva!\"**  \n\n- Combina surpresa (comportamento incomum), ciência (estudo comprovado), e fascínio (raridade do uso de ferramentas em invertebrados).",
+      "category": "animals",
+      "quality_score": 0.72,
+      "response_time": 9.817198991775513,
+      "timestamp": "2025-11-03T23:54:58.922498",
+      "usage": {
+        "prompt_tokens": 340,
+        "completion_tokens": 1049,
+        "total_tokens": 1389
+      },
+      "metrics": {
+        "length_ok": false,
+        "has_question_mark": false,
+        "is_interrogative": false,
+        "category_relevant": true,
+        "criteria_scores": [
+          {
+            "criterion": "Comportamento animal real e documentado",
+            "score": 0.7
+          },
+          {
+            "criterion": "Surpreendente sobre capacidades animais",
+            "score": 0.8
+          },
+          {
+            "criterion": "Educativo sobre vida selvagem",
+            "score": 0.7
+          },
+          {
+            "criterion": "Gera admiração pela natureza",
+            "score": 0.7
+          },
+          {
+            "criterion": "Fascina tanto cientistas quanto crianças",
+            "score": 0.7
+          }
+        ],
+        "overall_quality": 0.72
+      }
+    },
+    {
+      "content": "**Tema:** *\"O Pescado que Estupe Prey com um Som Sônico — Louder Than a Grenade!\"*  \n\n**Explique:** Quando o *pistol shrimp* aperta suas pinças, cria uma explosão de pressão que emite um som de 218 decibéis — poderosa o suficiente para estunar presas. Perfeito para visualizar (a explosão + a reação do peixe).",
+      "category": "nature",
+      "quality_score": 0.7,
+      "response_time": 6.382939577102661,
+      "timestamp": "2025-11-03T23:55:05.305711",
+      "usage": {
+        "prompt_tokens": 342,
+        "completion_tokens": 673,
+        "total_tokens": 1015
+      },
+      "metrics": {
+        "length_ok": false,
+        "has_question_mark": false,
+        "is_interrogative": false,
+        "category_relevant": true,
+        "criteria_scores": [
+          {
+            "criterion": "Fenômeno natural real",
+            "score": 0.7
+          },
+          {
+            "criterion": "Visualmente impressionante",
+            "score": 0.7
+          },
+          {
+            "criterion": "Comportamento ou característica única",
+            "score": 0.7
+          },
+          {
+            "criterion": "Cientificamente preciso",
+            "score": 0.7
+          },
+          {
+            "criterion": "Gera admiração imediata",
+            "score": 0.7
+          }
+        ],
+        "overall_quality": 0.7
+      }
+    },
+    {
+      "content": "**\"Você aprendeu algo novo e agora vê ele por toda parte — isso é seu cérebro atrapalhando!\"**  \n\n**Explicação rápida:** Após notar algo recentemente, seu cérebro aumenta a atenção e a retenção de memória, criando a ilusão de que o elemento está em todo lugar. Isso é chamado de \"efeito Baader-Meinhof\" e mostra como nossa percepção é manipulada por processos automáticos.",
+      "category": "psychology",
+      "quality_score": 0.72,
+      "response_time": 8.075305700302124,
+      "timestamp": "2025-11-03T23:55:13.381357",
+      "usage": {
+        "prompt_tokens": 337,
+        "completion_tokens": 925,
+        "total_tokens": 1262
+      },
+      "metrics": {
+        "length_ok": false,
+        "has_question_mark": false,
+        "is_interrogative": false,
+        "category_relevant": true,
+        "criteria_scores": [
+          {
+            "criterion": "Baseado em pesquisa psicológica real",
+            "score": 0.7
+          },
+          {
+            "criterion": "Revela aspectos Surpreendentes da mente",
+            "score": 0.8
+          },
+          {
+            "criterion": "Faz sentido quando explicado",
+            "score": 0.7
+          },
+          {
+            "criterion": "Gera curiosidade sobre comportamento próprio",
+            "score": 0.7
+          },
+          {
+            "criterion": "Aceito pela comunidade científica",
+            "score": 0.7
+          }
+        ],
+        "overall_quality": 0.72
+      }
+    }
+  ],
+  "best_theme": {
+    "content": "**\"¿OCTOPUS QUE USAM COBERTURAS COCONUTE COMO ALMOÇARIAS? Isso não é brincadeira: é adaptação evolutiva!\"**  \n\n- Combina surpresa (comportamento incomum), ciência (estudo comprovado), e fascínio (raridade do uso de ferramentas em invertebrados).",
+    "category": "animals",
+    "quality_score": 0.72,
+    "response_time": 9.817198991775513,
+    "timestamp": "2025-11-03T23:54:58.922498",
+    "usage": {
+      "prompt_tokens": 340,
+      "completion_tokens": 1049,
+      "total_tokens": 1389
+    },
+    "metrics": {
+      "length_ok": false,
+      "has_question_mark": false,
+      "is_interrogative": false,
+      "category_relevant": true,
+      "criteria_scores": [
+        {
+          "criterion": "Comportamento animal real e documentado",
+          "score": 0.7
+        },
+        {
+          "criterion": "Surpreendente sobre capacidades animais",
+          "score": 0.8
+        },
+        {
+          "criterion": "Educativo sobre vida selvagem",
+          "score": 0.7
+        },
+        {
+          "criterion": "Gera admiração pela natureza",
+          "score": 0.7
+        },
+        {
+          "criterion": "Fascina tanto cientistas quanto crianças",
+          "score": 0.7
+        }
+      ],
+      "overall_quality": 0.72
+    }
+  },
+  "total_time": 24.276344060897827,
+  "generation_stats": {
+    "total_attempts": 3,
+    "successful_generations": 3,
+    "failed_generations": 0,
+    "categories_used": [
+      "nature",
+      "psychology",
+      "animals"
+    ],
+    "quality_scores": [
+      0.72,
+      0.7,
+      0.72
+    ],
+    "response_times": [
+      9.817198991775513,
+      6.382939577102661,
+      8.075305700302124
+    ],
+    "avg_quality_score": 0.7133333333333333,
+    "min_quality_score": 0.7,
+    "max_quality_score": 0.72,
+    "avg_response_time": 8.091814756393433
+  },
+  "timestamp": "2025-11-03T23:55:13.381553"
+}
