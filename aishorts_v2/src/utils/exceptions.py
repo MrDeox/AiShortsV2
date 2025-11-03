@@ -49,6 +49,15 @@ class ThemeGenerationError(AiShortsError):
             "category": category
         })
 
+class ScriptGenerationError(AiShortsError):
+    """Erro na geração de roteiros."""
+    
+    def __init__(self, message: str, theme_content: Optional[str] = None, platform: Optional[str] = None):
+        super().__init__(message, "SCRIPT_GENERATION_ERROR", {
+            "theme_content": theme_content,
+            "platform": platform
+        })
+
 class RateLimitError(AiShortsError):
     """Erro de rate limiting."""
     

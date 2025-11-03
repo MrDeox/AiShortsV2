@@ -26,6 +26,8 @@ class OpenRouterSettings(BaseSettings):
     model: str = Field(default="nvidia/nemotron-nano-9b-v2:free", env="OPENROUTER_MODEL")
     max_tokens_theme: int = Field(default=150, env="MAX_TOKENS_THEME")
     temperature_theme: float = Field(default=0.7, env="TEMPERATURE_THEME")
+    max_tokens_script: int = Field(default=800, env="MAX_TOKENS_SCRIPT")
+    temperature_script: float = Field(default=0.7, env="TEMPERATURE_SCRIPT")
 
 class LoggingSettings(BaseSettings):
     """Configurações do sistema de logging."""
@@ -60,6 +62,29 @@ class ThemeGeneratorSettings(BaseSettings):
         """Converte string separada por vírgulas em lista."""
         if isinstance(v, str):
             return [cat.strip() for cat in v.split(',')]
+        return v
+
+class ScriptGeneratorSettings(BaseSettings):
+    """Configurações do gerador de roteiro."""
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        extra="ignore"
+    )
+    
+    target_duration: int = Field(default=60, env="SCRIPT_TARGET_DURATION")
+    min_quality_score: float = Field(default=0.7, env="SCRIPT_MIN_QUALITY_SCORE")
+    max_attempts: int = Field(default=3, env="MAX_ATTEMPTS_SCRIPT")
+    platforms: List[str] = Field(
+        default=["tiktok", "shorts", "reels"],
+        env="SCRIPT_PLATFORMS"
+    )
+    
+    @field_validator('platforms', mode='before')
+    @classmethod
+    def parse_platforms(cls, v):
+        """Converte string separada por vírgulas em lista."""
+        if isinstance(v, str):
+            return [plat.strip() for plat in v.split(',')]
         return v
 
 class RetrySettings(BaseSettings):
@@ -118,6 +143,7 @@ class AiShortsConfig:
         self.openrouter = OpenRouterSettings()
         self.logging = LoggingSettings()
         self.theme_gen = ThemeGeneratorSettings()
+        self.script_gen = ScriptGeneratorSettings()
         self.retry = RetrySettings()
         self.storage = StorageSettings()
         
@@ -153,6 +179,8 @@ class AiShortsConfig:
             "version": self.project.version,
             "openrouter_model": self.openrouter.model,
             "theme_categories": self.theme_gen.categories,
+            "script_target_duration": self.script_gen.target_duration,
+            "script_platforms": self.script_gen.platforms,
             "max_retries": self.retry.max_retries,
             "rate_limit_per_minute": self.retry.rate_limit_per_minute,
             "directories": {
