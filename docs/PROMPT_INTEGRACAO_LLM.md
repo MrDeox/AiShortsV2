@@ -58,7 +58,7 @@
 #### 5. ThemeGenerator - PROBLEMA DE API
 - **Localização:** `src/generators/theme_generator.py`
 - **Status:** ❌ Código funciona, mas API inválida
-- **Problema:** OpenRouter API key inválida (`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`)
+- **Problema:** OpenRouter API key inválida (chave fornecida anteriormente não é válida)
 - **Erro:** 401 "User not found"
 - **Estrutura:** ✅ Classe implementada corretamente
 - **Métodos:** `generate_theme()` e `create_script_outline()` definidos
