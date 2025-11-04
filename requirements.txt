@@ -1,30 +1,75 @@
+
+# === ANÁLISE DE ÁUDIO E BEAT DETECTION ===
+# === DEPENDÊNCIAS DO SISTEMA TTS ===
+# === DEPENDÊNCIAS OPCIONAIS PARA MELHORIA ===
+# === EDIÇÃO E PROCESSAMENTO DE VÍDEO ===
+# === INSTALAÇÃO ===
+# === UTILITÁRIOS E INFRAESTRUTURA ===
+# Additional utilities
 # AiShorts v2.0 - Dependencies
-
+# AiShorts v2.0 - Módulo de Sincronização TTS-Vídeo
+# Audio processing
+# CLIP model and machine learning
 # Core
-requests>=2.31.0
-python-dotenv>=1.0.0
-pydantic>=2.0.0
-loguru>=0.7.0
-
-# OpenRouter Integration
-openai>=1.0.0
-httpx>=0.24.0
-
 # Data Processing
-jsonschema>=4.17.0
-typing-extensions>=4.7.0
-
+# Development
+# Fase 1 - Setup técnico do Módulo 8
+# NLP processing
+# OpenRouter Integration
+# Optional: For better performance
 # Testing
-pytest>=7.4.0
+# Video Processing
+# Video editing and processing
+# YouTube content extraction
+# matplotlib>=3.5.0           # Visualização de waveforms e análises
+# pip install -r requirements_sync.txt# Dependências para o Módulo de Vídeo - AI Shorts
+# plotly>=5.10.0             # Gráficos interativos para análises
+# seaborn>=0.11.0            # Visualizações estatísticas
+Pillow>=10.0.0
+black>=23.0.0
+dataclasses               # Estruturas de dados (built-in Python 3.7+)
+ffmpeg-python>=0.2.0
+ffmpeg-python>=0.2.0# Dependências para Sistema de Sincronização Áudio-Vídeo
+flake8>=6.0.0
+httpx>=0.24.0
+imageio-ffmpeg>=0.4.8
+imageio-ffmpeg>=0.4.8         # Suporte a codecs de vídeo
+imageio>=2.22.0               # Leitura de imagens e vídeos
+imageio>=2.31.0
+json                      # Manipulação JSON (built-in)
+jsonschema>=4.17.0
+librosa>=0.10.0
+librosa>=0.10.0              # Análise de áudio, beat detection, feature extraction
+logging                   # Sistema de logs (built-in)
+loguru>=0.7.0
+moviepy>=1.0.3
+moviepy>=1.0.3                # Edição de vídeo programática
+mypy>=1.5.0
+numba>=0.58.0
+numpy>=1.21.0                 # Computação numérica para processamento de sinal
+numpy>=1.24.0
+openai>=1.0.0
+opencv-python>=4.8.0
+pandas>=2.0.0
+pathlib                    # Manipulação de caminhos (built-in)
+psutil>=5.9.0
+pydantic>=2.0.0
+pydub>=0.25.0
 pytest-asyncio>=0.21.0
 pytest-cov>=4.1.0
-psutil>=5.9.0
-
-# Development
-black>=23.0.0
-flake8>=6.0.0
-mypy>=1.5.0
-
-# Video Processing
+pytest>=7.4.0
+python-dotenv>=1.0.0
+requests>=2.31.0
+scikit-learn>=1.3.0
+scipy>=1.9.0                  # Processamento de sinais e científica
+soundfile>=0.12.0            # Leitura/escrita de arquivos de áudio
+spacy>=3.7.0
+torch>=2.0.0
+torch>=2.0.0                  # Framework ML para Kokoro TTS
+torchaudio>=2.0.0             # Processamento de áudio no PyTorch
+torchvision>=0.15.0
+tqdm>=4.66.0
+transformers>=4.36.0
+typing                    # Type hints (built-in)
+typing-extensions>=4.7.0
 yt-dlp>=2024.1.1
-ffmpeg-python>=0.2.0

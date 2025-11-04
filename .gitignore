@@ -887,11 +887,50 @@
 **/*.zip
 
 # ==============================================================================
-# PROJECT SPECIFIC
+# PROJECT SPECIFIC - AISHORTS V2
 # ==============================================================================
-# Add your project-specific ignores here
-# workspace/
-# data/
-# uploads/
-# downloads/
+# Backups e Archives
+**/backups/
+**/archive/
+**/archive_*/
+
+# Outputs (vídeos, áudios, imagens gerados)
+**/outputs/**/*.mp4
+**/outputs/**/*.wav
+**/outputs/**/*.jpg
+**/outputs/**/*.png
+**/outputs/**/*.json
+# Manter estrutura de pastas
+!**/outputs/**/.gitkeep
+
+# Cache do projeto
+**/cache/
+**/.cache/
+**/temp_pdf_subsets/
+**/extract/
+
+# Data temporária
+**/data/cache/
+**/data/temp/
+**/data/output/
+
+# Browser automation
+**/browser/user_data*/
+**/browser/sessions/
+
+# Memory e research (temporários)
+**/memory/
+**/research/**/docs/
+
+# Test results
+**/test_results.txt
+**/test_*.log
+
+# Demo outputs na raiz
+final_demo_*.mp4
+final_demo_*.jpg
+demo_output_*.mp4
+
+# Documentação temporária de consolidação
+**/docs/consolidacao/
 
