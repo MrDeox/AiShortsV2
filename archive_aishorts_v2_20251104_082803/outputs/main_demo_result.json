@@ -1,0 +1,194 @@
+{
+  "themes": [
+    {
+      "content": "**Tema:** \"No Forfatellum, no nordeste da França, o pôr do sol aponta para o LESTE devido à sua topografia única. A luz do sol é refletida por colinas e vales, desafiando a lógica de que o sol sempre se põe no oeste.\"  \n\n*(Gancho com fato Surpreendente + Explicação geográfica direta e Fascinante para aventureiros.)*",
+      "category": "geography",
+      "quality_score": 0.72,
+      "response_time": 10.451840162277222,
+      "timestamp": "2025-11-04T02:29:45.225988",
+      "usage": {
+        "prompt_tokens": 343,
+        "completion_tokens": 1171,
+        "total_tokens": 1514
+      },
+      "metrics": {
+        "length_ok": false,
+        "has_question_mark": false,
+        "is_interrogative": false,
+        "category_relevant": true,
+        "criteria_scores": [
+          {
+            "criterion": "Informação geográfica precisa",
+            "score": 0.7
+          },
+          {
+            "criterion": "Revela aspectos Surpreendentes do planeta",
+            "score": 0.8
+          },
+          {
+            "criterion": "Desperta curiosidade sobre lugares",
+            "score": 0.7
+          },
+          {
+            "criterion": "Impressiona quem ama viajar",
+            "score": 0.7
+          },
+          {
+            "criterion": "Educativo sobre nossa Terra",
+            "score": 0.7
+          }
+        ],
+        "overall_quality": 0.72
+      }
+    },
+    {
+      "content": "**Tema:** \"Neutron stars estão 'ficcando' com padrões de pulso imprevisíveis — e os cientistas não sabem por quê.\"",
+      "category": "space",
+      "quality_score": 0.72,
+      "response_time": 9.527151823043823,
+      "timestamp": "2025-11-04T02:29:54.753441",
+      "usage": {
+        "prompt_tokens": 345,
+        "completion_tokens": 1014,
+        "total_tokens": 1359
+      },
+      "metrics": {
+        "length_ok": true,
+        "has_question_mark": false,
+        "is_interrogative": false,
+        "category_relevant": true,
+        "criteria_scores": [
+          {
+            "criterion": "Informação astronomicamente precisa",
+            "score": 0.7
+          },
+          {
+            "criterion": "Impressionante sobre nossa posição cósmica",
+            "score": 0.7
+          },
+          {
+            "criterion": "Fascina tanto leigos quanto astrônomos",
+            "score": 0.7
+          },
+          {
+            "criterion": "Revela aspectos Surpreendentes do cosmos",
+            "score": 0.8
+          },
+          {
+            "criterion": "Desperta curiosidade sobre o espaço",
+            "score": 0.7
+          }
+        ],
+        "overall_quality": 0.72
+      }
+    },
+    {
+      "content": "**Tema:**  \n\"Seu cérebro inventa detalhes de memórias que nunca ocorreram? Pesquisas mostram que perguntas后事件 podem alterar até os detalhes mais específicos, como se fosse real.\"",
+      "category": "psychology",
+      "quality_score": 0.72,
+      "response_time": 10.274850130081177,
+      "timestamp": "2025-11-04T02:30:05.028574",
+      "usage": {
+        "prompt_tokens": 337,
+        "completion_tokens": 1136,
+        "total_tokens": 1473
+      },
+      "metrics": {
+        "length_ok": true,
+        "has_question_mark": false,
+        "is_interrogative": false,
+        "category_relevant": true,
+        "criteria_scores": [
+          {
+            "criterion": "Baseado em pesquisa psicológica real",
+            "score": 0.7
+          },
+          {
+            "criterion": "Revela aspectos Surpreendentes da mente",
+            "score": 0.8
+          },
+          {
+            "criterion": "Faz sentido quando explicado",
+            "score": 0.7
+          },
+          {
+            "criterion": "Gera curiosidade sobre comportamento próprio",
+            "score": 0.7
+          },
+          {
+            "criterion": "Aceito pela comunidade científica",
+            "score": 0.7
+          }
+        ],
+        "overall_quality": 0.72
+      }
+    }
+  ],
+  "best_theme": {
+    "content": "**Tema:** \"No Forfatellum, no nordeste da França, o pôr do sol aponta para o LESTE devido à sua topografia única. A luz do sol é refletida por colinas e vales, desafiando a lógica de que o sol sempre se põe no oeste.\"  \n\n*(Gancho com fato Surpreendente + Explicação geográfica direta e Fascinante para aventureiros.)*",
+    "category": "geography",
+    "quality_score": 0.72,
+    "response_time": 10.451840162277222,
+    "timestamp": "2025-11-04T02:29:45.225988",
+    "usage": {
+      "prompt_tokens": 343,
+      "completion_tokens": 1171,
+      "total_tokens": 1514
+    },
+    "metrics": {
+      "length_ok": false,
+      "has_question_mark": false,
+      "is_interrogative": false,
+      "category_relevant": true,
+      "criteria_scores": [
+        {
+          "criterion": "Informação geográfica precisa",
+          "score": 0.7
+        },
+        {
+          "criterion": "Revela aspectos Surpreendentes do planeta",
+          "score": 0.8
+        },
+        {
+          "criterion": "Desperta curiosidade sobre lugares",
+          "score": 0.7
+        },
+        {
+          "criterion": "Impressiona quem ama viajar",
+          "score": 0.7
+        },
+        {
+          "criterion": "Educativo sobre nossa Terra",
+          "score": 0.7
+        }
+      ],
+      "overall_quality": 0.72
+    }
+  },
+  "total_time": 30.254802227020264,
+  "generation_stats": {
+    "total_attempts": 3,
+    "successful_generations": 3,
+    "failed_generations": 0,
+    "categories_used": [
+      "psychology",
+      "geography",
+      "space"
+    ],
+    "quality_scores": [
+      0.72,
+      0.72,
+      0.72
+    ],
+    "response_times": [
+      10.451840162277222,
+      9.527151823043823,
+      10.274850130081177
+    ],
+    "avg_quality_score": 0.7200000000000001,
+    "min_quality_score": 0.72,
+    "max_quality_score": 0.72,
+    "avg_response_time": 10.084614038467407
+  },
+  "timestamp": "2025-11-04T02:30:05.028780"
+}

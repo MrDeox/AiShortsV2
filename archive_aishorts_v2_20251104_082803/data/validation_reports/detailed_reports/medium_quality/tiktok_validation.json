@@ -1,0 +1,245 @@
+{
+  "timestamp": "2025-11-04T00:29:54.693854",
+  "script_title": "Fatos Básicos do Espaço",
+  "platform": "tiktok",
+  "overall_score": 52.083,
+  "quality_level": "poor",
+  "is_approved": false,
+  "structure_validation": {
+    "score": 60,
+    "is_valid": true,
+    "issues": [
+      {
+        "code": "HOOK_LOW_ENGAGEMENT",
+        "message": "Hook não tem elementos suficientes de engajamento",
+        "severity": "warning",
+        "section": "hook",
+        "field": null,
+        "suggestion": "Adicione perguntas, palavras emocionais ou storytelling ao hook",
+        "position": null,
+        "details": null
+      },
+      {
+        "code": "HOOK_TOO_SHORT",
+        "message": "Hook é muito curto (menos de 50 caracteres)",
+        "severity": "warning",
+        "section": "hook",
+        "field": null,
+        "suggestion": "Torne o hook mais detalhado e envolvente",
+        "position": null,
+        "details": null
+      },
+      {
+        "code": "DEVELOPMENT_NO_FACTS",
+        "message": "Seção de desenvolvimento carece de fatos ou dados",
+        "severity": "warning",
+        "section": "development",
+        "field": null,
+        "suggestion": "Adicione números, estatísticas ou fatos relevantes",
+        "position": null,
+        "details": null
+      },
+      {
+        "code": "CONCLUSION_NO_CTA",
+        "message": "Conclusão não contém call-to-action",
+        "severity": "warning",
+        "section": "conclusion",
+        "field": null,
+        "suggestion": "Adicione um call-to-action (curtir, compartilhar, seguir)",
+        "position": null,
+        "details": null
+      }
+    ],
+    "suggestions": []
+  },
+  "content_validation": {
+    "score": 85,
+    "is_valid": true,
+    "issues": [
+      {
+        "code": "CONTENT_THEME_MISMATCH",
+        "message": "Conteúdo não reflete claramente o tema/categoria",
+        "severity": "warning",
+        "section": null,
+        "field": null,
+        "suggestion": "Garanta que o conteúdo esteja alinhado com a categoria 'ThemeCategory.SPACE'",
+        "position": null,
+        "details": null
+      }
+    ],
+    "suggestions": []
+  },
+  "platform_validation": {
+    "score": 30,
+    "is_valid": false,
+    "issues": [
+      {
+        "code": "PLATFORM_DURATION_TOO_LONG",
+        "message": "Duração 75s excede limite 60s para tiktok",
+        "severity": "error",
+        "section": null,
+        "field": null,
+        "suggestion": "Reduza a duração do roteiro",
+        "position": null,
+        "details": null
+      },
+      {
+        "code": "PLATFORM_CHARS_TOO_SHORT",
+        "message": "Texto muito curto (124 chars) para tiktok (min: 150)",
+        "severity": "warning",
+        "section": null,
+        "field": null,
+        "suggestion": "Expanda o conteúdo do roteiro",
+        "position": null,
+        "details": null
+      },
+      {
+        "code": "PLATFORM_MISSING_ENGAGEMENT",
+        "message": "Faltam frases de engajamento recomendadas para tiktok",
+        "severity": "warning",
+        "section": null,
+        "field": null,
+        "suggestion": "Adicione frases como: Você sabia que, Vamos descobrir, Surpreendente",
+        "position": null,
+        "details": null
+      }
+    ],
+    "suggestions": []
+  },
+  "quality_metrics": {
+    "clarity_score": 1.0,
+    "engagement_score": 0.0,
+    "retention_score": 0.0,
+    "clarity_issues": [],
+    "engagement_issues": [
+      {
+        "code": "ENGAGEMENT_LOW_PATTERNS",
+        "message": "Poucos elementos de engajamento (encontrados: 0)",
+        "severity": "warning",
+        "section": null,
+        "field": null,
+        "suggestion": "Adicione mais perguntas, elementos emocionais e storytelling",
+        "position": null,
+        "details": null
+      }
+    ],
+    "retention_issues": [
+      {
+        "code": "RETENTION_LOW_PATTERNS",
+        "message": "Poucos elementos de retenção (encontrados: 0)",
+        "severity": "warning",
+        "section": null,
+        "field": null,
+        "suggestion": "Adicione cliffhangers, estruturação clara e elementos de antecipação",
+        "position": null,
+        "details": null
+      }
+    ]
+  },
+  "all_issues": [
+    {
+      "code": "HOOK_LOW_ENGAGEMENT",
+      "message": "Hook não tem elementos suficientes de engajamento",
+      "severity": "warning",
+      "section": "hook",
+      "field": null,
+      "suggestion": "Adicione perguntas, palavras emocionais ou storytelling ao hook",
+      "position": null,
+      "details": null
+    },
+    {
+      "code": "HOOK_TOO_SHORT",
+      "message": "Hook é muito curto (menos de 50 caracteres)",
+      "severity": "warning",
+      "section": "hook",
+      "field": null,
+      "suggestion": "Torne o hook mais detalhado e envolvente",
+      "position": null,
+      "details": null
+    },
+    {
+      "code": "DEVELOPMENT_NO_FACTS",
+      "message": "Seção de desenvolvimento carece de fatos ou dados",
+      "severity": "warning",
+      "section": "development",
+      "field": null,
+      "suggestion": "Adicione números, estatísticas ou fatos relevantes",
+      "position": null,
+      "details": null
+    },
+    {
+      "code": "CONCLUSION_NO_CTA",
+      "message": "Conclusão não contém call-to-action",
+      "severity": "warning",
+      "section": "conclusion",
+      "field": null,
+      "suggestion": "Adicione um call-to-action (curtir, compartilhar, seguir)",
+      "position": null,
+      "details": null
+    },
+    {
+      "code": "CONTENT_THEME_MISMATCH",
+      "message": "Conteúdo não reflete claramente o tema/categoria",
+      "severity": "warning",
+      "section": null,
+      "field": null,
+      "suggestion": "Garanta que o conteúdo esteja alinhado com a categoria 'ThemeCategory.SPACE'",
+      "position": null,
+      "details": null
+    },
+    {
+      "code": "PLATFORM_DURATION_TOO_LONG",
+      "message": "Duração 75s excede limite 60s para tiktok",
+      "severity": "error",
+      "section": null,
+      "field": null,
+      "suggestion": "Reduza a duração do roteiro",
+      "position": null,
+      "details": null
+    },
+    {
+      "code": "PLATFORM_CHARS_TOO_SHORT",
+      "message": "Texto muito curto (124 chars) para tiktok (min: 150)",
+      "severity": "warning",
+      "section": null,
+      "field": null,
+      "suggestion": "Expanda o conteúdo do roteiro",
+      "position": null,
+      "details": null
+    },
+    {
+      "code": "PLATFORM_MISSING_ENGAGEMENT",
+      "message": "Faltam frases de engajamento recomendadas para tiktok",
+      "severity": "warning",
+      "section": null,
+      "field": null,
+      "suggestion": "Adicione frases como: Você sabia que, Vamos descobrir, Surpreendente",
+      "position": null,
+      "details": null
+    }
+  ],
+  "suggestions": [
+    "Reduza a duração do roteiro",
+    "Revise a estrutura do roteiro, garantindo que todas as seções estejam presentes e bem organizadas",
+    "Adicione um call-to-action (curtir, compartilhar, seguir)",
+    "Adicione frases como: Você sabia que, Vamos descobrir, Surpreendente",
+    "Garanta que o conteúdo esteja alinhado com a categoria 'ThemeCategory.SPACE'",
+    "Adicione números, estatísticas ou fatos relevantes",
+    "Ajuste o roteiro para atender melhor aos requisitos da plataforma (duração, formato, elementos específicos)",
+    "Expanda o conteúdo do roteiro",
+    "Torne o hook mais detalhado e envolvente",
+    "Adicione perguntas, palavras emocionais ou storytelling ao hook"
+  ],
+  "summary": {
+    "platform": "tiktok",
+    "overall_score": 52.083,
+    "quality_level": "poor",
+    "is_approved": false,
+    "total_issues": 8,
+    "critical_issues": 1,
+    "total_suggestions": 10,
+    "structure_score": 60,
+    "content_score": 85,
+    "platform_score": 30
+  }
+}

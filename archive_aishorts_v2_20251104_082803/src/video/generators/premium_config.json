@@ -1,0 +1,509 @@
+{
+  "premium_templates_config": {
+    "version": "1.0",
+    "last_updated": "2025-11-04",
+    
+    "platform_specs": {
+      "tiktok": {
+        "aspect_ratio": "9:16",
+        "resolution": "1080x1920", 
+        "max_duration": 60.0,
+        "text_size_multiplier": 1.1,
+        "padding_percent": 0.08,
+        "optimization_tips": [
+          "Use cores vibrantes e contrastantes",
+          "Mantenha elementos grandes e visíveis",
+          "Adicione conteúdo nos primeiros 3 segundos"
+        ]
+      },
+      "youtube_shorts": {
+        "aspect_ratio": "9:16",
+        "resolution": "1080x1920",
+        "max_duration": 60.0,
+        "text_size_multiplier": 1.0,
+        "padding_percent": 0.06,
+        "optimization_tips": [
+          "Foque na legibilidade do texto",
+          "Use transições suaves",
+          "Mantenha título claro e direto"
+        ]
+      },
+      "instagram_reels": {
+        "aspect_ratio": "9:16",
+        "resolution": "1080x1920",
+        "max_duration": 90.0,
+        "text_size_multiplier": 1.05,
+        "padding_percent": 0.07,
+        "optimization_tips": [
+          "Priorize estética premium",
+          "Use storytelling visual",
+          "Adicione elementos de tendências"
+        ]
+      },
+      "facebook_reels": {
+        "aspect_ratio": "9:16",
+        "resolution": "1080x1920",
+        "max_duration": 90.0,
+        "text_size_multiplier": 1.0,
+        "padding_percent": 0.06,
+        "optimization_tips": [
+          "Conteúdo familiar e acessível",
+          "Call-to-actions claros",
+          "Engagement emocional"
+        ]
+      }
+    },
+    
+    "monetization_styles": {
+      "tikkok_engaging": {
+        "primary_color": "#ff0050",
+        "secondary_color": "#ffffff",
+        "accent_color": "#00f2ea",
+        "text_style": "montserrat_bold",
+        "background_style": "gradient_dynamic",
+        "animation_speed": "fast",
+        "transition_style": "energetic",
+        "engagement_elements": ["arrow", "fire", "heart", "pulse"],
+        "characteristics": {
+          "energy_level": "high",
+          "color_saturation": 1.2,
+          "text_size": "large",
+          "animation_intensity": "high"
+        }
+      },
+      "shorts_educational": {
+        "primary_color": "#1a73e8",
+        "secondary_color": "#ffffff",
+        "accent_color": "#34a853",
+        "text_style": "open_sans_semi_bold",
+        "background_style": "clean_minimal",
+        "animation_speed": "medium",
+        "transition_style": "educational",
+        "engagement_elements": ["checkmark", "highlight", "arrow", "star"],
+        "characteristics": {
+          "energy_level": "medium",
+          "color_saturation": 0.9,
+          "text_size": "medium",
+          "animation_intensity": "medium"
+        }
+      },
+      "reels_premium": {
+        "primary_color": "#8338ec",
+        "secondary_color": "#ffffff",
+        "accent_color": "#ff006e",
+        "text_style": "poppins_semi_bold",
+        "background_style": "aesthetic_gradient",
+        "animation_speed": "smooth",
+        "transition_style": "premium",
+        "engagement_elements": ["heart", "star", "pulse", "highlight"],
+        "characteristics": {
+          "energy_level": "medium-high",
+          "color_saturation": 1.0,
+          "text_size": "medium-large",
+          "animation_intensity": "smooth"
+        }
+      }
+    },
+    
+    "professional_palettes": {
+      "space_professional": {
+        "colors": ["#0f1419", "#64b5f6", "#ffffff", "#e0e0e0", "#1976d2"],
+        "gradient": "cosmic_dark",
+        "mood": "mysterious, scientific, premium"
+      },
+      "animals_professional": {
+        "colors": ["#1a1a1a", "#ff8a65", "#81c784", "#ffffff", "#4caf50"],
+        "gradient": "organic_warm",
+        "mood": "energetic, playful, professional"
+      },
+      "science_professional": {
+        "colors": ["#212121", "#90caf9", "#4fc3f7", "#e0e0e0", "#2196f3"],
+        "gradient": "tech_blue",
+        "mood": "technical, precise, modern"
+      },
+      "history_professional": {
+        "colors": ["#2c2622", "#d7ccc8", "#bcaaa4", "#8d6e63", "#5d4037"],
+        "gradient": "vintage_warm",
+        "mood": "elegant, classic, sophisticated"
+      },
+      "nature_professional": {
+        "colors": ["#1b5e20", "#a5d6a7", "#81c784", "#ffffff", "#2e7d32"],
+        "gradient": "organic_green",
+        "mood": "natural, fresh, peaceful"
+      },
+      "professional_general": {
+        "colors": ["#000000", "#ffffff", "#ff6b6b", "#ffd700", "#2c3e50"],
+        "gradient": "premium_dark",
+        "mood": "luxury, professional, striking"
+      }
+    },
+    
+    "engagement_elements_config": {
+      "arrow": {
+        "style": "pointer_arrow",
+        "colors": {
+          "tiktok": "#ffffff",
+          "youtube": "#ff0000", 
+          "instagram": "#ffffff",
+          "facebook": "#1877f2"
+        },
+        "sizes": {
+          "small": 24,
+          "medium": 32,
+          "large": 40
+        },
+        "animations": ["slide_in", "bounce", "pulse"],
+        "best_positions": ["center_bottom", "right_side", "bottom_right"],
+        "timing": {
+          "start": 1.0,
+          "duration": 2.0
+        }
+      },
+      "highlight": {
+        "style": "glow_highlight",
+        "colors": {
+          "default": "#ffff00",
+          "warning": "#ff9500",
+          "success": "#00ff88",
+          "info": "#00bfff"
+        },
+        "sizes": {
+          "small": "text_only",
+          "medium": "word_focus",
+          "large": "phrase_glow"
+        },
+        "animations": ["pulse", "glow", "flash"],
+        "best_positions": ["around_text", "behind_element", "subtle_glow"],
+        "timing": {
+          "start": 1.0,
+          "duration": 3.5
+        }
+      },
+      "pulse": {
+        "style": "radial_pulse",
+        "colors": {
+          "default": "#ff6b6b",
+          "urgent": "#ff1744",
+          "positive": "#4caf50",
+          "neutral": "#2196f3"
+        },
+        "sizes": {
+          "small": 48,
+          "medium": 64,
+          "large": 80
+        },
+        "animations": ["expand", "contract", "wave"],
+        "best_positions": ["center", "around_elements", "attention_focus"],
+        "timing": {
+          "start": 0.0,
+          "duration": 4.0
+        }
+      },
+      "heart": {
+        "style": "heart_beat",
+        "colors": {
+          "love": "#e91e63",
+          "like": "#ff6b9d",
+          "support": "#ff9800",
+          "energy": "#ff5722"
+        },
+        "sizes": {
+          "small": 20,
+          "medium": 28,
+          "large": 36
+        },
+        "animations": ["heartbeat", "float", "bounce"],
+        "best_positions": ["center_right", "bottom_left", "top_right"],
+        "timing": {
+          "start": 0.5,
+          "duration": 1.5
+        }
+      },
+      "fire": {
+        "style": "flame_effect",
+        "colors": {
+          "viral": "#ff4500",
+          "hot": "#ff6347",
+          "trending": "#ff7700",
+          "premium": "#ff1493"
+        },
+        "sizes": {
+          "small": 24,
+          "medium": 32,
+          "large": 40
+        },
+        "animations": ["flicker", "rise", "intensify"],
+        "best_positions": ["top_right", "bottom_left", "corner_flame"],
+        "timing": {
+          "start": 2.0,
+          "duration": 3.0
+        }
+      },
+      "checkmark": {
+        "style": "success_check",
+        "colors": {
+          "success": "#4caf50",
+          "verified": "#2196f3",
+          "premium": "#ffd700",
+          "important": "#ff9800"
+        },
+        "sizes": {
+          "small": 16,
+          "medium": 24,
+          "large": 32
+        },
+        "animations": ["bounce_in", "check_draw", "glow_appear"],
+        "best_positions": ["center", "next_to_text", "achievement_marker"],
+        "timing": {
+          "start": 1.5,
+          "duration": 2.5
+        }
+      },
+      "star": {
+        "style": "sparkle_star",
+        "colors": {
+          "premium": "#ffd700",
+          "magic": "#e1bee7",
+          "special": "#ffab40",
+          "focus": "#fff59d"
+        },
+        "sizes": {
+          "small": 16,
+          "medium": 20,
+          "large": 28
+        },
+        "animations": ["twinkle", "rotate", "sparkle"],
+        "best_positions": ["top_right", "around_element", "attention_magnet"],
+        "timing": {
+          "start": 0.8,
+          "duration": 1.8
+        }
+      }
+    },
+    
+    "branding_elements": {
+      "premium_logo": {
+        "type": "logo",
+        "default_position": "bottom_right",
+        "opacity": 0.9,
+        "sizes": {
+          "small": {"width": 80, "height": 30},
+          "medium": {"width": 120, "height": 45},
+          "large": {"width": 160, "height": 60}
+        },
+        "animations": ["subtle_float", "gentle_glow", "brand_appear"],
+        "platform_adaptations": {
+          "tiktok": {"opacity_multiplier": 0.8},
+          "youtube": {"size_multiplier": 1.1},
+          "instagram": {"opacity_multiplier": 0.9},
+          "facebook": {"size_multiplier": 0.95}
+        }
+      },
+      "watermark": {
+        "type": "watermark",
+        "default_position": "top_left",
+        "opacity": 0.6,
+        "sizes": {
+          "small": {"width": 60, "height": 20},
+          "medium": {"width": 80, "height": 27},
+          "large": {"width": 100, "height": 33}
+        },
+        "animations": ["fade_in", "subtle_drift", "brand_reveal"],
+        "platform_adaptations": {
+          "tiktok": {"position": "bottom_right", "size_multiplier": 0.8},
+          "youtube": {"opacity_multiplier": 0.7},
+          "instagram": {"position": "top_right"},
+          "facebook": {"opacity_multiplier": 0.8}
+        }
+      },
+      "premium_badge": {
+        "type": "badge",
+        "default_position": "top_right",
+        "opacity": 1.0,
+        "sizes": {
+          "small": {"width": 40, "height": 40},
+          "medium": {"width": 50, "height": 50},
+          "large": {"width": 60, "height": 60}
+        },
+        "animations": ["shine", "pulse", "badge_reveal"],
+        "platform_adaptations": {
+          "tiktok": {"position": "bottom_left"},
+          "youtube": {"size_multiplier": 1.2},
+          "instagram": {"opacity_multiplier": 0.95},
+          "facebook": {"size_multiplier": 1.1}
+        }
+      }
+    },
+    
+    "fonts_config": {
+      "montserrat_bold": {
+        "weights": [700, 800],
+        "best_for": ["titles", "headlines", "attention"],
+        "readability": "high",
+        "premium_level": "high"
+      },
+      "montserrat_semi_bold": {
+        "weights": [600],
+        "best_for": ["subtitles", "section_headers"],
+        "readability": "high",
+        "premium_level": "high"
+      },
+      "open_sans_regular": {
+        "weights": [400],
+        "best_for": ["body_text", "descriptions"],
+        "readability": "very_high",
+        "premium_level": "medium"
+      },
+      "open_sans_semi_bold": {
+        "weights": [600],
+        "best_for": ["important_text", "captions"],
+        "readability": "very_high",
+        "premium_level": "medium"
+      },
+      "inter_medium": {
+        "weights": [500],
+        "best_for": ["labels", "meta_info"],
+        "readability": "very_high",
+        "premium_level": "high"
+      },
+      "inter_semi_bold": {
+        "weights": [600],
+        "best_for": ["ui_elements", "navigation"],
+        "readability": "very_high",
+        "premium_level": "high"
+      },
+      "roboto_medium": {
+        "weights": [500],
+        "best_for": ["technical_content", "data"],
+        "readability": "high",
+        "premium_level": "medium"
+      },
+      "poppins_semi_bold": {
+        "weights": [600],
+        "best_for": ["modern_titles", "social_content"],
+        "readability": "high",
+        "premium_level": "high"
+      }
+    },
+    
+    "animation_presets": {
+      "fade_in": {
+        "duration": 0.8,
+        "easing": "ease-in",
+        "delay": 0.0
+      },
+      "slide_up": {
+        "duration": 0.6,
+        "easing": "ease-out",
+        "delay": 0.1
+      },
+      "slide_down": {
+        "duration": 0.6,
+        "easing": "ease-out", 
+        "delay": 0.1
+      },
+      "zoom": {
+        "duration": 0.5,
+        "easing": "ease-out",
+        "delay": 0.0
+      },
+      "typewriter": {
+        "duration": 2.0,
+        "easing": "linear",
+        "delay": 0.5
+      },
+      "professional_fade": {
+        "duration": 1.0,
+        "easing": "ease-in-out",
+        "delay": 0.2
+      },
+      "elegant_slide": {
+        "duration": 0.8,
+        "easing": "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+        "delay": 0.3
+      }
+    },
+    
+    "performance_targets": {
+      "tiktok": {
+        "engagement_score_min": 0.7,
+        "monetization_potential_min": 0.8,
+        "optimization_level": "excellent",
+        "engagement_elements_count": [3, 5],
+        "branding_elements_count": [1, 3]
+      },
+      "youtube_shorts": {
+        "engagement_score_min": 0.6,
+        "monetization_potential_min": 0.7,
+        "optimization_level": "good",
+        "engagement_elements_count": [2, 4],
+        "branding_elements_count": [1, 2]
+      },
+      "instagram_reels": {
+        "engagement_score_min": 0.8,
+        "monetization_potential_min": 0.85,
+        "optimization_level": "excellent",
+        "engagement_elements_count": [3, 6],
+        "branding_elements_count": [2, 4]
+      },
+      "facebook_reels": {
+        "engagement_score_min": 0.65,
+        "monetization_potential_min": 0.75,
+        "optimization_level": "good",
+        "engagement_elements_count": [2, 4],
+        "branding_elements_count": [1, 3]
+      }
+    },
+    
+    "ab_testing_variants": {
+      "vibrant_variant": {
+        "color_saturation": 1.2,
+        "animation_speed": "fast",
+        "text_size": "large",
+        "engagement_multiplier": 1.1
+      },
+      "minimalist_variant": {
+        "color_saturation": 0.8,
+        "animation_speed": "slow",
+        "text_size": "medium",
+        "remove_engagement": ["fire", "pulse"],
+        "engagement_multiplier": 0.95
+      },
+      "premium_variant": {
+        "color_saturation": 1.0,
+        "animation_speed": "smooth",
+        "text_size": "large",
+        "enhanced_branding": true,
+        "premium_elements": true,
+        "engagement_multiplier": 1.05
+      }
+    },
+    
+    "optimization_recommendations": {
+      "low_engagement": [
+        "Adicionar mais elementos de engajamento",
+        "Aumentar contraste das cores",
+        "Usar animações mais dinâmicas",
+        "Melhorar call-to-actions"
+      ],
+      "platform_mismatch": [
+        "Ajustar tamanho de texto para a plataforma",
+        "Modificar duração do vídeo",
+        "Adaptar elementos visuais",
+        "Otimizar padding e margens"
+      ],
+      "branding_issues": [
+        "Adicionar logo mais visível",
+        "Melhorar posicionamento do watermark",
+        "Aumentar consistência visual",
+        "Otimizar opacidade dos elementos"
+      ],
+      "monetization_opportunities": [
+        "Adicionar elementos de urgência",
+        "Melhorar call-to-actions visuais",
+        "Aumentar elementos sociais",
+        "Otimizar para conversão"
+      ]
+    }
+  }
+}
