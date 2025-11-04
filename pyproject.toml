@@ -53,6 +53,9 @@ dependencies = [
  "mypy>=1.16.1",
  # PDF处理
  "weasyprint>=65.1",
+ "loguru>=0.7.3",
+ "pydantic-settings>=2.11.0",
+ "python-dotenv>=1.2.1",
 ]
 
 [build-system]
