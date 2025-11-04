@@ -214,7 +214,7 @@ class YouTubeExtractor:
             
             raise YouTubeExtractionError(error_msg, video_url=video_url, youtube_error=str(e))
     
-    def download_segment(self, video_url: str, start_time: float, duration: float) -> str:
+    def download_segment(self, video_url: str, start_time: float, duration: float, output_dir: Optional[str] = None) -> str:
         """
         Baixa um segmento específico de um vídeo.
         
@@ -222,6 +222,7 @@ class YouTubeExtractor:
             video_url: URL do vídeo
             start_time: Tempo de início em segundos
             duration: Duração do segmento em segundos
+            output_dir: Diretório de saída (opcional)
             
         Returns:
             Caminho para o arquivo baixado
@@ -251,11 +252,15 @@ class YouTubeExtractor:
                     f"Vídeo: {video_duration}s, Solicitado: {start_time}s + {duration}s"
                 )
             
+            # Definir diretório de saída
+            output_dir_path = Path(output_dir) if output_dir else self.output_dir
+            output_dir_path.mkdir(parents=True, exist_ok=True)
+            
             # Configurar opções para download do segmento
             download_opts = {
                 **self.ydl_opts,
                 'format': 'best[height<=720]',  # Resolução adequada para shorts
-                'outtmpl': str(self.temp_dir / '%(id)s_segment.%(ext)s'),
+                'outtmpl': str(output_dir_path / '%(id)s_segment.%(ext)s'),
                 'postprocessors': [{
                     'key': 'FFmpegVideoConvertor',
                     'preferedformat': 'mp4',  # Convert to MP4 for consistency
@@ -273,7 +278,7 @@ class YouTubeExtractor:
                     
                     # O arquivo é salvo com o template, encontramos o arquivo real
                     video_id = info.get('id')
-                    pattern = str(self.temp_dir / f"{video_id}_segment.*")
+                    pattern = str(output_dir_path / f"{video_id}_segment.*")
                     
                     import glob
                     downloaded_files = glob.glob(pattern)
