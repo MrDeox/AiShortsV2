@@ -1,7 +1,13 @@
 """
-Módulo de matching de conteúdo
+Módulo de matching entre roteiro e vídeo.
+Implementa análise semântica e busca inteligente de conteúdo.
 """
 
-from .content_matcher import ContentMatcher
+from .semantic_analyzer import SemanticAnalyzer
+from .video_searcher import VideoSearcher, VideoInfo
 
-__all__ = ["ContentMatcher"]
+__all__ = [
+    'SemanticAnalyzer',
+    'VideoSearcher', 
+    'VideoInfo'
+]

@@ -887,11 +887,58 @@
 **/*.zip
 
 # ==============================================================================
-# PROJECT SPECIFIC
+# PROJECT SPECIFIC - AISHORTS V2.0
 # ==============================================================================
-# Add your project-specific ignores here
-# workspace/
-# data/
-# uploads/
-# downloads/
+# Archives and old versions
+archive/
+archive_*/
+backups/
+backup_*/
+
+# Memory and cache specific
+.memory/
+.pdf_temp/
+memory/
+
+# Browser automation
+browser/
+
+# External APIs
+external_api/
+
+# Research and extraction
+research/
+extract/
+
+# Temporary files specific
+temp_pdf_subsets/
+
+# Large media files
+final_demo_*.mp4
+final_demo_*.jpg
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wav
+*.mp3
+*.flac
+
+# Test and demo outputs
+test_results.txt
+supplementary_*
+demo_final_funcional.py
+demo_pipeline_simples.py
+
+# Workspace specific
+workspace.json
+
+# Data outputs (keep structure, ignore generated content)
+data/output/
+data/temp/
+data/cache/
+outputs/audio/
+outputs/demo_*/
+outputs/video/
+outputs/tts_demo/
 

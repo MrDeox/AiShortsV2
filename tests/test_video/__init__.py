@@ -1,5 +1,8 @@
 """
-Testes do módulo de vídeo
-"""
+Testes para funcionalidades de vídeo.
 
-__version__ = "1.0.0"
+Contém testes para:
+- Configurações de plataforma e otimização
+- Templates visuais
+- Sistema de matching roteiro-vídeo (semantic_analyzer, video_searcher)
+"""

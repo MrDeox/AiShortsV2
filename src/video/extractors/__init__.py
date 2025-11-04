@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
 """
-Extractors de conteúdo do YouTube
+Módulo de extratores de vídeo.
 """
 
 from .youtube_extractor import YouTubeExtractor
+from .segment_processor import SegmentProcessor
 
-__all__ = ["YouTubeExtractor"]
+__all__ = ["YouTubeExtractor", "SegmentProcessor"]

@@ -1,541 +1,326 @@
 """
-Analisador semântico para roteiros - AiShorts v2.0
-Sistema de análise semântica para extração de palavras-chave e categorização
+Analisador semântico para matching entre roteiro e vídeo.
+Utiliza spaCy para processamento de linguagem natural em português.
 """
 
-import re
-import string
-from typing import List, Dict, Any, Optional
+import spacy
 import numpy as np
+from typing import List, Dict, Tuple, Optional
 from collections import Counter
-import logging
-
-# Configurar logging
-logger = logging.getLogger(__name__)
-
-# Tentar importar spaCy, se não disponível usar implementação alternativa
-try:
-    import spacy
-    SPACY_AVAILABLE = True
-    logger.info("spaCy detectado, usando modelo completo")
-except ImportError:
-    SPACY_AVAILABLE = False
-    logger.warning("spaCy não disponível, usando análise básica")
+import re
 
 
 class SemanticAnalyzer:
     """
-    Analisador semântico para processamento de roteiros.
-    
-    Features:
-    - Extração de palavras-chave
-    - Análise de tom emocional
-    - Categorização de conteúdo
-    - Geração de embeddings semânticos
-    - Processamento de objetos Script
+    Classe para análise semântica de texto usando spaCy.
+    Extrai palavras-chave, analisa tom emocional e categoriza conteúdo.
     """
     
-    def __init__(self):
-        """Inicializa o analisador semântico."""
-        self.logger = logging.getLogger(__name__)
-        
-        # Palavras de parada em português
-        self.stop_words = {
-            'o', 'a', 'os', 'as', 'um', 'uma', 'uns', 'umas', 'de', 'da', 'do', 'dos', 'das',
-            'em', 'no', 'na', 'nos', 'nas', 'por', 'para', 'com', 'que', 'se', 'não', 'é',
-            'e', 'ou', 'mas', 'como', 'já', 'muito', 'mais', 'menos', 'bem', 'mal', 'ao',
-            'pelo', 'pela', 'pelos', 'pelas', 'dele', 'dela', 'eles', 'elas', 'nosso', 'nossa',
-            'seu', 'sua', 'seus', 'suas', 'este', 'esta', 'estes', 'estas', 'esse', 'essa',
-            'esses', 'essas', 'aquele', 'aquela', 'aqueles', 'aquelas', 'este', 'aquilo'
-        }
-        
-        # Dicionário de palavras-chave por categoria
-        self.category_keywords = {
-            'SPACE': {
-                'sol', 'lua', 'estrela', 'galáxia', 'universo', 'planeta', 'satélite', 'foguete',
-                'astronauta', 'espaço', 'orbit', 'nasa', 'júpiter', 'marte', 'venus', 'saturno',
-                'neptuno', 'urano', 'plutão', 'cometa', 'asteróide', 'meteorito', 'galáxias',
-                'nebulosas', 'buraco negro', 'via láctea', 'sistema solar'
-            },
-            'ANIMALS': {
-                'cachorro', 'gato', 'elefante', 'leão', 'tigre', 'urso', 'panda', 'golfinho',
-                'baleia', 'passaro', 'papagaio', 'pato', 'ganso', 'cavalo', 'vaca', 'boi',
-                'porco', 'ovelha', 'bode', 'coelho', 'camundongo', 'rato', 'galo', 'galinha',
-                'macaco', 'gorila', 'chimpanzé', 'zebra', 'girafa', 'hipopótamo', 'rinoceronte'
-            },
-            'SCIENCE': {
-                'experimento', 'laboratório', 'científico', 'pesquisa', 'descoberta', 'teoria',
-                'hipótese', 'método', 'análise', 'resultado', 'dados', 'química', 'física',
-                'biologia', 'matemática', 'genética', 'evolução', 'microscópio', 'telescópio',
-                'fórmula', 'lei', 'princípio', 'conceito', 'estudo', 'observação'
-            },
-            'NATURE': {
-                'floresta', 'árvore', 'planta', 'flor', 'folha', 'raiz', 'semente', 'fruto',
-                'montanha', 'rio', 'mar', 'oceano', 'lago', 'praia', 'deserto', 'caverna',
-                'vale', 'canyon', 'água', 'fogo', 'ar', 'terra', 'vento', 'chuva', 'sol',
-                'nuvem', 'céu', ' lua', 'estrela', 'natureza', 'ambiente', 'ecossistema'
-            },
-            'HISTORY': {
-                'história', 'passado', 'antigo', 'medieval', 'moderno', 'império', 'rei',
-                'rainha', 'castelo', 'catedral', 'monumento', 'guerra', 'batalha', 'revolução',
-                'independência', 'colônia', 'descoberta', 'explorador', 'conquistador',
-                'nascimento', 'morte', 'época', 'século', 'ano', 'data', 'evento'
-            },
-            'TECHNOLOGY': {
-                'tecnologia', 'computador', 'internet', 'software', 'hardware', 'aplicativo',
-                'sistema', 'programa', 'código', 'algoritmo', 'inteligência artificial',
-                'robô', 'automação', 'digital', 'eletrônico', 'máquina', 'dispositivo',
-                'conexão', 'dados', 'informação', 'rede', 'website', 'app', 'smartphone'
-            },
-            'CULTURE': {
-                'cultura', 'arte', 'música', 'pintura', 'escultura', 'dança', 'teatro',
-                'cinema', 'livro', 'poesia', 'literatura', 'filosofia', 'religião',
-                'tradição', 'costume', 'festividade', 'comida', 'bebida', 'vestimenta'
-            },
-            'PSYCHOLOGY': {
-                'psicologia', 'mente', 'emoção', 'sentimento', 'comportamento', 'personalidade',
-                'caráter', 'temperamento', 'motivação', 'desejo', 'medo', 'alegria', 'tristeza',
-                'raiva', 'amor', 'ódio', 'simpatia', 'antipatia', 'consciência', 'subconsciente'
-            },
-            'GEOGRAPHY': {
-                'geografia', 'país', 'cidade', 'estado', 'região', 'continente', 'ocean',
-                'montanha', 'rio', 'lago', 'deserto', 'floresta', 'planície', 'planeta',
-                'latitude', 'longitude', 'clima', 'temperatura', 'população', 'demo'
-            },
-            'FOOD': {
-                'comida', 'alimento', 'prato', 'refeição', 'café', 'chá', 'suco', 'água',
-                'pão', 'arroz', 'feijão', 'carne', 'peixe', 'frango', 'verdura', 'fruta',
-                'doce', 'salgado', 'bom', 'delicioso', 'sabor', 'ingrediente', 'receita',
-                'cozinha', 'restaurante', 'chef', 'cozinheiro', 'comer', 'beber', 'fome'
-            }
-        }
-        
-        # Dicionário de emoções
-        self.emotion_keywords = {
-            'positive': {
-                'alegria', 'felicidade', 'amor', 'prazer', 'satisfação', 'orgulho', 'esperança',
-                'entusiasmo', 'euforia', 'êxtase', 'contentamento', 'benefício', 'sucesso',
-                'vitória', 'triunfo', 'conquista', 'realização', 'progresso', 'evolução',
-                'feliz', 'animado', 'incrível', 'maravilhoso', 'excelente', 'fantástico',
-                'surpreendente', 'genial', 'brilhante', 'perfeito', 'maravilha', 'discoberta'
-            },
-            'negative': {
-                'tristeza', 'depressão', 'angústia', 'sofrimento', 'dor', 'mágoa', 'desespero',
-                'raiva', 'ódio', 'ressentimento', 'vingança', 'ciúme', 'inveja', 'medo',
-                'terror', 'pavor', 'pânico', 'ansiedade', 'preocupação', 'nervosismo',
-                'triste', 'terrível', 'horrível', 'ruim', 'péssimo', 'pior', 'problema',
-                'difícil', 'complicado', 'impossível', 'fracasso', 'preocupado'
-            },
-            'neutral': {
-                'informação', 'dados', 'fato', 'conceito', 'processo', 'sistema', 'método',
-                'análise', 'resultado', 'observação', 'estudo', 'pesquisa', 'investigação',
-                'importante', 'interessante', 'relevante', 'significativo'
-            }
-        }
-        
-        # Inicializar spaCy se disponível
-        self._init_spacy()
-        
-        self.logger.info("SemanticAnalyzer inicializado com sucesso")
+    # Mapeamento de categorias para palavras-chave
+    CATEGORY_KEYWORDS = {
+        'SPACE': ['espaço', 'galáxia', 'planeta', 'estrela', 'universo', 'astronauta', 
+                  'satélite', 'lua', 'sol', 'cosmos', 'astronomia', 'orbits', 'mars'],
+        'ANIMALS': ['animal', 'cachorro', 'gato', 'leão', 'tigre', 'elefante', 'pássaro', 
+                    'peixe', 'delfim', 'golfinho', 'baleia', 'tubarão', 'zebra', 'macaco'],
+        'NATURE': ['natureza', 'floresta', 'árvore', 'flor', 'montanha', 'rio', 'mar', 
+                   'praia', 'céu', 'nuvem', 'chuva', 'sol', 'vento', 'paisagem'],
+        'TECHNOLOGY': ['tecnologia', 'robô', 'computador', 'internet', 'aplicativo', 
+                       'software', 'hardware', 'AI', 'inteligência artificial', 'algoritmo'],
+        'FOOD': ['comida', 'alimentação', 'prato', 'receita', 'cozinha', 'gastronomia', 
+                 'ingrediente', 'doce', 'salgado', 'bebida', 'restaurante'],
+        'SPORTS': ['esporte', 'futebol', 'basquete', 'vôlei', 'tênis', 'corrida', 'natação', 
+                   'ginástica', 'olimpíadas', 'competição', 'atleta'],
+        'MUSIC': ['música', 'cantor', 'banda', 'instrumento', 'guitarra', 'piano', 'bateria', 
+                  'violão', 'show', 'concerto', 'festival', 'canção'],
+        'EDUCATION': ['educação', 'ensino', 'aprendizado', 'escola', 'universidade', 'professor', 
+                      'aluno', 'livro', 'curso', 'estudo', 'conhecimento'],
+        'HEALTH': ['saúde', 'medicina', 'hospital', 'médico', 'doença', 'tratamento', 'remédio', 
+                   'corpo', 'exercício', 'dieta', 'bem-estar', 'mental'],
+        'TRAVEL': ['viagem', 'destino', 'turismo', 'cidade', 'país', 'continente', 'avião', 
+                   'hotel', 'praia', 'montanha', 'cultura', 'aventura']
+    }
     
-    def _init_spacy(self):
-        """Inicializa spaCy se disponível."""
-        if SPACY_AVAILABLE:
-            try:
-                self.nlp = spacy.load("pt_core_news_sm")
-                self.logger.info("spaCy carregado com sucesso")
-            except OSError:
-                self.logger.warning("Modelo spaCy pt_core_news_sm não encontrado")
-                self.logger.info("Usando análise textual básica")
-                self.nlp = None
-        else:
+    # Palavras de tom emocional positivo
+    POSITIVE_WORDS = ['feliz', 'alegre', 'bonito', 'maravilhoso', 'excelente', 'fantástico', 
+                      'incrível', 'espetacular', 'adorável', 'amor', 'paixão', 'diversão']
+    
+    # Palavras de tom emocional negativo
+    NEGATIVE_WORDS = ['triste', 'feio', 'terrível', 'horrível', 'péssimo', 'ruim', 
+                      'dor', 'sofrimento', 'guerra', 'conflito', 'problema', 'crise']
+    
+    # Palavras de tom emocional neutro
+    NEUTRAL_WORDS = ['informação', 'dados', 'fato', 'conhecimento', 'estudo', 'análise', 
+                     'pesquisa', 'descoberta', 'explicação', 'descrição']
+    
+    def __init__(self):
+        """Inicializa o analisador semântico com modelo spaCy para português."""
+        try:
+            # Tenta carregar modelo português do spaCy
+            self.nlp = spacy.load("pt_core_news_sm")
+            self.use_spacy = True
+            print("Modelo spaCy pt_core_news_sm carregado com sucesso.")
+        except OSError:
+            print("Modelo spaCy pt_core_news_sm não encontrado. Usando fallback básico.")
+            self.use_spacy = False
             self.nlp = None
     
-    def extract_keywords(self, text: str, max_keywords: int = 10) -> List[str]:
+    def extract_keywords(self, text: str, max_keywords: int = 20) -> List[str]:
         """
-        Extrai palavras-chave do texto.
+        Extrai palavras-chave importantes do texto.
         
         Args:
-            text: Texto para processar
-            max_keywords: Número máximo de palavras-chave
+            text (str): Texto para análise
+            max_keywords (int): Número máximo de palavras-chave a retornar
             
         Returns:
-            Lista de palavras-chave ordenadas por relevância
+            List[str]: Lista de palavras-chave extraídas
         """
-        if not text or not text.strip():
-            return []
-        
-        try:
-            # Limpar e preparar texto
-            clean_text = self._preprocess_text(text)
-            
-            if self.nlp is not None:
-                # Usar spaCy se disponível
-                return self._extract_keywords_spacy(clean_text, max_keywords)
-            else:
-                # Usar análise básica
-                return self._extract_keywords_basic(clean_text, max_keywords)
-                
-        except Exception as e:
-            self.logger.error(f"Erro ao extrair palavras-chave: {e}")
-            return []
-    
-    def _preprocess_text(self, text: str) -> str:
-        """Preprocessa o texto para análise."""
-        # Converter para minúsculas
-        text = text.lower()
-        
-        # Remover pontuação e caracteres especiais
-        text = re.sub(r'[^\w\s]', ' ', text)
-        
-        # Remover espaços extras
-        text = re.sub(r'\s+', ' ', text).strip()
-        
-        return text
+        if self.use_spacy and self.nlp:
+            return self._extract_keywords_spacy(text, max_keywords)
+        else:
+            return self._extract_keywords_fallback(text, max_keywords)
     
     def _extract_keywords_spacy(self, text: str, max_keywords: int) -> List[str]:
         """Extrai palavras-chave usando spaCy."""
-        doc = self.nlp(text)
+        doc = self.nlp(text.lower())
         
-        # Extrair substantivos, adjetivos e verbos relevantes
+        # Palavras a serem ignoradas
+        stop_words = set(self.nlp.Defaults.stop_words)
+        ignore_words = {'ser', 'estar', 'ter', 'fazer', 'ir', 'vir', 'dar', 'dizer', 'ver', 'saber'}
+        stop_words.update(ignore_words)
+        
         keywords = []
-        for token in doc:
-            if (
-                not token.is_stop
-                and not token.is_punct
-                and not token.is_space
-                and len(token.text) > 2
-                and (token.pos_ in ['NOUN', 'ADJ', 'VERB'])
-            ):
-                keywords.append(token.lemma_)
         
-        # Contar frequência e retornar as mais relevantes
+        # Extrai substantivos, adjetivos e verbos relevantes
+        for token in doc:
+            if (not token.is_stop and 
+                not token.is_punct and 
+                not token.is_space and
+                len(token.text) > 2 and
+                token.text not in stop_words and
+                token.pos_ in ['NOUN', 'ADJ', 'VERB']):
+                
+                # Adiciona forma normalizada
+                if token.lemma_ != token.text:
+                    keywords.append(token.lemma_)
+                else:
+                    keywords.append(token.text)
+        
+        # Conta frequência e retorna as mais importantes
         keyword_counts = Counter(keywords)
         return [word for word, count in keyword_counts.most_common(max_keywords)]
     
-    def _extract_keywords_basic(self, text: str, max_keywords: int) -> List[str]:
-        """Extrai palavras-chave usando análise básica."""
-        # Dividir em palavras
-        words = text.split()
+    def _extract_keywords_fallback(self, text: str, max_keywords: int) -> List[str]:
+        """Extrai palavras-chave usando método básico (sem spaCy)."""
+        # Lista básica de stop words em português
+        basic_stop_words = {
+            'a', 'o', 'e', 'é', 'de', 'do', 'da', 'dos', 'das', 'em', 'no', 'na', 'nos', 'nas',
+            'para', 'por', 'com', 'como', 'que', 'se', 'não', 'sim', 'um', 'uma', 'uns', 'umas',
+            'ser', 'estar', 'ter', 'fazer', 'ir', 'vir', 'dar', 'dizer', 'ver', 'saber',
+            'este', 'esta', 'estes', 'estas', 'esse', 'essa', 'esses', 'essas',
+            'aquele', 'aquela', 'aqueles', 'aquelas', 'eu', 'tu', 'ele', 'ela', 'nós', 'vós', 'eles', 'elas'
+        }
         
-        # Filtrar palavras válidas
-        valid_words = []
+        # Remove pontuação e converte para minúsculas
+        text_clean = re.sub(r'[^\w\s]', ' ', text.lower())
+        words = text_clean.split()
+        
+        # Filtra palavras relevantes
+        keywords = []
         for word in words:
-            word = word.strip().lower()
-            if (
-                len(word) > 2
-                and word not in self.stop_words
-                and word.isalpha()
-            ):
-                valid_words.append(word)
+            if (len(word) > 2 and 
+                word not in basic_stop_words and
+                word.isalpha()):
+                keywords.append(word)
         
-        # Contar frequência
-        word_counts = Counter(valid_words)
-        return [word for word, count in word_counts.most_common(max_keywords)]
+        # Conta frequência e retorna as mais importantes
+        keyword_counts = Counter(keywords)
+        return [word for word, count in keyword_counts.most_common(max_keywords)]
     
     def analyze_tone(self, text: str) -> Dict[str, float]:
         """
         Analisa o tom emocional do texto.
         
         Args:
-            text: Texto para analisar
+            text (str): Texto para análise de tom
             
         Returns:
-            Dicionário com scores de emoções
+            Dict[str, float]: Dicionário com scores de tom (positivo, negativo, neutro)
         """
-        if not text or not text.strip():
-            return {'positive': 0.0, 'negative': 0.0, 'neutral': 1.0}
+        text_lower = text.lower()
         
-        try:
-            clean_text = self._preprocess_text(text)
-            words = clean_text.split()
-            
-            emotion_scores = {
-                'positive': 0.0,
-                'negative': 0.0, 
-                'neutral': 0.0
-            }
-            
-            # Contar palavras de cada categoria emocional
-            positive_count = sum(1 for word in words if word in self.emotion_keywords['positive'])
-            negative_count = sum(1 for word in words if word in self.emotion_keywords['negative'])
-            neutral_count = sum(1 for word in words if word in self.emotion_keywords['neutral'])
-            
-            total_emotional_words = positive_count + negative_count + neutral_count
-            
-            if total_emotional_words > 0:
-                emotion_scores['positive'] = positive_count / len(words)
-                emotion_scores['negative'] = negative_count / len(words)
-                emotion_scores['neutral'] = neutral_count / len(words)
-            else:
-                emotion_scores['neutral'] = 1.0
-            
-            # Normalizar scores para somar 1.0
-            total = sum(emotion_scores.values())
-            if total > 0:
-                emotion_scores = {k: v/total for k, v in emotion_scores.items()}
-            
-            return emotion_scores
-            
-        except Exception as e:
-            self.logger.error(f"Erro ao analisar tom: {e}")
-            return {'positive': 0.0, 'negative': 0.0, 'neutral': 1.0}
+        if self.use_spacy and self.nlp:
+            return self._analyze_tone_spacy(text_lower)
+        else:
+            return self._analyze_tone_fallback(text_lower)
     
-    def categorize_content(self, text: str) -> Dict[str, float]:
+    def _analyze_tone_spacy(self, text_lower: str) -> Dict[str, float]:
+        """Analisa tom usando spaCy."""
+        doc = self.nlp(text_lower)
+        
+        # Conta ocorrências de palavras de cada categoria
+        positive_count = sum(1 for word in self.POSITIVE_WORDS if word in text_lower)
+        negative_count = sum(1 for word in self.NEGATIVE_WORDS if word in text_lower)
+        neutral_count = sum(1 for word in self.NEUTRAL_WORDS if word in text_lower)
+        
+        # Conta também palavras extraídas do texto que podem indicar tom
+        for token in doc:
+            token_text = token.lemma_
+            if token_text in self.POSITIVE_WORDS:
+                positive_count += 1
+            elif token_text in self.NEGATIVE_WORDS:
+                negative_count += 1
+            elif token_text in self.NEUTRAL_WORDS:
+                neutral_count += 1
+        
+        total_words = positive_count + negative_count + neutral_count
+        if total_words == 0:
+            return {'positive': 0.33, 'negative': 0.33, 'neutral': 0.34}
+        
+        return {
+            'positive': positive_count / total_words,
+            'negative': negative_count / total_words,
+            'neutral': neutral_count / total_words
+        }
+    
+    def _analyze_tone_fallback(self, text_lower: str) -> Dict[str, float]:
+        """Analisa tom usando método básico."""
+        # Conta ocorrências de palavras de cada categoria
+        positive_count = sum(1 for word in self.POSITIVE_WORDS if word in text_lower)
+        negative_count = sum(1 for word in self.NEGATIVE_WORDS if word in text_lower)
+        neutral_count = sum(1 for word in self.NEUTRAL_WORDS if word in text_lower)
+        
+        total_words = positive_count + negative_count + neutral_count
+        if total_words == 0:
+            return {'positive': 0.33, 'negative': 0.33, 'neutral': 0.34}
+        
+        return {
+            'positive': positive_count / total_words,
+            'negative': negative_count / total_words,
+            'neutral': neutral_count / total_words
+        }
+    
+    def categorize_content(self, text: str) -> Tuple[str, float]:
         """
-        Categoriza o conteúdo do texto.
+        Categoriza o conteúdo do texto em uma das categorias predefinidas.
         
         Args:
-            text: Texto para categorizar
+            text (str): Texto para categorização
             
         Returns:
-            Dicionário com scores de categoria
+            Tuple[str, float]: (categoria, score de confiança)
         """
-        if not text or not text.strip():
-            return {'UNKNOWN': 1.0}
+        keywords = self.extract_keywords(text, max_keywords=50)
+        text_lower = text.lower()
         
-        try:
-            clean_text = self._preprocess_text(text)
-            words = set(clean_text.split())
+        category_scores = {}
+        
+        for category, category_keywords in self.CATEGORY_KEYWORDS.items():
+            score = 0
+            for keyword in keywords:
+                if keyword in category_keywords:
+                    score += 2  # Palavras-chave têm peso maior
             
-            category_scores = {}
+            # Adiciona pontuação por presença no texto completo
+            for keyword in category_keywords:
+                if keyword in text_lower:
+                    score += 1
             
-            # Calcular scores para cada categoria
-            for category, keywords in self.category_keywords.items():
-                matches = len(words.intersection(keywords))
-                if keywords:
-                    score = matches / len(keywords)
+            category_scores[category] = score
+        
+        if not category_scores or max(category_scores.values()) == 0:
+            return 'GENERAL', 0.0
+        
+        best_category = max(category_scores, key=category_scores.get)
+        max_score = category_scores[best_category]
+        
+        # Normaliza score de confiança (0-1)
+        total_possible = len(keywords) * 2
+        confidence = min(max_score / max(total_possible, 1), 1.0)
+        
+        return best_category, confidence
+    
+    def get_semantic_embedding(self, text: str) -> Optional[np.ndarray]:
+        """
+        Gera embedding semântico do texto usando spaCy.
+        
+        Args:
+            text (str): Texto para embedding
+            
+        Returns:
+            Optional[np.ndarray]: Vetor de embedding ou None se erro
+        """
+        if self.use_spacy and self.nlp:
+            try:
+                doc = self.nlp(text)
+                if doc.has_vector:
+                    return doc.vector
                 else:
-                    score = 0.0
-                category_scores[category] = score
-            
-            # Normalizar scores
-            total_score = sum(category_scores.values())
-            if total_score > 0:
-                category_scores = {k: v/total_score for k, v in category_scores.items()}
-            
-            # Se nenhuma categoria teve matches significativos, marcar como UNKNOWN
-            if max(category_scores.values()) < 0.01:
-                return {'UNKNOWN': 1.0}
-            
-            return category_scores
-            
-        except Exception as e:
-            self.logger.error(f"Erro ao categorizar conteúdo: {e}")
-            return {'UNKNOWN': 1.0}
+                    # Fallback: retorna vetor médio dos tokens
+                    vectors = [token.vector for token in doc if token.has_vector]
+                    if vectors:
+                        return np.mean(vectors, axis=0)
+                    else:
+                        return None
+            except Exception as e:
+                print(f"Erro ao gerar embedding: {e}")
+                return None
+        else:
+            return self._generate_fallback_embedding(text)
     
-    def get_semantic_embedding(self, text: str, use_clip: bool = True) -> Optional[np.ndarray]:
+    def _generate_fallback_embedding(self, text: str) -> Optional[np.ndarray]:
+        """Gera embedding básico usando hash de palavras."""
+        words = text.lower().split()
+        vector = np.zeros(300)  # Vetor de 300 dimensões para compatibilidade
+        
+        for i, word in enumerate(words[:300]):  # Limita a 300 palavras
+            hash_val = hash(word) % 300
+            vector[hash_val] += 1 / (i + 1)  # Palavras mais próximas têm peso maior
+        
+        return vector if np.any(vector) else None
+    
+    def calculate_similarity(self, text1: str, text2: str) -> float:
         """
-        Gera embedding semântico do texto usando CLIP se disponível.
+        Calcula similaridade semântica entre dois textos.
         
         Args:
-            text: Texto para processar
-            use_clip: Se deve usar CLIP quando disponível
+            text1 (str): Primeiro texto
+            text2 (str): Segundo texto
             
         Returns:
-            Array numpy com embedding ou None se falhar
+            float: Score de similaridade (0-1)
         """
-        if not text or not text.strip():
-            return None
+        embedding1 = self.get_semantic_embedding(text1)
+        embedding2 = self.get_semantic_embedding(text2)
         
-        try:
-            # Tentar usar CLIP se disponível e solicitado
-            if use_clip:
-                clip_embedding = self._get_clip_embedding(text)
-                if clip_embedding is not None:
-                    return clip_embedding
-            
-            # Fallback para embedding básico
-            return self._get_basic_embedding(text)
-            
-        except Exception as e:
-            self.logger.error(f"Erro ao gerar embedding: {e}")
-            return self._get_basic_embedding(text)
+        if embedding1 is None or embedding2 is None:
+            return 0.0
+        
+        # Calcula similaridade cosseno
+        dot_product = np.dot(embedding1, embedding2)
+        norm1 = np.linalg.norm(embedding1)
+        norm2 = np.linalg.norm(embedding2)
+        
+        if norm1 == 0 or norm2 == 0:
+            return 0.0
+        
+        similarity = dot_product / (norm1 * norm2)
+        return max(0.0, similarity)  # Garante que não seja negativo
     
-    def _get_clip_embedding(self, text: str) -> Optional[np.ndarray]:
-        """Gera embedding usando CLIP se disponível."""
-        try:
-            # Lazy import para evitar dependência obrigatória
-            from .clip_relevance_scorer import CLIPRelevanceScorer
-            
-            # Usar instância global ou criar nova
-            if not hasattr(self, '_clip_scorer'):
-                self._clip_scorer = CLIPRelevanceScorer()
-            
-            return self._clip_scorer.get_text_embedding(text)
-            
-        except Exception as e:
-            self.logger.debug(f"CLIP não disponível para embedding: {e}")
-            return None
-    
-    def _get_basic_embedding(self, text: str) -> np.ndarray:
-        """Gera embedding básico usando características manuais."""
-        # Extrair características básicas do texto
-        keywords = self.extract_keywords(text, max_keywords=20)
-        tone_scores = self.analyze_tone(text)
-        category_scores = self.categorize_content(text)
-        
-        # Criar vetor de características
-        features = []
-        
-        # Adicionar palavras-chave como one-hot
-        all_category_keywords = set()
-        for keywords_set in self.category_keywords.values():
-            all_category_keywords.update(keywords_set)
-        
-        for keyword in all_category_keywords:
-            features.append(1.0 if keyword in keywords else 0.0)
-        
-        # Adicionar scores de tom
-        features.extend([
-            tone_scores['positive'],
-            tone_scores['negative'],
-            tone_scores['neutral']
-        ])
-        
-        # Adicionar scores de categoria
-        for category in self.category_keywords.keys():
-            features.append(category_scores.get(category, 0.0))
-        
-        # Normalizar vetor
-        embedding = np.array(features, dtype=np.float32)
-        if np.linalg.norm(embedding) > 0:
-            embedding = embedding / np.linalg.norm(embedding)
-        
-        return embedding
-    
-    def process_script(self, script) -> Dict[str, Any]:
+    def analyze_script(self, script_text: str) -> Dict:
         """
-        Processa um objeto Script completo.
+        Análise completa de um roteiro.
         
         Args:
-            script: Objeto Script do AiShorts v2.0
+            script_text (str): Texto do roteiro
             
         Returns:
-            Dicionário com análise completa do roteiro
+            Dict: Resultado completo da análise
         """
-        try:
-            # Obter texto completo
-            if hasattr(script, 'get_full_text'):
-                full_text = script.get_full_text()
-            else:
-                # Fallback para objetos sem método get_full_text
-                sections_text = []
-                for section in getattr(script, 'sections', []):
-                    if hasattr(section, 'content'):
-                        sections_text.append(section.content)
-                    elif isinstance(section, dict) and 'content' in section:
-                        sections_text.append(section['content'])
-                full_text = ' '.join(sections_text)
-            
-            # Analisar texto completo
-            script_id = 'unknown'
-            if hasattr(script, 'id'):
-                script_id = script.id
-            elif isinstance(script, dict) and 'id' in script:
-                script_id = script['id']
-            
-            analysis = {
-                'script_id': script_id,
-                'keywords': self.extract_keywords(full_text),
-                'tone': self.analyze_tone(full_text),
-                'categories': self.categorize_content(full_text),
-                'embedding': self.get_semantic_embedding(full_text).tolist() if self.get_semantic_embedding(full_text) is not None else None,
-                'text_length': len(full_text),
-                'word_count': len(full_text.split())
-            }
-            
-            # Analisar seções individualmente
-            sections_analysis = []
-            for section in getattr(script, 'sections', []):
-                section_content = ""
-                section_type = ""
-                
-                if hasattr(section, 'content'):
-                    section_content = section.content
-                    section_type = getattr(section, 'type', 'unknown')
-                elif isinstance(section, dict):
-                    section_content = section.get('content', '')
-                    section_type = section.get('type', 'unknown')
-                
-                if section_content:
-                    section_analysis = {
-                        'type': section_type,
-                        'keywords': self.extract_keywords(section_content),
-                        'tone': self.analyze_tone(section_content),
-                        'categories': self.categorize_content(section_content),
-                        'length': len(section_content)
-                    }
-                    sections_analysis.append(section_analysis)
-            
-            analysis['sections'] = sections_analysis
-            
-            # Adicionar informações do tema se disponível
-            if hasattr(script, 'theme'):
-                theme = script.theme
-                analysis['theme_title'] = getattr(theme, 'main_title', '')
-                analysis['theme_category'] = str(getattr(theme, 'category', ''))
-                analysis['theme_keywords'] = getattr(theme, 'keywords', [])
-            
-            self.logger.info(f"Análise completa do roteiro {analysis['script_id']} finalizada")
-            return analysis
-            
-        except Exception as e:
-            self.logger.error(f"Erro ao processar roteiro: {e}")
-            return {
-                'script_id': getattr(script, 'id', 'error'),
-                'error': str(e),
-                'keywords': [],
-                'tone': {'positive': 0.0, 'negative': 0.0, 'neutral': 1.0},
-                'categories': {'UNKNOWN': 1.0},
-                'embedding': None,
-                'text_length': 0,
-                'word_count': 0,
-                'sections': []
-            }
-
-
-# Exemplo de uso
-if __name__ == "__main__":
-    # Configurar logging
-    logging.basicConfig(level=logging.INFO)
-    
-    # Testar analisador
-    analyzer = SemanticAnalyzer()
-    
-    # Texto de exemplo
-    texto_exemplo = """
-    O universo é cheio de mistérios fascinantes. As estrelas brilhantes no céu noturno 
-    nos fazem pensar sobre nossa existência. A lua é um satélite natural da Terra que 
-    influencia as marés dos oceanos. Os cientistas estudam constantemente os fenômenos 
-    cósmicos para entender melhor o espaço.
-    """
-    
-    print("=== Teste do SemanticAnalyzer ===")
-    print(f"Texto: {texto_exemplo.strip()}")
-    print()
-    
-    # Extrair palavras-chave
-    keywords = analyzer.extract_keywords(texto_exemplo)
-    print(f"Palavras-chave: {keywords}")
-    print()
-    
-    # Analisar tom
-    tone = analyzer.analyze_tone(texto_exemplo)
-    print(f"Tom emocional: {tone}")
-    print()
-    
-    # Categorizar conteúdo
-    categories = analyzer.categorize_content(texto_exemplo)
-    print(f"Categorias: {categories}")
-    print()
-    
-    # Gerar embedding
-    embedding = analyzer.get_semantic_embedding(texto_exemplo)
-    if embedding is not None:
-        print(f"Embedding: shape {embedding.shape}")
-        print(f"Embedding (primeiros 10 valores): {embedding[:10]}")
-    else:
-        print("Embedding: None")
-    
-    print("\n=== Teste concluído ===")
+        return {
+            'keywords': self.extract_keywords(script_text),
+            'tone': self.analyze_tone(script_text),
+            'category': self.categorize_content(script_text)[0],
+            'category_confidence': self.categorize_content(script_text)[1],
+            'semantic_vector': self.get_semantic_embedding(script_text)
+        }

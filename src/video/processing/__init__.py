@@ -1,16 +1,9 @@
 """
-Processamento de vídeo
-Módulo completo de processamento automático e análise de qualidade
+Módulo de processamento de vídeo para otimização por plataforma.
+
+Contém ferramentas para ajustar vídeos para TikTok, YouTube Shorts e Instagram Reels.
 """
 
-from .video_processor import VideoProcessor
-from .automatic_video_processor import AutomaticVideoProcessor
-from .video_quality_analyzer import VideoQualityAnalyzer, QualityMetrics, PlatformRequirements
+from .platform_optimizer import PlatformOptimizer, VideoProcessingError
 
-__all__ = [
-    "VideoProcessor",
-    "AutomaticVideoProcessor", 
-    "VideoQualityAnalyzer",
-    "QualityMetrics",
-    "PlatformRequirements"
-]
+__all__ = ["PlatformOptimizer", "VideoProcessingError"]
