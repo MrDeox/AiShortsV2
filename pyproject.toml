@@ -56,6 +56,9 @@ dependencies = [
  "loguru>=0.7.3",
  "pydantic-settings>=2.11.0",
  "python-dotenv>=1.2.1",
+ "yt-dlp>=2025.10.22",
+ "spacy>=3.8.7",
+ "moviepy>=2.2.1",
 ]
 
 [build-system]

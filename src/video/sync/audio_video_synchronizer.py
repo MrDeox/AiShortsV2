@@ -12,7 +12,7 @@ from pathlib import Path
 import logging
 from dataclasses import dataclass
 from scipy.signal import find_peaks
-import moviepy.editor as mp
+import moviepy as mp
 
 # Configuração de logging
 logging.basicConfig(level=logging.INFO)

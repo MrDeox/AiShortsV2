@@ -5,8 +5,8 @@ Utilitários de processamento de vídeo usando OpenCV e MoviePy
 
 import cv2
 import numpy as np
-from moviepy.editor import VideoFileClip, ImageClip, concatenate_videoclips
-from moviepy.audio.fx import volumex
+from moviepy import VideoFileClip, ImageClip, concatenate_videoclips
+from moviepy.audio.fx import MultiplyVolume
 import os
 from typing import List, Dict, Tuple, Optional, Any
 from pathlib import Path

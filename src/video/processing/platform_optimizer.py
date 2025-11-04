@@ -12,7 +12,7 @@ from typing import Dict, Any, List, Tuple, Optional
 import logging
 from dataclasses import asdict
 
-from aishorts_v2.src.config.video_platforms import (
+from src.config.video_platforms import (
     Platform, VideoPlatformConfig, video_config, get_category_config, get_timing_preset
 )
 

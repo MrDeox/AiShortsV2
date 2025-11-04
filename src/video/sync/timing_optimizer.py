@@ -11,7 +11,7 @@ from pathlib import Path
 from dataclasses import dataclass
 import librosa
 from scipy.signal import find_peaks
-import moviepy.editor as mp
+import moviepy as mp
 
 # Configuração de logging
 logging.basicConfig(level=logging.INFO)
