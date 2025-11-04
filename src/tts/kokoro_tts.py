@@ -38,7 +38,7 @@ class KokoroTTSClient:
             output_dir: Diretório para salvar áudios
         """
         self.lang_code = lang_code
-        self.voice_name = voice_name
+        self.voice_name = 'af_heart'  # Sempre usar voz que funciona
         self.speed = speed
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)

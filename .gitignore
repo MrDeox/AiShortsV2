@@ -890,8 +890,24 @@
 # PROJECT SPECIFIC
 # ==============================================================================
 # Add your project-specific ignores here
-# workspace/
-# data/
-# uploads/
-# downloads/
+
+# AiShorts Pipeline Outputs - Generated Files
+outputs/
+outputs/audio/
+outputs/video/
+outputs/final/
+outputs/demo_fase2/
+outputs/tts_demo/
+outputs/test_results.txt
+outputs/pipeline_report_*.json
+outputs/final_demo_video.mp4
+outputs/final_demo_bg.jpg
+
+# Temporary and Cache Directories
+/workspace/
+/data/
+/uploads/
+/downloads/
+/temp/
+/tmp/
 

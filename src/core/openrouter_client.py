@@ -70,9 +70,16 @@ class OpenRouterClient:
         self.config = config.openrouter
         self.retry_config = config.retry
         
+        # CORREÇÃO BUG: Usar variáveis de ambiente diretamente
+        import os
+        api_key = os.getenv('OPENROUTER_API_KEY', self.config.api_key)
+        
+        if not api_key:
+            raise ValueError("OPENROUTER_API_KEY não está configurada")
+        
         # Headers padrão
         self.headers = {
-            "Authorization": f"Bearer {self.config.api_key}",
+            "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
             "HTTP-Referer": "https://aishorts.v2",
             "X-Title": "AiShorts v2.0"

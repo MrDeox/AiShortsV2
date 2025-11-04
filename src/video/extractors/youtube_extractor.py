@@ -214,6 +214,73 @@ class YouTubeExtractor:
             
             raise YouTubeExtractionError(error_msg, video_url=video_url, youtube_error=str(e))
     
+    def download_video(self, video_url: str, output_dir: Optional[str] = None) -> str:
+        """
+        Baixa um vídeo completo do YouTube.
+        
+        Args:
+            video_url: URL do vídeo
+            output_dir: Diretório de saída (opcional)
+            
+        Returns:
+            Caminho para o arquivo baixado
+            
+        Raises:
+            VideoUnavailableError: Se vídeo não estiver disponível
+            YouTubeExtractionError: Se houver erro no download
+        """
+        logger.info(f"Baixando vídeo completo: {video_url}")
+        
+        try:
+            # Definir diretório de saída
+            output_dir_path = Path(output_dir) if output_dir else self.output_dir
+            output_dir_path.mkdir(parents=True, exist_ok=True)
+            
+            # Configurar opções para download do vídeo completo
+            download_opts = {
+                **self.ydl_opts,
+                'format': 'best[height<=720]',  # Resolução adequada para shorts
+                'outtmpl': str(output_dir_path / '%(id)s.%(ext)s'),
+                'postprocessors': [{
+                    'key': 'FFmpegVideoConvertor',
+                    'preferedformat': 'mp4',  # Convert to MP4 for consistency
+                }],
+                'keepvideo': True,
+            }
+            
+            def _download():
+                with yt_dlp.YoutubeDL(download_opts) as ydl:
+                    info = ydl.extract_info(video_url, download=True)
+                    
+                    # O arquivo é salvo com o template, encontramos o arquivo real
+                    video_id = info.get('id')
+                    pattern = str(output_dir_path / f"{video_id}.*")
+                    
+                    import glob
+                    downloaded_files = glob.glob(pattern)
+                    if not downloaded_files:
+                        raise YouTubeExtractionError(
+                            f"Arquivo não encontrado após download: {video_url}"
+                        )
+                    
+                    return downloaded_files[0]
+            
+            file_path = ErrorHandler.retry_with_backoff(
+                _download,
+                max_retries=2,
+                delay=3.0
+            )
+            
+            logger.info(f"Vídeo baixado com sucesso: {file_path}")
+            return file_path
+            
+        except (VideoUnavailableError, VideoTooShortError):
+            raise
+        except Exception as e:
+            error_msg = f"Erro no download do vídeo {video_url}: {str(e)}"
+            logger.error(error_msg)
+            raise YouTubeExtractionError(error_msg, video_url=video_url, youtube_error=str(e))
+
     def download_segment(self, video_url: str, start_time: float, duration: float, output_dir: Optional[str] = None) -> str:
         """
         Baixa um segmento específico de um vídeo.

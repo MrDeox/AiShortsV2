@@ -11,8 +11,9 @@ from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from dotenv import load_dotenv
 
-# Carregar variáveis de ambiente
-load_dotenv()
+# Carregar variáveis de ambiente explicitamente
+from pathlib import Path
+load_dotenv(dotenv_path=Path(".env").absolute())
 
 class OpenRouterSettings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -21,7 +22,7 @@ class OpenRouterSettings(BaseSettings):
     )
     """Configurações da integração OpenRouter."""
     
-    api_key: Optional[str] = Field(default=None, env="OPENROUTER_API_KEY")
+    api_key: str = Field(default="", env="OPENROUTER_API_KEY")
     base_url: str = Field(default="https://openrouter.ai/api/v1", env="OPENROUTER_BASE_URL")
     model: str = Field(default="nvidia/nemotron-nano-9b-v2:free", env="OPENROUTER_MODEL")
     max_tokens_theme: int = Field(default=150, env="MAX_TOKENS_THEME")
