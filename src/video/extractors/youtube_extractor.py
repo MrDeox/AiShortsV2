@@ -88,8 +88,7 @@ class YouTubeExtractor:
             result = ErrorHandler.retry_with_backoff(
                 _search, 
                 max_retries=3, 
-                delay=1.0,
-                context=f"search_videos: {query}"
+                delay=1.0
             )
             
             if not result or 'entries' not in result:
@@ -144,8 +143,7 @@ class YouTubeExtractor:
             info = ErrorHandler.retry_with_backoff(
                 _extract_info,
                 max_retries=2,
-                delay=2.0,
-                context=f"extract_video_info: {video_url}"
+                delay=2.0
             )
             
             if not info:
@@ -289,8 +287,7 @@ class YouTubeExtractor:
             file_path = ErrorHandler.retry_with_backoff(
                 _download,
                 max_retries=2,
-                delay=3.0,
-                context=f"download_segment: {video_url} ({start_time}s, {duration}s)"
+                delay=3.0
             )
             
             logger.info(f"Segmento baixado com sucesso: {file_path}")
