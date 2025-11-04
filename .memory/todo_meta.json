@@ -3,59 +3,45 @@
     "Coordinator": {
       "1": {
         "id": "1",
-        "content": "VALIDAÇÃO INDIVIDUAL DO PIPELINE - Teste por Componentes",
-        "details": "✅ VALIDAÇÃO INDIVIDUAL CONCLUÍDA\n\n📊 RESUMO:\n- 4/6 componentes VALIDADOS ✅\n- 2 componentes COM PROBLEMAS ❌\n\n🟢 FUNCIONANDO:\n• YouTubeExtractor (B-roll) - yt-dlp OK\n• SemanticAnalyzer (Matching) - spaCy OK\n• AudioVideoSynchronizer - moviepy v2.2.1 OK\n• VideoProcessor (Composição) - OpenCV + MoviePy OK\n\n🔴 PROBLEMAS IDENTIFICADOS:\n• ThemeGenerator - API OpenRouter inválida\n• KokoroTTS - Library não instalada\n\n📋 PRÓXIMOS PASSOS:\n1. Obter API key OpenRouter válida\n2. Instalar Kokoro TTS localmente\n3. Teste End-to-End completo",
+        "content": "Pesquisa de Mercado Estratégica - Novas Aplicações do Modelo do Inventor",
+        "details": "Analisar oportunidades de negócios digitais autônomos que se alinhem com a filosofia de ativos que geram renda passiva com alta automação",
         "status": "completed",
         "priority": "high"
       },
-      "1.1": {
-        "id": "1.1",
-        "content": "Teste 1: Geração de Roteiro a partir de Tema",
-        "details": "1. ❌ API key OpenRouter inválida detectada\n2. ✅ Dependências instaladas (loguru, pydantic, etc.)\n3. ✅ Código do ThemeGenerator funciona\n4. ❌ API key OpenRouter precisa ser válida\n5. Próximo: Solicitar nova API key da OpenRouter",
-        "status": "in_progress",
-        "priority": "high"
-      },
-      "1.2": {
-        "id": "1.2",
-        "content": "Teste 2: Conversão de Roteiro para TTS",
-        "details": "1. ❌ Kokoro TTS library não instalada\n2. ✅ Código do KokoroTTSClient funciona tecnicamente\n3. ❌ Requer instalação local do Kokoro\n4. Próximo: Testar busca de B-roll",
-        "status": "in_progress",
-        "priority": "high"
-      },
-      "1.3": {
-        "id": "1.3",
-        "content": "Teste 3: Busca e Download de B-roll",
-        "details": "1. Testar video_searcher.py individualmente\n2. Verificar busca por palavras-chave do roteiro\n3. Validar download de vídeos\n4. Testar filtros de qualidade e duração\n5. Verificar arquivos de vídeo baixados",
-        "status": "pending",
-        "priority": "high"
-      },
-      "1.4": {
-        "id": "1.4",
-        "content": "Teste 4: Análise Semântica e Matching",
-        "details": "1. ✅ spaCy instalado com sucesso\n2. ✅ Código do SemanticAnalyzer funciona perfeitamente\n3. ✅ Import corrigido (aishorts_v2 → src)\n4. ✅ Teste completo: palavras-chave, tom, categorização, similaridade\n5. ✅ SemanticAnalyzer - TOTALMENTE FUNCIONAL",
+      "2": {
+        "id": "2",
+        "content": "Análise de Tendências Tecnológicas Emergentes",
+        "details": "Identificar novas tecnologias/IA que criam oportunidades para automação de tarefas tradicionalmente manuais",
         "status": "completed",
         "priority": "high"
       },
-      "1.5": {
-        "id": "1.5",
-        "content": "Teste 5: Sincronização de Vídeo",
-        "details": "1. ✅ moviepy instalado (v2.2.1)\n2. ✅ Import corrigido (moviepy.editor → moviepy)\n3. ✅ Dependências: librosa, soundfile, numpy, scipy, moviepy - todas OK\n4. ✅ AudioVideoSynchronizer inicializado com sucesso\n5. ✅ AudioSegment e VideoSegment criados com sucesso\n6. ✅ AudioVideoSynchronizer - TOTALMENTE FUNCIONAL",
+      "3": {
+        "id": "3",
+        "content": "Mapeamento de Modelos de Monetização de Ativos Digitais",
+        "details": "Analisar diferentes formas de renda passiva: AdSense, afiliados, assinaturas, venda de ativos, subscriptions, etc.",
         "status": "completed",
         "priority": "high"
       },
-      "1.6": {
-        "id": "1.6",
-        "content": "Teste 6: Composição Final",
-        "details": "1. ✅ moviepy import corrigido para v2.2.1\n2. ✅ OpenCV, PIL - todas dependências OK\n3. ✅ VideoProcessor inicializado com sucesso\n4. ✅ Import da configuração corrigido\n5. ✅ VideoProcessor - FUNCIONAL para composição final",
+      "4": {
+        "id": "4",
+        "content": "Identificação de Nichos Mal Explorados",
+        "details": "Encontrar áreas de mercado com baixa competição mas alto potencial de automação",
         "status": "completed",
         "priority": "high"
       },
-      "1.7": {
-        "id": "1.7",
-        "content": "Teste 7: Integração End-to-End",
-        "details": "1. Executar pipeline completo\n2. Medir tempo de execução\n3. Validar qualidade final\n4. Documentar gargalos\n5. Verificar todos os arquivos de saída",
-        "status": "pending",
-        "priority": "medium"
+      "5": {
+        "id": "5",
+        "content": "Análise de Complexidade de MVP e Potencial de Automação",
+        "details": "Avaliar facilidade de construção inicial e potencial de autonomia operacional de cada oportunidade",
+        "status": "completed",
+        "priority": "high"
+      },
+      "6": {
+        "id": "6",
+        "content": "Síntese Estratégica e Recomendações",
+        "details": "Compilar todos os achados em relatório executivo com as 5-10 melhores oportunidades e plano de ação",
+        "status": "completed",
+        "priority": "high"
       }
     }
   }
