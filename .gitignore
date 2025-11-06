@@ -911,3 +911,37 @@ outputs/final_demo_bg.jpg
 /temp/
 /tmp/
 
+# ==============================================================================
+# WORKSPACE SPECIFIC FILES
+# ==============================================================================
+
+# Research Reports and Documentation
+RELATORIO_ESTRATEGICO_MODELO_INVENTOR.md
+GEMINI.md
+final_demo_report.json
+final_demo_video.mp4
+report_record.txt
+check_fix.py
+test_youtube_extractor_fix.py
+
+# Workspace Memory and Cache
+/memory/
+/research/
+/user_input_files/
+/imgs/
+/extract/
+/tmp/
+/backups/
+/browser/
+/external_api/
+
+# Workspace Configuration
+/workspace.json
+
+# Temporary test files
+'=2.0.0'
+'=4.3.0'
+
+# Platform-specific files
+tmp/
+
