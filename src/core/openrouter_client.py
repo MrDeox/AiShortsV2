@@ -1,7 +1,7 @@
 """
 Cliente OpenRouter para AiShorts v2.0
 
-Implementação robusta da integração com o modelo nvidia/nemotron-nano-9b-v2:free.
+Integração centralizada com o modelo qwen/qwen3-235b-a22b:free via OpenRouter.
 """
 
 import json
@@ -132,7 +132,8 @@ class OpenRouterClient:
             )
         
         try:
-            with httpx.Client(timeout=30.0) as client:
+            # Aumentar timeout para respostas longas (tokens altos)
+            with httpx.Client(timeout=120.0) as client:
                 start_time = time.time()
                 
                 response = client.post(
@@ -160,7 +161,6 @@ class OpenRouterClient:
                     wait_time = self.rate_limiter.get_wait_time()
                     raise RateLimitError(
                         f"Rate limit HTTP 429 - Aguarde {wait_time:.2f}s",
-                        status_code=429,
                         wait_time=wait_time
                     )
                 

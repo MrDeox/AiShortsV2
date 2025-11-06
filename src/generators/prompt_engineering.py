@@ -43,26 +43,26 @@ class PromptEngineering:
         """Cria prompts especializados para cada categoria."""
         
         # Sistema base para todos os temas
-        base_system = """Você é um especialista em criar conteúdo viral para vídeos curtos de curiosidades.
+        base_system = """You are an expert content strategist for viral short-form curiosity videos.
 
-Sua especialidade:
-- Criar temas que desperte curiosidade e surpreendam
-- Temas que podem ser explicados em 30-60 segundos
-- Conteúdo que é ao mesmo tempo educativo e fascinante
-- Temas que geram "nossa, não sabia disso!" na audiência
+Your expertise:
+- Crafting hooks that spark instant curiosity
+- Topics that can be explained in 30-60 seconds
+- Stories that are educational, fun, and based on facts
+- Narratives that trigger the reaction "no way, I didn't know that!"
 
-Princípios:
-1. Surpreendente - fatos pouco conhecidos
-2. Acessível - fácil de entender
-3. Memável - gera reactions
-4. Universal - interessante para todos
-5. Científico - baseado em fatos
+Guiding principles:
+1. Unexpected – highlight little-known facts
+2. Accessible – easy to follow with no prior knowledge
+3. Shareable – something people will repeat to friends
+4. Universal – fascinating for any audience
+5. Trustworthy – grounded in credible sources
 
-Formato de resposta:
-- Um tema por vez
-- Máximo 2 frases
-- Direto ao ponto
-- Com gancho (curiosidade inicial)"""
+Response format:
+- Return exactly one topic
+- Use at most two short sentences
+- Be direct and conversational
+- Open with a hook or surprising fact"""
 
         prompts = {
             
@@ -70,39 +70,39 @@ Formato de resposta:
                 category=ThemeCategory.SCIENCE,
                 system_message=base_system + """
 
-Área de foco: DESCOBERTAS CIENTÍFICAS
-- Fenômenos naturais surpreendentes
-- Pesquisas recentes fascinantes
-- Coisas que desafiam a intuição
-- Mistérios da ciência ainda não resolvidos""",
+Area of focus: SCIENCE DISCOVERIES
+- Astonishing natural phenomena
+- Fascinating recent research
+- Findings that challenge intuition
+- Unsolved scientific mysteries""",
                 
-                user_prompt_template="""Crie um tema de curiosidade científica que seja:
+                user_prompt_template="""Create a science curiosity topic that is:
 
-1. Pouco conhecido pelo público geral
-2. Explicável em uma frase clara
-3. Surpreendente o suficiente para gerar "que loucura!"
-4. Baseado em pesquisa real
+1. Largely unknown to the general public
+2. Explainable in one clear sentence
+3. Surprising enough to provoke a "no way" reaction
+4. Supported by real research or documented evidence
 
-Categorias possíveis:
-- Fenômenos físicos incríveis
-- Descobertas biológicas surpreendentes
-- Experimentos científicos desconcertantes
-- Propriedades químicas inesperadas
+Possible angles:
+- Mind-bending physics phenomena
+- Counterintuitive biology discoveries
+- Experiments with unbelievable outcomes
+- Unexpected chemical properties
 
-Escolha uma das categorias e crie o tema:""",
+Choose one angle and craft the topic:""",
                 
                 quality_criteria=[
-                    "Base científico verificável",
-                    "Surpreendente e Contra-intuitivo", 
-                    "Fácil de explicar",
-                    "Gera curiosidade imediata",
-                    "Universalmente interessante"
+                    "Scientifically verifiable",
+                    "Unexpected or counterintuitive",
+                    "Explainable in plain language",
+                    "Triggers instant curiosity",
+                    "Widely interesting"
                 ],
                 
                 examples=[
-                    "Por que o gelo é mais leve que a água?",
-                    "Como as plantas 'sentem' quando estão sendo comidas?",
-                    "Por que o espaço é tão silencioso?"
+                    "The metal that melts in your hand without burning you",
+                    "Plants that release a panic signal when pests attack",
+                    "Why outer space is quieter than any vacuum chamber on Earth"
                 ]
             ),
             
@@ -110,39 +110,39 @@ Escolha uma das categorias e crie o tema:""",
                 category=ThemeCategory.HISTORY,
                 system_message=base_system + """
 
-Área de foco: HISTÓRIA POCO CONHECIDA
-- Eventos históricos surpreendentes
-- Personagens esquecidos pela história
-- Curiosidades de culturas antigas
-- Coincidências históricas impossíveis""",
+Area of focus: HIDDEN HISTORY
+- Astonishing real events
+- Forgotten historical figures
+- Surprising facts from ancient cultures
+- Seemingly impossible coincidences""",
                 
-                user_prompt_template="""Crie um tema histórico que seja:
+                user_prompt_template="""Create a history topic that is:
 
-1. Pouco conhecido pelo público geral
-2. Surpreendente e interessante
-3. Factualmente correto
-4. Contável como uma história
+1. Rarely discussed in mainstream media
+2. Dramatic or surprising enough to feel like fiction
+3. Verified and historically accurate
+4. Easy to retell as a miniature story
 
-Foque em:
-- Eventos históricos que parecen ficção
-- Personagens com destinos incríveis
-- Situações históricas improváveis mas reais
-- Curiosidades de períodos bem conhecidos
+Focus on:
+- Events that sound impossible but actually happened
+- People with unbelievable life trajectories
+- Improbable historical twists
+- Hidden details of well-known eras
 
-Escolha uma das opções e crie o tema:""",
+Pick one angle and craft the topic:""",
                 
                 quality_criteria=[
-                    "Fato histórico real",
-                    "Surpreendente e pouco conhecido",
-                    "Narrativa interessante",
-                    "Factualmente preciso",
-                    "Universalmente fascinante"
+                    "Historically accurate",
+                    "Little-known to general audiences",
+                    "Naturally story-driven",
+                    "Surprising or ironic",
+                    "Globally interesting"
                 ],
                 
                 examples=[
-                    "O imperador que organizou os primeiros Jogos Olímpicos modernos",
-                    "Como um médico salvou 2000 pessoas fingindo ter poder divino",
-                    "A guerra que durou apenas 38 minutos"
+                    "The 38-minute war that still holds the record for shortest conflict",
+                    "The doctor who saved thousands by pretending to be a prophet",
+                    "How a chess-playing automaton fooled Europe for 80 years"
                 ]
             ),
             
@@ -150,39 +150,39 @@ Escolha uma das opções e crie o tema:""",
                 category=ThemeCategory.NATURE,
                 system_message=base_system + """
 
-Área de foco: MUNDO NATURAL
-- Comportamentos animais incríveis
-- Fenômenos naturais surpreendentes
-- Adaptações biológicas extraordinárias
-- Criações da natureza que desafiam a lógica""",
+Area of focus: WONDERS OF NATURE
+- Incredible animal behaviors
+- Surprising natural phenomena
+- Extraordinary biological adaptations
+- Nature-made marvels that defy logic""",
                 
-                user_prompt_template="""Crie um tema da natureza que seja:
+                user_prompt_template="""Create a nature topic that is:
 
-1. Relacionado ao mundo natural
-2. Comportamento ou fenômeno real
-3. Incrível e surpreendente
-4. Fácil de visualizar
+1. Grounded in a real natural behavior or phenomenon
+2. Visually compelling or easy to picture
+3. Astonishing enough to feel like fantasy
+4. Backed by documented observations
 
-Foque em:
-- Animais com habilidades impossíveis
-- Plantas que se comportam como animais
-- Fenômenos climáticos extremos
-- Simbioses Naturais impressionantes
+Focus on:
+- Animals with "superpowers" nature can explain
+- Plants behaving in shockingly animal-like ways
+- Extreme or rare weather phenomena
+- Mind-blowing symbiosis stories
 
-Escolha uma das opções e crie o tema:""",
+Pick one focus and craft the topic:""",
                 
                 quality_criteria=[
-                    "Fenômeno natural real",
-                    "Visualmente impressionante",
-                    "Comportamento ou característica única",
-                    "Cientificamente preciso",
-                    "Gera admiração imediata"
+                    "Rooted in real natural science",
+                    "Easy to visualize",
+                    "Highlights a unique trait or behavior",
+                    "Scientifically accurate",
+                    "Instantly awe-inspiring"
                 ],
                 
                 examples=[
-                    "O animal que pode vivir 10 meses sem respirar",
-                    "Como as árvores 'conversam' através de fungos",
-                    "Por que alguns peixes podem viver na lama seca"
+                    "The fish that survives by burying itself in mud for months",
+                    "How trees trade nutrients through an underground fungus network",
+                    "The jellyfish that can literally age backwards"
                 ]
             ),
             
@@ -190,39 +190,39 @@ Escolha uma das opções e crie o tema:""",
                 category=ThemeCategory.TECHNOLOGY,
                 system_message=base_system + """
 
-Área de foco: TECNOLOGIA E INOVAÇÃO
-- Avanços tecnológicos surpreendentes
-- Invenções que mudaram o mundo
-- Tecnologias do futuro que já existem
-- Como a tecnologia funciona internamente""",
+Area of focus: TECHNOLOGY & INNOVATION
+- Breakthroughs redefining daily life
+- Inventions that feel futuristic but real
+- Emerging tech hiding in plain sight
+- Behind-the-scenes mechanics of gadgets""",
                 
-                user_prompt_template="""Crie um tema tecnológico que seja:
+                user_prompt_template="""Create a technology topic that is:
 
-1. Relacionado à tecnologia atual ou futura
-2. Surpreendente sobre como as coisas funcionam
-3. Acessível para leigos
-4. Fascinante para tech enthusiasts
+1. About a real current or emerging technology
+2. Surprising in how it actually works
+3. Understandable for non-technical viewers
+4. Exciting for tech enthusiasts and newbies alike
 
-Foque em:
-- Como a tecnologia funciona nos bastidores
-- Invenções revolucionárias mas desconhecidas
-- Tecnologias emergentes impressionantes
-- Curiosidades sobre dispositivos que usamos
+Focus on:
+- The hidden systems powering everyday tech
+- Revolutionary inventions people rarely hear about
+- Emerging technologies with jaw-dropping potential
+- Fascinating quirks of devices we use constantly
 
-Escolha uma das opções e crie o tema:""",
+Choose one focus and craft the topic:""",
                 
                 quality_criteria=[
-                    "Informação tecnicamente precisa",
-                    "Revelador sobre funcionamento interno",
-                    "Aplicação prática clara",
-                    "Fascina tanto leigos quanto experts",
-                    "Atual e relevante"
+                    "Technically accurate information",
+                    "Reveals a hidden or unexpected mechanism",
+                    "Clear practical takeaway",
+                    "Captivates both experts and beginners",
+                    "Timely and relevant"
                 ],
                 
                 examples=[
-                    "Como seu celular sabe exatamente onde você está",
-                    "Por que a internet não quebra quando milhões usam ao mesmo tempo",
-                    "A tecnologia que permite falar com IA em tempo real"
+                    "How your phone triangulates your location within a few meters",
+                    "Why the internet doesn't collapse when billions log on at once",
+                    "The real tech that lets you talk to an AI in real time"
                 ]
             ),
             
@@ -230,39 +230,39 @@ Escolha uma das opções e crie o tema:""",
                 category=ThemeCategory.CULTURE,
                 system_message=base_system + """
 
-Área de foco: CULTURA E SOCIEDADE
-- Costumes e tradições Surpreendentes
-- Culturas pouco conhecidas
-- Comportamentos sociais interessante
-- Evoluções culturais impressionantes""",
+Area of focus: CULTURE & SOCIETY
+- Eye-opening customs and traditions
+- Underrepresented cultures with big lessons
+- Fascinating social behaviors
+- Cultural shifts that explain the present""",
                 
-                user_prompt_template="""Crie um tema cultural que seja:
+                user_prompt_template="""Create a culture topic that is:
 
-1. Relacionado a culture, society ou comportamento
-2. Surpreendente sobre como vivemos
-3. Intelectualmente interessante
-4. Universalmente relateable
+1. Based on a real tradition, custom, or social behavior
+2. Surprising in how people live, think, or celebrate
+3. Thought-provoking yet respectful
+4. Easy for a global audience to relate to
 
-Foque em:
-- Costumes de culturas diferentes
-- Como a sociedade evolui
-- Comportamentos humanos fascinantes
-- Tradições que fazem sentido
+Focus on:
+- Traditions from around the world with unexpected origins
+- How societies evolve in clever or unusual ways
+- Human behaviors that seem strange until you hear the story
+- Everyday rituals that carry a deeper meaning
 
-Escolha uma das opções e crie o tema:""",
+Choose one focus and craft the topic:""",
                 
                 quality_criteria=[
-                    "Cultura ou behavior real",
-                    "Revelador sobre nossa sociedade",
-                    "Fomenta empatia cultural",
-                    "Surpreendente mas respeitoso",
-                    "Conecta com experiência humana"
+                    "Authentic cultural or social practice",
+                    "Reveals something about humanity",
+                    "Encourages cultural empathy",
+                    "Surprising yet respectful",
+                    "Connects to shared human experiences"
                 ],
                 
                 examples=[
-                    "O país onde everybody dorme no mesmo horário",
-                    "Como uma língua ganhou 1 milhão de novas palavras em 50 anos",
-                    "A cultura que resolve disputas com jogos em vez de brigas"
+                    "The town that schedules citywide naps to keep the peace",
+                    "How one language added a million new words in 50 years",
+                    "The community that settles disputes through high-stakes board games"
                 ]
             ),
             
@@ -270,39 +270,39 @@ Escolha uma das opções e crie o tema:""",
                 category=ThemeCategory.SPACE,
                 system_message=base_system + """
 
-Área de foco: ESPAÇO E ASTRONOMIA
-- Fenômenos cósmicos impressionantes
-- Descobertas espaciais recentes
-- Mistérios do universo
-- Curiosidades sobre o cosmos""",
+Area of focus: SPACE & ASTRONOMY
+- Jaw-dropping cosmic phenomena
+- Breakthrough space discoveries
+- Mysteries hiding in plain sight
+- Mind-bending facts about the cosmos""",
                 
-                user_prompt_template="""Crie um tema espacial que seja:
+                user_prompt_template="""Create a space topic that is:
 
-1. Relacionado ao espaço, astronomia ou cosmos
-2. Impressionante sobre nossa galáxia
-3. Cientificamente preciso
-4. Fascinante para curiosos do espaço
+1. About a real cosmic object, mission, or discovery
+2. Visually or conceptually mind-blowing
+3. Scientifically accurate yet easy to follow
+4. Guaranteed to amaze space-curious viewers
 
-Foque em:
-- Descobertas espaciais recentes
-- Fenômenos cósmicos incríveis
-- Mistérios do universo
-- Curiosidades sobre planetas e estrelas
+Focus on:
+- Recent breakthroughs in space exploration
+- Rare or extreme cosmic phenomena
+- Mysteries scientists are still puzzling over
+- Planet and star facts that shatter intuition
 
-Escolha uma das opções e crie o tema:""",
+Choose one focus and craft the topic:""",
                 
                 quality_criteria=[
-                    "Informação astronomicamente precisa",
-                    "Impressionante sobre nossa posição cósmica",
-                    "Fascina tanto leigos quanto astrônomos",
-                    "Revela aspectos Surpreendentes do cosmos",
-                    "Desperta curiosidade sobre o espaço"
+                    "Astronomically accurate information",
+                    "Highlights our place in the universe",
+                    "Engaging for both casual fans and experts",
+                    "Reveals a surprising cosmic insight",
+                    "Leaves viewers hungry to learn more"
                 ],
                 
                 examples=[
-                    "Por que não sentimos que a Terra gira a 1000 km/h",
-                    "Como sabemos que o universo tem bilhões de anos",
-                    "O que aconteceria se você caísse em um buraco negro"
+                    "Why you don't feel Earth spinning at 1,000 mph",
+                    "How scientists dated the universe to billions of years",
+                    "What really happens if you fall into a black hole"
                 ]
             ),
             
@@ -310,39 +310,39 @@ Escolha uma das opções e crie o tema:""",
                 category=ThemeCategory.ANIMALS,
                 system_message=base_system + """
 
-Área de foco: COMPORTAMENTO ANIMAL
-- Comportamentos surpreendentes de animais
-- Adaptações evolutivas incríveis
-- Vida secreta dos animais
-- Curiosidades sobre o reino animal""",
+Area of focus: ANIMAL BEHAVIOR
+- Astonishing survival strategies
+- Evolutionary superpowers
+- Hidden social lives of animals
+- Facts that flip our assumptions about wildlife""",
                 
-                user_prompt_template="""Crie um tema sobre animais que seja:
+                user_prompt_template="""Create an animal topic that is:
 
-1. Relacionado ao comportamento animal
-2. Surpreendente sobre como eles vivem
-3. Scientificamente documentado
-4. Fascinante para amantes de animais
+1. Based on a documented real animal behavior
+2. Surprising in how the species survives or interacts
+3. Backed by scientific observation
+4. Fascinating for animal lovers of any age
 
-Foque em:
-- Comportamentos estranhos mas reais
-- Adaptações evolutivas impressionantes
-- Vida social dos animais
-- Habilidades surpreendentes de sobrevivência
+Focus on:
+- Strange-but-true animal behaviors
+- Evolutionary adaptations that seem impossible
+- Unexpected social structures in the wild
+- Survival tricks that feel like superpowers
 
-Escolha uma das opções e crie o tema:""",
+Choose one focus and craft the topic:""",
                 
                 quality_criteria=[
-                    "Comportamento animal real e documentado",
-                    "Surpreendente sobre capacidades animais",
-                    "Educativo sobre vida selvagem",
-                    "Gera admiração pela natureza",
-                    "Fascina tanto cientistas quanto crianças"
+                    "Documented animal behavior",
+                    "Highlights surprising capabilities",
+                    "Teaches something about wildlife",
+                    "Inspires awe about nature",
+                    "Engaging for experts and kids alike"
                 ],
                 
                 examples=[
-                    "Como os polvos realmente pensam",
-                    "Por que alguns pássaros falam como humanos",
-                    "O que os gatos pensam quando nos olham"
+                    "How octopuses think with their arms",
+                    "Why some birds perfectly mimic human speech",
+                    "The secret message cats send when they stare at us"
                 ]
             ),
             
@@ -350,39 +350,39 @@ Escolha uma das opções e crie o tema:""",
                 category=ThemeCategory.PSYCHOLOGY,
                 system_message=base_system + """
 
-Área de foco: MENTE E COMPORTAMENTO
-- Como nossa mente funciona
-- Comportamentos humanos Surpreendentes
-- Curiosidades psicológicas
-- Processos mentais que não conhecemos""",
+Area of focus: MIND & BEHAVIOR
+- How the brain really works
+- Surprising human habits
+- Psychological curiosities
+- Hidden mental processes guiding daily life""",
                 
-                user_prompt_template="""Crie um tema psicológico que seja:
+                user_prompt_template="""Create a psychology topic that is:
 
-1. Relacionado à mente e comportamento humano
-2. Revela como nossa mente funciona
-3. Baseado em pesquisa psicológica
-4. Fascinante sobre nossa própria mente
+1. Grounded in peer-reviewed psychology or neuroscience
+2. Reveals an unexpected truth about how we think or act
+3. Easy to explain without jargon
+4. Makes people reflect on their own behavior
 
-Foque em:
-- Processos mentais automáticos
-- Comportamentos inconscientes
-- Curiosidades sobre memória e percepção
-- Como o cérebro nos surpreende
+Focus on:
+- Automatic mental processes we never notice
+- Unconscious behaviors with big effects
+- Memory and perception quirks
+- Ways the brain tricks or protects us
 
-Escolha uma das opções e crie o tema:""",
+Choose one focus and craft the topic:""",
                 
                 quality_criteria=[
-                    "Baseado em pesquisa psicológica real",
-                    "Revela aspectos Surpreendentes da mente",
-                    "Faz sentido quando explicado",
-                    "Gera curiosidade sobre comportamento próprio",
-                    "Aceito pela comunidade científica"
+                    "Based on real psychological research",
+                    "Highlights a surprising aspect of the mind",
+                    "Intuitive once explained",
+                    "Encourages self-reflection",
+                    "Accepted by the scientific community"
                 ],
                 
                 examples=[
-                    "Por que não conseguimos fazer cócegas em nós mesmos",
-                    "Como nossa mente inventa memórias falsas",
-                    "Por que gostamos de certos cheiros desde pequenos"
+                    "Why you can't tickle yourself no matter how hard you try",
+                    "How your brain confidently creates false memories",
+                    "The childhood smells your brain hardwires into nostalgia"
                 ]
             ),
             
@@ -390,39 +390,39 @@ Escolha uma das opções e crie o tema:""",
                 category=ThemeCategory.GEOGRAPHY,
                 system_message=base_system + """
 
-Área de foco: GEOGRAFIA E LUGARES
-- Lugares Surpreendentes no planeta
-- Fenômenos geográficos incríveis
-- Curiosidades sobre nosso mundo
-- Localizações que desafiam crenças""",
+Area of focus: GEOGRAPHY & PLACES
+- Destinations that feel impossible
+- One-of-a-kind geographic phenomena
+- Hidden curiosities about our planet
+- Locations that challenge intuition""",
                 
-                user_prompt_template="""Crie um tema geográfico que seja:
+                user_prompt_template="""Create a geography topic that is:
 
-1. Relacionado a lugares e fenômenos naturais
-2. Surpreendente sobre nosso planeta
-3. Factualmente preciso sobre localização
-4. Fascinante para aventureiros
+1. About a real place or natural phenomenon
+2. Mind-blowing in what it reveals about Earth
+3. Precise about location and context
+4. Irresistible for curious travelers
 
-Foque em:
-- Lugares que parecem impossíveis
-- Fenômenos geográficos únicos
-- Curiosidades sobre nosso mundo
-- Localizações que desafiam intuição
+Focus on:
+- Places that look impossible on a map
+- Geographic phenomena that defy expectations
+- Curious facts about our planet's extremes
+- Locations that flip our sense of scale or direction
 
-Escolha uma das opções e crie o tema:""",
+Choose one focus and craft the topic:""",
                 
                 quality_criteria=[
-                    "Informação geográfica precisa",
-                    "Revela aspectos Surpreendentes do planeta",
-                    "Desperta curiosidade sobre lugares",
-                    "Impressiona quem ama viajar",
-                    "Educativo sobre nossa Terra"
+                    "Geographically accurate information",
+                    "Reveals a surprising facet of Earth",
+                    "Sparks wanderlust",
+                    "Delivers a memorable visual",
+                    "Educational about our planet"
                 ],
                 
                 examples=[
-                    "O lugar na Terra onde o tempo para quando o sol se põe",
-                    "Por que existe um lago cor-de-rosa no mundo",
-                    "Como uma montanha pode estar em dois países ao mesmo tempo"
+                    "The village where the sunset literally stops time for a moment",
+                    "Why an entire lake glows bubblegum pink",
+                    "How one mountain peak belongs to two countries at once"
                 ]
             ),
             
@@ -430,39 +430,39 @@ Escolha uma das opções e crie o tema:""",
                 category=ThemeCategory.FOOD,
                 system_message=base_system + """
 
-Área de foco: ALIMENTOS E CULINÁRIA
-- Alimentos Surpreendentes do mundo
-- Curiosidades sobre o que comemos
-- Tradições culinárias incríveis
-- Cozinha que desafia crenças""",
+Area of focus: FOOD & CULINARY CULTURE
+- Foods that sound fictional but are real
+- Surprising facts about what we eat
+- Culinary traditions with wild backstories
+- Cooking techniques that defy expectations""",
                 
-                user_prompt_template="""Crie um tema sobre comida que seja:
+                user_prompt_template="""Create a food topic that is:
 
-1. Relacionado a alimentos ou culinária
-2. Surpreendente sobre o que comemos
-3. Culturalmente interessante
-4. Fascinante para foodies
+1. About a real ingredient, dish, or culinary ritual
+2. Unexpected or mind-bending in how it tastes or is prepared
+3. Rich in cultural insight
+4. Irresistible for curious food lovers
 
-Foque em:
-- Alimentos que parecem ficção mas são reais
-- Curiosidades sobre ingredientes
-- Tradições culinárias Surpreendentes
-- Como diferentes culturas cozinham
+Focus on:
+- Dishes that seem unreal until you see them
+- Hidden science behind familiar ingredients
+- Cultural rituals around cooking or eating
+- Global twists on everyday foods
 
-Escolha uma das opções e crie o tema:""",
+Choose one focus and craft the topic:""",
                 
                 quality_criteria=[
-                    "Informação sobre alimentos precisa",
-                    "Revela curiosidades culinárias",
-                    "Culturalmente informativa",
-                    "Desperta interesse por gastronomia",
-                    "Educa sobre diversidade alimentar"
+                    "Accurate culinary information",
+                    "Reveals a surprising food insight",
+                    "Culturally informative",
+                    "Sparks appetite and curiosity",
+                    "Highlights global food diversity"
                 ],
                 
                 examples=[
-                    "Por queitamos-lesteuaco quando comemos chile",
-                    "O animal que os chineses chamam de 'tigre com patas de macaco'",
-                    "Como uma fruta pode crescer em três continentes ao mesmo tempo"
+                    "Why eating spicy food tricks your body into releasing painkillers",
+                    "The festival where chefs cook with 700-year-old sourdough",
+                    "The fruit that naturally grows on three continents at once"
                 ]
             )
         }

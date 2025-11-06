@@ -340,70 +340,66 @@ class ScriptGenerator:
         
         # System message baseado na plataforma
         platform_instructions = {
-            "tiktok": "TikTok: Foque em conteúdo viral, tendências e linguagem jovem",
-            "shorts": "YouTube Shorts: Foque em qualidade de conteúdo e retenção",
-            "reels": "Instagram Reels: Foque em estética e engajamento visual"
+            "tiktok": "TikTok: lean into fast pacing, bold hooks, and conversational slang.",
+            "shorts": "YouTube Shorts: balance storytelling with clarity and high retention cues.",
+            "reels": "Instagram Reels: emphasize visual moments, aesthetic beats, and shareable lines."
         }
         
-        base_system = f"""Você é um especialista em criar roteiros virais para vídeos curtos de 60 segundos.
+        base_system = f"""You are a senior short-form scriptwriter who crafts viral 60-second videos in English.
 
-Sua especialidade:
-- Criar roteiros que prendam atenção nos primeiros 3 segundos
-- Transformar curiosidades em narrativas envolventes
-- Estruturar conteúdo para máxima retenção de audiência
-- Adaptar linguagem para {target_platform}
+Your superpowers:
+- Write hooks that stop the scroll within three seconds
+- Turn curiosity-packed facts into binge-worthy micro stories
+- Structure every beat for maximum retention and rewatchability
+- Adapt tone, pacing, and wording for {target_platform}
 
-PRINCÍPIOS DE SUCESSO:
-1. Hook Fortíssimo (3-5s): Frase que faz a pessoa PARAR e assistir
-2. Desenvolvimento Envolvente (40-50s): Explicação clara e fascinante
-3. Call-to-Action Estratégico (5-10s): Encoraja engajamento sem ser óbvio
-4. Linguagem Natural: Como se estivesse contando para um amigo
-5. Ritmo Dinâmico: Variação de velocidade e ênfase
+SUCCESS PRINCIPLES:
+1. Magnetic Hook (3-5s): deliver a shocking fact or question immediately.
+2. Engaging Body (~50s): explain with clarity, analogies, and dynamic pacing.
+3. Strategic Close (5-10s): wrap up with a punchy summary and subtle CTA.
+4. Natural Voice: sound like a passionate friend sharing the coolest fact.
+5. Dynamic Rhythm: vary sentence length, energy, and pauses.
 
-ESTRUTURA OBRIGATÓRIA:
-HOOK (3-5 segundos):
-- Frase de impacto que desperte curiosidade
-- Pode ser pergunta, afirmação surpreendente ou "Você sabia que..."
-- DEVE fazer a pessoa querer continuar assistindo
+MANDATORY STRUCTURE:
+- HOOK (3-5 seconds): Start with a jaw-dropping fact, bold claim, or question. Keep it under 12 words.
+- BODY (~50 seconds): 6 sentences, 140-160 words total. Use imagery, comparisons, or mini-scenes to keep attention high and maintain momentum.
+- CONCLUSION (5-10 seconds): 2 sentences, at least 25 words total, delivering payoff + subtle CTA.
+- ESTIMATED_DURATION: A single line formatted exactly as ESTIMATED_DURATION: <seconds>
 
-DESENVOLVIMENTO (40-50 segundos):
-- Explicação clara e envolvente do tema
-- Use analogias e exemplos práticos
-- Mantenha ritmo dinâmico
-- Varie entonação (subir, baixar volume)
-- Use pausas dramáticas
+RESPONSE FORMAT (use exactly this layout, no extra markdown or backticks):
+HOOK: [8-12 words]
+BODY: [6 sentences, 140-160 words total]
+CONCLUSION: [2 sentences, ≥25 words with CTA]
+ESTIMATED_DURATION: [seconds]
 
-CONCLUSÃO/CTA (5-10 segundos):
-- Resumo em 1 frase
-- Call-to-action sutil (curtir, comentar, seguir)
-- Pode incluir pergunta para comentários
+EXAMPLES (copy the structure and tone, no markdown fences):
+HOOK: This fish defeats sharks with instant, suffocating slime.
+BODY: Meet the hagfish—the ocean’s weirdest survivor. When threatened, it ejects threads of mucus that expand like foam, clogging a predator’s gills in seconds. Scientists measured enough slime to fill a bathtub from one fish, turning an attack into a choking retreat. Divers filmed this in Alaska, proving even sharks back off the “slime torpedo.”
+CONCLUSION: Nature’s grossest defense might be the smartest. Would you touch it? Tag someone who would!
+ESTIMATED_DURATION: 58
 
-FORMATO DE RESPOSTA:
-```
-HOOK: [texto do gancho de 8-12 palavras]
-DESENVOLVIMENTO: [explicação principal em 2-3 frases, 40-50 palavras]
-CONCLUSÃO: [resumo + CTA em 1-2 frases, 8-15 palavras]
-
-DURAÇÃO ESTIMADA: [calculada em segundos]
-```
+HOOK: This tree whispers secrets through an underground internet.
+BODY: Forests aren’t silent—fungi link roots into a “wood-wide web,” letting trees trade nutrients and send distress signals. A shaded sapling can literally receive carbon “transfers” from older trees, keeping it alive until it reaches sunlight—an ecosystem built on hidden generosity. Researchers tracked this network in Canada, proving forests behave like families. Imagine the tallest tree feeding a sapling through hidden fibers while the forest “hears” chainsaws miles away. That’s not myth—it’s chemistry and teamwork.
+CONCLUSION: Still think trees don’t talk? The forest says otherwise—share if that blew your mind. Tag someone who needs proof that nature is running a covert comms network under our feet.
+ESTIMATED_DURATION: 60
 
 {platform_instructions[target_platform]}
 
-Sua tarefa é transformar o seguinte tema em um roteiro viral:"""
+Write the full script in English using the structure above. Do NOT include any extra commentary, explanations, or markdown fences."""
         
-        user_prompt = f"""TEMA: "{theme.content}"
-CATEGORIA: {theme.category.value.upper()}
-QUALIDADE DO TEMA: {theme.quality_score:.2f}/1.0
+        user_prompt = f"""THEME: "{theme.content}"
+CATEGORY: {theme.category.value.upper()}
+THEME QUALITY: {theme.quality_score:.2f}/1.0
 
-INSTRUÇÕES ESPECÍFICAS:
-- Use a curiosidade natural do tema como base
-- Adapte o tom para {target_platform}
-- Mantenha factual accuracy
-- Crie narrativa envolvente sem perder credibilidade
+SPECIFIC INSTRUCTIONS:
+- Let the core curiosity drive the narrative.
+- Match the tone, pacing, and slang to {target_platform}.
+- Keep every statement factual and sourceable.
+- Make the story feel cinematic without losing credibility.
 
 {'- ' + '\n- '.join(custom_requirements) if custom_requirements else ''}
 
-Agora crie o roteiro:"""
+Now craft the script:"""
         
         return {
             "system_message": base_system,
@@ -441,12 +437,12 @@ Agora crie o roteiro:"""
                     name="hook",
                     content="",
                     duration_seconds=0,
-                    purpose="Prender atenção",
+                    purpose="Grab attention instantly",
                     key_elements=[]
                 )
                 current_content = [line[5:].strip()]  # Pega conteúdo após "HOOK:"
             
-            elif line_upper.startswith('DESENVOLVIMENTO:'):
+            elif line_upper.startswith('DESENVOLVIMENTO:') or line_upper.startswith('BODY:'):
                 if current_section:
                     current_section.content = ' '.join(current_content)
                     sections.append(current_section)
@@ -454,12 +450,13 @@ Agora crie o roteiro:"""
                     name="development",
                     content="",
                     duration_seconds=0,
-                    purpose="Explicar e envolver",
+                    purpose="Explain and sustain engagement",
                     key_elements=[]
                 )
-                current_content = [line[14:].strip()]  # Pega conteúdo após "DESENVOLVIMENTO:"
+                content_start = line.split(':', 1)[1].strip()
+                current_content = [content_start]
             
-            elif line_upper.startswith('CONCLUSÃO:') or line_upper.startswith('CTA:'):
+            elif line_upper.startswith('CONCLUSÃO:') or line_upper.startswith('CONCLUSION:') or line_upper.startswith('CTA:'):
                 if current_section:
                     current_section.content = ' '.join(current_content)
                     sections.append(current_section)
@@ -467,11 +464,15 @@ Agora crie o roteiro:"""
                     name="conclusion",
                     content="",
                     duration_seconds=0,
-                    purpose="Fechar e engajar",
+                    purpose="Deliver payoff and invite engagement",
                     key_elements=[]
                 )
-                start_idx = 10 if line_upper.startswith('CONCLUSÃO:') else 4
-                current_content = [line[start_idx:].strip()]
+                if ':' in line:
+                    content_start = line.split(':', 1)[1].strip()
+                else:
+                    start_idx = 10 if line_upper.startswith('CONCLUSÃO:') else 4
+                    content_start = line[start_idx:].strip()
+                current_content = [content_start]
             
             elif line_upper.startswith('DURAÇÃO'):
                 # Calcular duração e fechar seção atual
@@ -501,6 +502,11 @@ Agora crie o roteiro:"""
             current_section.content = ' '.join(current_content)
             sections.append(current_section)
         
+        # Garantir que cada seção tenha duração estimada (>0)
+        for s in sections:
+            if s.duration_seconds is None or s.duration_seconds <= 0:
+                s.duration_seconds = self._estimate_section_duration([s.content])
+        
         return sections
     
     def _simple_parse_script(self, response: str, theme: GeneratedTheme) -> List[ScriptSection]:
@@ -511,10 +517,10 @@ Agora crie o roteiro:"""
         total_words = len(words)
         
         if total_words < 10:
-            # Resposta muito curta, usar estrutura básica
-            hook_content = f"Você sabia que {theme.content}?"
-            development_content = f"Esta curiosidade sobre {theme.category.value} vai te surpreender!"
-            conclusion_content = "Curte se você não sabia disso!"
+            # Very short response; craft a minimal English structure
+            hook_content = f"Did you know that {theme.content}?"
+            development_content = f"This {theme.category.value} fact is wilder than it sounds."  # noqa: E501
+            conclusion_content = "Follow for more mind-bending curiosities!"
         else:
             # Dividir texto em 3 partes
             third = total_words // 3
@@ -527,22 +533,22 @@ Agora crie o roteiro:"""
                 name="hook",
                 content=hook_content,
                 duration_seconds=4.0,
-                purpose="Prender atenção",
-                key_elements=["curiosidade", "surpresa"]
+                purpose="Grab attention instantly",
+                key_elements=["curiosity", "surprise"]
             ),
             ScriptSection(
                 name="development",
                 content=development_content,
                 duration_seconds=45.0,
-                purpose="Explicar e envolver",
-                key_elements=["explicação", "detalhes", "fascínio"]
+                purpose="Explain and keep viewers engaged",
+                key_elements=["explanation", "detail", "wonder"]
             ),
             ScriptSection(
                 name="conclusion",
                 content=conclusion_content,
                 duration_seconds=8.0,
-                purpose="Fechar e engajar",
-                key_elements=["resumo", "engajamento"]
+                purpose="Deliver payoff and invite engagement",
+                key_elements=["summary", "engagement"]
             )
         ]
     
@@ -672,7 +678,7 @@ Agora crie o roteiro:"""
         
         # Desenvolvimento deve ser a maior parte
         development_section = next((s for s in sections if s.name == "development"), None)
-        if development_section:
+        if development_section and total_duration > 0:
             development_ratio = development_section.duration_seconds / total_duration
             if 0.6 <= development_ratio <= 0.8:
                 score += 0.2

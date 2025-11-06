@@ -26,7 +26,7 @@ class KokoroTTSClient:
     def __init__(self, 
                  lang_code: str = 'p',  # 'p' = Português Brasileiro
                  voice_name: str = 'af_diamond',  # Voz feminina padrão
-                 speed: float = 1.0,
+                 speed: float = 0.85,
                  output_dir: str = 'outputs/audio'):
         """
         Inicializa cliente Kokoro TTS
@@ -123,18 +123,20 @@ class KokoroTTSClient:
             
             # Coletar áudio gerado
             audio_data = []
-            for i, (gs, ps, audio) in enumerate(generator):
+            for _, (_, _, audio) in enumerate(generator):
                 audio_data.append(audio)
-                if i > 0:  # Apenas o primeiro chunk para texto simples
-                    break
-            
+
             if not audio_data:
                 raise Exception("Nenhum áudio foi gerado")
-            
+
             # Salvar áudio
-            final_audio = audio_data[0]
+            if len(audio_data) == 1:
+                final_audio = audio_data[0]
+            else:
+                import numpy as np
+                final_audio = np.concatenate(audio_data)
             sf.write(str(audio_path), final_audio, 24000)
-            
+
             # Calcular duração
             duration = len(final_audio) / 24000  # 24kHz sample rate
             

@@ -120,6 +120,18 @@ class SemanticAnalyzer:
             'este', 'esta', 'estes', 'estas', 'esse', 'essa', 'esses', 'essas',
             'aquele', 'aquela', 'aqueles', 'aquelas', 'eu', 'tu', 'ele', 'ela', 'nós', 'vós', 'eles', 'elas'
         }
+        # Adicionar stop words básicas em inglês para suportar prompts traduzidos
+        english_stop_words = {
+            'the', 'a', 'an', 'and', 'or', 'but', 'of', 'to', 'in', 'on', 'at', 'by',
+            'with', 'without', 'for', 'from', 'is', 'are', 'was', 'were', 'be', 'been',
+            'being', 'it', 'this', 'that', 'these', 'those', 'as', 'about', 'into', 'out',
+            'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when',
+            'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most',
+            'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so',
+            'than', 'too', 'very', 'can', 'will', 'just', 'don', "don't", 'should',
+            "should've", 'now'
+        }
+        basic_stop_words.update(english_stop_words)
         
         # Remove pontuação e converte para minúsculas
         text_clean = re.sub(r'[^\w\s]', ' ', text.lower())

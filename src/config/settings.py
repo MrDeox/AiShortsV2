@@ -24,10 +24,10 @@ class OpenRouterSettings(BaseSettings):
     
     api_key: str = Field(default="", env="OPENROUTER_API_KEY")
     base_url: str = Field(default="https://openrouter.ai/api/v1", env="OPENROUTER_BASE_URL")
-    model: str = Field(default="nvidia/nemotron-nano-9b-v2:free", env="OPENROUTER_MODEL")
-    max_tokens_theme: int = Field(default=150, env="MAX_TOKENS_THEME")
+    model: str = Field(default="qwen/qwen3-235b-a22b:free", env="OPENROUTER_MODEL")
+    max_tokens_theme: int = Field(default=2048, env="MAX_TOKENS_THEME")
     temperature_theme: float = Field(default=0.7, env="TEMPERATURE_THEME")
-    max_tokens_script: int = Field(default=800, env="MAX_TOKENS_SCRIPT")
+    max_tokens_script: int = Field(default=4096, env="MAX_TOKENS_SCRIPT")
     temperature_script: float = Field(default=0.7, env="TEMPERATURE_SCRIPT")
 
 class LoggingSettings(BaseSettings):
@@ -165,8 +165,8 @@ class AiShortsConfig:
                     raise ValueError("OPENROUTER_API_KEY não está configurada ou é inválida")
             
             # Verificar se o modelo é válido
-            if "nvidia/nemotron-nano-9b-v2" not in self.openrouter.model:
-                raise ValueError("Modelo OpenRouter deve ser nvidia/nemotron-nano-9b-v2:free")
+            if "qwen3-235b-a22b" not in self.openrouter.model:
+                raise ValueError("Modelo OpenRouter deve ser qwen/qwen3-235b-a22b:free")
             
             return True
             
