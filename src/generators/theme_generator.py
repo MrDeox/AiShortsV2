@@ -127,57 +127,106 @@ class ThemeGenerator:
             category = self._choose_random_category()
         
         try:
-            # Criar prompt
-            prompt_data = self.prompt_engineering.create_generation_prompt(
-                category=category,
-                custom_requirements=custom_requirements
+            last_error: Optional[Exception] = None
+            for attempt in range(1, self.max_attempts + 1):
+                # Criar prompt (ajustar para tentativas subsequentes)
+                prompt_data = self.prompt_engineering.create_generation_prompt(
+                    category=category,
+                    custom_requirements=custom_requirements
+                )
+                if attempt > 1:
+                    # Reforçar formato e objetividade em retries
+                    prompt_data["user_prompt"] += (
+                        "\n\nIMPORTANT: Return exactly one topic in 1-2 short sentences. "
+                        "Start with a hook. Do not add explanations or lists."
+                    )
+
+                logger.info(f"📝 SYSTEM MESSAGE (theme) [attempt {attempt}/{self.max_attempts}]:")
+                logger.info(prompt_data["system_message"])
+                logger.info(f"💬 USER PROMPT (theme) [attempt {attempt}/{self.max_attempts}]:")
+                logger.info(prompt_data["user_prompt"])
+
+                # Log do início da geração
+                logger.info(
+                    f"Iniciando geração de tema - Categoria: {category.value} (tentativa {attempt})"
+                )
+
+                # Gerar conteúdo usando OpenRouter
+                start_time = time.time()
+                try:
+                    response = self.openrouter.generate_content(
+                        prompt=prompt_data["user_prompt"],
+                        system_message=prompt_data["system_message"],
+                        max_tokens=config.openrouter.max_tokens_theme,
+                        temperature=0.8  # Mais criatividade para temas
+                    )
+                except Exception as gen_exc:
+                    last_error = gen_exc
+                    logger.warning(f"⚠️ Falha na requisição (tentativa {attempt}): {gen_exc}")
+                    if attempt < self.max_attempts:
+                        continue
+                    break
+
+                logger.info("🧾 RESPOTA BRUTA (theme):")
+                logger.info(response.content)
+
+                generation_time = time.time() - start_time
+
+                # Processar resposta
+                theme_content = self._clean_response(response.content)
+
+                # Checar vazio/curto
+                if not theme_content or len(theme_content.split()) < 5:
+                    logger.warning(
+                        f"⚠️ Resposta vazia/curta na tentativa {attempt}. Conteúdo: '{theme_content}'"
+                    )
+                    last_error = ValueError("Tema muito curto ou vazio")
+                    if attempt < self.max_attempts:
+                        continue
+                    break
+
+                try:
+                    # Validar resposta
+                    self._validate_theme_response(theme_content, category)
+                except Exception as val_exc:
+                    last_error = val_exc
+                    logger.warning(
+                        f"⚠️ Validação falhou na tentativa {attempt}: {val_exc}"
+                    )
+                    if attempt < self.max_attempts:
+                        continue
+                    break
+
+                # Calcular métricas de qualidade
+                quality_metrics = self.prompt_engineering.get_quality_metrics(theme_content, category)
+                quality_score = quality_metrics["overall_quality"]
+
+                # Criar tema gerado
+                theme = GeneratedTheme(
+                    content=theme_content,
+                    category=category,
+                    quality_score=quality_score,
+                    response_time=generation_time,
+                    timestamp=datetime.now(),
+                    usage=response.usage,
+                    metrics=quality_metrics
+                )
+
+                # Log do resultado
+                logger.info(
+                    f"Tema gerado - Categoria: {category.value}, "
+                    f"Qualidade: {quality_score:.2f}, "
+                    f"Tempo: {generation_time:.2f}s"
+                )
+
+                return theme
+
+            # Se chegou aqui, todas as tentativas falharam
+            raise ThemeGenerationError(
+                f"Falha na geração após {self.max_attempts} tentativas: {last_error}",
+                category=category.value
             )
-            
-            # Log do início da geração
-            logger.info(f"Iniciando geração de tema - Categoria: {category.value}")
-            
-            # Gerar conteúdo usando OpenRouter
-            start_time = time.time()
-            
-            response = self.openrouter.generate_content(
-                prompt=prompt_data["user_prompt"],
-                system_message=prompt_data["system_message"],
-                max_tokens=config.openrouter.max_tokens_theme,
-                temperature=0.8  # Mais criatividade para temas
-            )
-            
-            generation_time = time.time() - start_time
-            
-            # Processar resposta
-            theme_content = self._clean_response(response.content)
-            
-            # Validar resposta
-            self._validate_theme_response(theme_content, category)
-            
-            # Calcular métricas de qualidade
-            quality_metrics = self.prompt_engineering.get_quality_metrics(theme_content, category)
-            quality_score = quality_metrics["overall_quality"]
-            
-            # Criar tema gerado
-            theme = GeneratedTheme(
-                content=theme_content,
-                category=category,
-                quality_score=quality_score,
-                response_time=generation_time,
-                timestamp=datetime.now(),
-                usage=response.usage,
-                metrics=quality_metrics
-            )
-            
-            # Log do resultado
-            logger.info(
-                f"Tema gerado - Categoria: {category.value}, "
-                f"Qualidade: {quality_score:.2f}, "
-                f"Tempo: {generation_time:.2f}s"
-            )
-            
-            return theme
-        
+
         except Exception as e:
             logger.error(f"Erro na geração de tema - Categoria: {category.value}, Erro: {e}")
             raise ThemeGenerationError(f"Falha na geração: {str(e)}", category=category.value)

@@ -1,7 +1,7 @@
 """
 Cliente OpenRouter para AiShorts v2.0
 
-Implementação robusta da integração com o modelo nvidia/nemotron-nano-9b-v2:free.
+Integração centralizada com o modelo qwen/qwen3-235b-a22b:free via OpenRouter.
 """
 
 import json
@@ -70,9 +70,16 @@ class OpenRouterClient:
         self.config = config.openrouter
         self.retry_config = config.retry
         
+        # CORREÇÃO BUG: Usar variáveis de ambiente diretamente
+        import os
+        api_key = os.getenv('OPENROUTER_API_KEY', self.config.api_key)
+        
+        if not api_key:
+            raise ValueError("OPENROUTER_API_KEY não está configurada")
+        
         # Headers padrão
         self.headers = {
-            "Authorization": f"Bearer {self.config.api_key}",
+            "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
             "HTTP-Referer": "https://aishorts.v2",
             "X-Title": "AiShorts v2.0"
@@ -125,7 +132,8 @@ class OpenRouterClient:
             )
         
         try:
-            with httpx.Client(timeout=30.0) as client:
+            # Aumentar timeout para respostas longas (tokens altos)
+            with httpx.Client(timeout=120.0) as client:
                 start_time = time.time()
                 
                 response = client.post(
@@ -153,7 +161,6 @@ class OpenRouterClient:
                     wait_time = self.rate_limiter.get_wait_time()
                     raise RateLimitError(
                         f"Rate limit HTTP 429 - Aguarde {wait_time:.2f}s",
-                        status_code=429,
                         wait_time=wait_time
                     )
                 

@@ -5,15 +5,38 @@ Utilitários de processamento de vídeo usando OpenCV e MoviePy
 
 import cv2
 import numpy as np
-from moviepy import VideoFileClip, ImageClip, concatenate_videoclips
-from moviepy.audio.fx import MultiplyVolume
+try:
+    from moviepy.editor import VideoFileClip, ImageClip, concatenate_videoclips
+except ImportError:
+    from moviepy import VideoFileClip, ImageClip, concatenate_videoclips  # type: ignore
 import os
 from typing import List, Dict, Tuple, Optional, Any
 from pathlib import Path
 import tempfile
 from PIL import Image
 import logging
-from config.video_settings import VIDEO_PROCESSING, get_config
+# Configurações inline para evitar dependências externas
+VIDEO_PROCESSING = {
+    'output_resolution': (1920, 1080),
+    'output_fps': 30,
+    'output_format': 'mp4',
+    'codec': 'libx264',
+    'audio_codec': 'aac',
+    'video_bitrate': '2000k',
+    'audio_bitrate': '128k',
+    'temp_dir': '/tmp/aishorts',
+    'max_workers': 4,
+}
+
+def get_config():
+    """Retorna configurações como um dicionário."""
+    return {
+        'video_processing': VIDEO_PROCESSING,
+        'paths': {
+            'temp_dir': VIDEO_PROCESSING['temp_dir'],
+            'output_dir': 'outputs/video'
+        }
+    }
 
 
 class VideoProcessor:

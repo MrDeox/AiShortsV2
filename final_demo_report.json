@@ -1,0 +1,28 @@
+{
+  "demo_info": {
+    "name": "Demo Final Funcional - AiShorts v2.0",
+    "timestamp": "2025-11-04T20:28:01.560646",
+    "purpose": "Validação end-to-end com vídeo real",
+    "status": "completed"
+  },
+  "pipeline_steps": {
+    "theme_generation": true,
+    "tts_generation": true,
+    "youtube_search": true,
+    "video_creation": true
+  },
+  "output_files": {
+    "theme": "N/A",
+    "audio_files": [
+      "outputs/audio/demo_audio.wav"
+    ],
+    "youtube_videos": 5,
+    "final_video": "final_demo_video.mp4"
+  },
+  "quality_metrics": {
+    "pipeline_completion": 5,
+    "total_steps": 4,
+    "success_rate": 125.0,
+    "execution_time": 52.32130217552185
+  }
+}

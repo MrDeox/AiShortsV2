@@ -27,6 +27,7 @@ from enum import Enum
 from moviepy.editor import (
     VideoFileClip, ImageClip, TextClip, concatenate_videoclips,
     CompositeVideoClip, CompositeAudioClip, ColorClip,
+    AudioFileClip,  # Import específico para trilhas de áudio
     vfx, afx
 )
 from moviepy.audio.fx import volumex, audio_loop
@@ -151,6 +152,7 @@ class FinalVideoComposer:
         audio_path: str,
         video_segments: List[VideoSegment],
         template_config: TemplateConfig,
+        captions: Optional[List[Dict[str, Any]]] = None,
         output_path: Optional[str] = None,
         metadata: Optional[Dict] = None
     ) -> str:
@@ -161,6 +163,7 @@ class FinalVideoComposer:
             audio_path: Caminho do arquivo de áudio TTS
             video_segments: Lista de segmentos de vídeo
             template_config: Configuração do template
+            captions: Legendas sincronizadas para sobreposição (opcional)
             output_path: Caminho de saída (opcional)
             metadata: Metadados do vídeo
             
@@ -201,6 +204,9 @@ class FinalVideoComposer:
             
             # Step 5: Concatenar todos os clips
             final_video = concatenate_videoclips(final_clips)
+
+            # Step 5.1: Aplicar legendas (se fornecidas)
+            final_video = self._apply_captions(final_video, captions, template_config)
             
             # Step 6: Adicionar áudio sincronizado
             final_video = self._sync_audio_with_video(final_video, audio_clip)
@@ -220,10 +226,17 @@ class FinalVideoComposer:
             # Step 11: Validar qualidade automaticamente
             quality_valid = self._validate_final_quality(output_path, audio_path)
             
-            if not quality_valid and metadata.get('retry_on_quality_fail', True):
+            if not quality_valid and (metadata or {}).get('retry_on_quality_fail', True):
+                retry_count = (metadata or {}).get('retry_count', 0)
+                if retry_count >= self.max_retries:
+                    self.logger.warning(
+                        f"Qualidade abaixo do padrão (score baixo) após {retry_count} tentativas. Encerrando retries."
+                    )
+                    return output_path
                 self.logger.warning("Qualidade abaixo do padrão, tentando novamente...")
+                meta_next = {**(metadata or {}), 'retry_count': retry_count + 1}
                 return self._retry_composition_with_improvements(
-                    audio_path, video_segments, template_config, output_path, metadata
+                    audio_path, video_segments, template_config, captions, output_path, meta_next
                 )
             
             # Step 12: Gerar metadados finais
@@ -520,7 +533,7 @@ class FinalVideoComposer:
     def _load_audio_track(self, audio_path: str):
         """Carrega e pré-processa track de áudio"""
         try:
-            audio_clip = VideoFileClip(audio_path).audio
+            audio_clip = AudioFileClip(audio_path)
             
             # Normalizar áudio
             audio_clip = audio_clip.volumex(1.0)  # Volume padrão
@@ -540,17 +553,23 @@ class FinalVideoComposer:
         """Sincroniza segmentos de vídeo com áudio TTS"""
         try:
             audio_duration = audio_clip.duration
-            
-            synchronized_segments = []
+            synchronized_segments: List[VideoSegment] = []
             current_time = 0.0
-            
-            for segment in video_segments:
-                # Calcular duração do segmento baseada no áudio
-                segment_duration = min(
-                    segment.duration,
-                    audio_duration - current_time
-                )
-                
+            min_segment_duration = 2.5
+
+            for index, segment in enumerate(video_segments):
+                remaining_audio = audio_duration - current_time
+                if remaining_audio <= 0:
+                    break
+
+                segments_remaining = max(len(video_segments) - index, 1)
+                ideal_duration = remaining_audio / segments_remaining
+                segment_duration = min(segment.duration, max(ideal_duration, min_segment_duration))
+                segment_duration = min(segment_duration, remaining_audio)
+
+                if segment_duration <= 0:
+                    continue
+
                 # Ajustar timing se necessário
                 if segment.audio_sync_points:
                     # Usar pontos de sincronização fornecidos
@@ -602,21 +621,23 @@ class FinalVideoComposer:
                     # Carregar clip de vídeo
                     if os.path.exists(segment.path):
                         clip = VideoFileClip(segment.path)
-                        
+
                         # Ajustar duração
                         if clip.duration > segment.duration:
-                            clip = clip.subclip(segment.start_time, segment.end_time)
+                            clip = clip.subclip(0, segment.duration)
                         elif clip.duration < segment.duration:
                             # Loop do clip se necessário
-                            clip = clip.loop(duration=segment.duration)
-                        
-                        # Redimensionar para template
-                        clip = clip.resize(template_config.resolution)
+                            clip = clip.fx(vfx.loop, duration=segment.duration)
                         
                         # Aplicar efeitos específicos do segmento
                         if segment.effects:
                             clip = self._apply_segment_effects(clip, segment.effects)
-                        
+
+                        # Garantir duração exata e layout vertical sem distorção
+                        clip = clip.set_duration(segment.duration)
+                        clip = clip.without_audio()
+                        clip = self._apply_vertical_sandwich_layout(clip, template_config)
+
                         video_clips.append(clip)
                         
                 except Exception as e:
@@ -638,6 +659,62 @@ class FinalVideoComposer:
         except Exception as e:
             self.logger.error(f"Erro ao criar estrutura de vídeo: {e}")
             raise
+
+    def _apply_vertical_sandwich_layout(
+        self,
+        clip: VideoFileClip,
+        template_config: TemplateConfig
+    ) -> VideoFileClip:
+        """
+        Aplica layout vertical estilo "sandwich" mantendo proporção do vídeo original.
+        
+        O vídeo original é centralizado, mantendo aspect ratio, com preenchimento
+        superior e inferior usando uma combinação de blur e barras sólidas.
+        """
+        target_width, target_height = template_config.resolution
+        duration = clip.duration
+        base_color = self._parse_hex_color(template_config.background_color)
+
+        # Redimensionar mantendo aspecto
+        aspect_clip = clip.w / clip.h if clip.h else 1
+        aspect_target = target_width / target_height
+        if aspect_clip >= aspect_target:
+            fitted_clip = clip.resize(width=target_width)
+        else:
+            fitted_clip = clip.resize(height=target_height)
+        fitted_clip = fitted_clip.set_duration(duration).without_audio()
+
+        # Criar background com blur suave
+        try:
+            background = self._create_blurred_background(clip, (target_width, target_height))
+        except Exception as blur_error:
+            self.logger.debug(f"Falha ao criar background com blur: {blur_error}")
+            background = ColorClip(size=(target_width, target_height), color=base_color, duration=duration)
+        else:
+            background = background.set_duration(duration).without_audio()
+
+        layers = [background]
+
+        # Barras superior e inferior para reforçar identidade visual
+        vertical_padding = max(int((target_height - fitted_clip.h) // 2), 0)
+        if vertical_padding > 0:
+            bar_opacity = 0.92
+            top_bar = ColorClip(
+                size=(target_width, vertical_padding),
+                color=base_color,
+                duration=duration
+            ).set_position(("center", "top")).set_opacity(bar_opacity)
+            bottom_bar = ColorClip(
+                size=(target_width, vertical_padding),
+                color=base_color,
+                duration=duration
+            ).set_position(("center", "bottom")).set_opacity(bar_opacity)
+            layers.extend([top_bar, bottom_bar])
+
+        layers.append(fitted_clip.set_position(("center", "center")))
+
+        composite = CompositeVideoClip(layers, size=(target_width, target_height))
+        return composite.set_duration(duration)
     
     def _apply_transitions_and_effects(
         self,
@@ -655,10 +732,10 @@ class FinalVideoComposer:
                 # Aplicar fade para todos os clips exceto o primeiro
                 if i > 0:
                     fade_duration = 0.5  # 0.5 segundos
-                    clip = clip.fadein(fade_duration)
+                    clip = clip.fx(vfx.fadein, fade_duration)
                     
                     # Aplicar fadeout no clip anterior
-                    processed_clips[-1] = processed_clips[-1].fadeout(fade_duration)
+                    processed_clips[-1] = processed_clips[-1].fx(vfx.fadeout, fade_duration)
                 
                 # Aplicar efeitos do template
                 if template_config.effects_config:
@@ -672,6 +749,50 @@ class FinalVideoComposer:
         except Exception as e:
             self.logger.error(f"Erro ao aplicar transições: {e}")
             return video_clips
+
+    def _apply_captions(
+        self,
+        video_clip: VideoFileClip,
+        captions: Optional[List[Dict[str, Any]]],
+        template_config: TemplateConfig
+    ) -> VideoFileClip:
+        """Sobrepõe legendas sincronizadas ao vídeo final."""
+        if not captions:
+            return video_clip
+
+        try:
+            caption_layers = []
+            for caption in captions:
+                text = caption.get('text', '').strip()
+                if not text:
+                    continue
+                start_time = float(caption.get('start_time', 0.0))
+                end_time = float(caption.get('end_time', start_time + 2.0))
+                duration = max(end_time - start_time, 0.5)
+                style = caption.get('style', {})
+
+                caption_clip = self._create_caption_clip(
+                    text=text,
+                    duration=duration,
+                    video_size=video_clip.size,
+                    style=style
+                )
+
+                if caption_clip:
+                    caption_layers.append(caption_clip.set_start(start_time))
+
+            if not caption_layers:
+                return video_clip
+
+            composite = CompositeVideoClip([video_clip] + caption_layers, size=video_clip.size)
+            composite = composite.set_duration(video_clip.duration)
+            if video_clip.audio:
+                composite = composite.set_audio(video_clip.audio)
+            return composite
+
+        except Exception as e:
+            self.logger.error(f"Erro ao aplicar legendas: {e}")
+            return video_clip
     
     def _sync_audio_with_video(self, video_clip, audio_clip):
         """Sincroniza áudio com vídeo final"""
@@ -681,8 +802,7 @@ class FinalVideoComposer:
                 audio_clip = audio_clip.subclip(0, video_clip.duration)
             elif audio_clip.duration < video_clip.duration:
                 # Repetir áudio se necessário
-                repeats = int(video_clip.duration / audio_clip.duration) + 1
-                audio_clip = audio_clip.loop(duration=video_clip.duration)
+                audio_clip = afx.audio_loop(audio_clip, duration=video_clip.duration)
             
             # Definir áudio no vídeo
             final_clip = video_clip.set_audio(audio_clip)
@@ -713,8 +833,11 @@ class FinalVideoComposer:
             if video_clip.fps != self.default_fps:
                 video_clip = video_clip.set_fps(self.default_fps)
             
-            # Aplicar configurações de cor
-            video_clip = video_clip.colorx(1.1)  # Saturação ligeiramente aumentada
+            # Aplicar configurações de cor (usar fx para compatibilidade)
+            try:
+                video_clip = video_clip.fx(vfx.colorx, 1.1)
+            except Exception:
+                pass
             
             return video_clip
             
@@ -1015,6 +1138,7 @@ class FinalVideoComposer:
         audio_path: str,
         video_segments: List[VideoSegment],
         template_config: TemplateConfig,
+        captions: Optional[List[Dict[str, Any]]],
         output_path: str,
         metadata: Dict
     ) -> str:
@@ -1030,8 +1154,9 @@ class FinalVideoComposer:
                 audio_path=audio_path,
                 video_segments=video_segments,
                 template_config=improved_template,
+                captions=captions,
                 output_path=output_path.replace('.mp4', '_retry.mp4'),
-                metadata={**metadata, 'retry_attempt': True}
+                metadata={**(metadata or {}), 'retry_attempt': True}
             )
             
         except Exception as e:
@@ -1097,6 +1222,171 @@ class FinalVideoComposer:
         )
         
         return placeholder_clip
+
+    def _parse_hex_color(self, hex_color: str) -> Tuple[int, int, int]:
+        """Converte cor em hex (#RRGGBB) para tupla RGB."""
+        if not hex_color:
+            return (0, 0, 0)
+        try:
+            if hex_color.startswith('#'):
+                hex_color = hex_color[1:]
+            if len(hex_color) == 6:
+                r = int(hex_color[0:2], 16)
+                g = int(hex_color[2:4], 16)
+                b = int(hex_color[4:6], 16)
+                return (r, g, b)
+            if len(hex_color) == 8:
+                r = int(hex_color[0:2], 16)
+                g = int(hex_color[2:4], 16)
+                b = int(hex_color[4:6], 16)
+                return (r, g, b)
+        except ValueError:
+            self.logger.debug(f"Cor inválida recebida: {hex_color}")
+        return (0, 0, 0)
+
+    def _create_blurred_background(
+        self,
+        clip: VideoFileClip,
+        target_size: Tuple[int, int],
+        blur_sigma: int = 35
+    ) -> VideoFileClip:
+        """Cria background desfocado a partir do próprio vídeo."""
+        resized = clip.resize(target_size).without_audio()
+
+        def _gaussian(frame):
+            return cv2.GaussianBlur(frame, (0, 0), blur_sigma)
+
+        return resized.fl_image(_gaussian)
+
+    def _create_caption_clip(
+        self,
+        text: str,
+        duration: float,
+        video_size: Tuple[int, int],
+        style: Dict[str, Any]
+    ) -> Optional[ImageClip]:
+        """Cria clip de legenda com fundo arredondado."""
+        try:
+            font_path = self._resolve_font_path(style.get('font_path'))
+            font_size = int(style.get('font_size', 54))
+            line_spacing = int(style.get('line_spacing', 12))
+            max_width_ratio = float(style.get('max_width_ratio', 0.9))
+            padding_x = int(style.get('padding_horizontal', 48))
+            padding_y = int(style.get('padding_vertical', 32))
+            background_opacity = float(style.get('background_opacity', 0.85))
+            text_color = style.get('font_color', '#FFFFFF')
+            stroke_color = style.get('stroke_color', '#000000')
+            stroke_width = int(style.get('stroke_width', 2))
+
+            font = ImageFont.truetype(font_path, font_size) if font_path else ImageFont.load_default()
+
+            max_text_width = int(video_size[0] * max_width_ratio) - (padding_x * 2)
+            lines = self._wrap_caption_text(text, font, max_text_width)
+            if not lines:
+                return None
+
+            ascent, descent = font.getmetrics() if hasattr(font, "getmetrics") else (font_size, int(font_size * 0.2))
+            line_height = ascent + descent
+            text_height = len(lines) * line_height + (len(lines) - 1) * line_spacing
+            panel_width = min(
+                int(video_size[0] * max_width_ratio),
+                max(self._measure_text(font, line)[0] + padding_x * 2 for line in lines)
+            )
+            panel_height = text_height + padding_y * 2
+
+            bg_color_rgb = self._parse_hex_color(style.get('background_color', '#101010'))
+            alpha = int(255 * background_opacity)
+            background_rgba = (*bg_color_rgb, alpha)
+
+            image = Image.new("RGBA", (panel_width, panel_height), (0, 0, 0, 0))
+            draw = ImageDraw.Draw(image)
+            draw.rounded_rectangle(
+                [(0, 0), (panel_width, panel_height)],
+                radius=24,
+                fill=background_rgba
+            )
+
+            current_y = padding_y
+            for line in lines:
+                line_width, _ = self._measure_text(font, line)
+                x = (panel_width - line_width) // 2
+                draw.text(
+                    (x, current_y),
+                    line,
+                    font=font,
+                    fill=text_color,
+                    stroke_width=stroke_width,
+                    stroke_fill=stroke_color if stroke_width > 0 else None
+                )
+                current_y += line_height + line_spacing
+
+            np_image = np.array(image)
+            caption_clip = ImageClip(np_image).set_duration(duration)
+
+            baseline = style.get('baseline', 'bottom')
+            vertical_margin_ratio = float(style.get('vertical_margin_ratio', 0.075))
+            if baseline == 'top':
+                y_pos = int(video_size[1] * vertical_margin_ratio)
+            elif baseline == 'center':
+                y_pos = (video_size[1] - panel_height) // 2
+            else:
+                y_pos = video_size[1] - panel_height - int(video_size[1] * vertical_margin_ratio)
+
+            caption_clip = caption_clip.set_position(("center", y_pos))
+            return caption_clip
+
+        except Exception as e:
+            self.logger.error(f"Erro ao criar legenda: {e}")
+            return None
+
+    def _resolve_font_path(self, preferred_path: Optional[str]) -> Optional[str]:
+        """Resolve caminho de fonte a ser utilizado nas legendas."""
+        candidate_paths = []
+        if preferred_path:
+            candidate_paths.append(preferred_path)
+        candidate_paths.extend([
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            "/Library/Fonts/Arial Unicode.ttf",
+            str(Path(__file__).resolve().parent / "assets" / "fonts" / "Roboto-Bold.ttf"),
+        ])
+        for path in candidate_paths:
+            if path and Path(path).exists():
+                return path
+        return None
+
+    def _wrap_caption_text(self, text: str, font: ImageFont.FreeTypeFont, max_width: int) -> List[str]:
+        """Quebra o texto para caber na largura disponível."""
+        if not text:
+            return []
+        words = text.split()
+        lines: List[str] = []
+        current_line: List[str] = []
+
+        for word in words:
+            test_line = " ".join(current_line + [word]).strip()
+            line_width, _ = self._measure_text(font, test_line)
+            if line_width <= max_width or not current_line:
+                current_line.append(word)
+            else:
+                lines.append(" ".join(current_line))
+                current_line = [word]
+
+        if current_line:
+            lines.append(" ".join(current_line))
+
+        return lines
+
+    def _measure_text(self, font: ImageFont.ImageFont, text: str) -> Tuple[int, int]:
+        """Calcula largura e altura de um texto usando o font informado."""
+        if hasattr(font, "getbbox"):
+            bbox = font.getbbox(text)
+            return bbox[2] - bbox[0], bbox[3] - bbox[1]
+
+        dummy_image = Image.new("RGB", (10, 10))
+        draw = ImageDraw.Draw(dummy_image)
+        bbox = draw.textbbox((0, 0), text, font=font)
+        return bbox[2] - bbox[0], bbox[3] - bbox[1]
     
     def _create_professional_text_clip(
         self,
@@ -1141,7 +1431,10 @@ class FinalVideoComposer:
     
     def _apply_color_correction(self, video_clip) -> VideoFileClip:
         """Aplica correção de cores"""
-        return video_clip.colorx(1.1)  # Slight enhancement
+        try:
+            return video_clip.fx(vfx.colorx, 1.1)
+        except Exception:
+            return video_clip
     
     def _apply_sharpening(self, video_clip) -> VideoFileClip:
         """Aplica sharpening"""
@@ -1163,22 +1456,31 @@ class FinalVideoComposer:
         """Aplica efeitos específicos do segmento"""
         for effect in effects:
             if effect == 'brightness_up':
-                video_clip = video_clip.brightness(0.1)
+                try:
+                    video_clip = video_clip.fx(vfx.colorx, 1.1)
+                except Exception:
+                    self.logger.debug("Efeito brightness_up não suportado para este clip")
             elif effect == 'contrast_boost':
-                video_clip = video_clip.contrast(1.2)
-        
+                try:
+                    video_clip = video_clip.fx(vfx.lum_contrast, contrast=30)
+                except Exception:
+                    self.logger.debug("Efeito contrast_boost não suportado para este clip")
+
         return video_clip
     
     def _apply_template_effect(self, video_clip, effect: str) -> VideoFileClip:
         """Aplica efeito do template"""
         if effect == 'color_enhance':
-            return video_clip.colorx(1.15)
+            return video_clip.fx(vfx.colorx, 1.15)
         elif effect == 'sharpening':
             return video_clip  # Placeholder
         elif effect == 'contrast_boost':
-            return video_clip.contrast(1.1)
+            try:
+                return video_clip.fx(vfx.lum_contrast, contrast=20)
+            except Exception:
+                return video_clip
         elif effect == 'vibrance':
-            return video_clip.colorx(1.2)
+            return video_clip.fx(vfx.colorx, 1.2)
         
         return video_clip
     
