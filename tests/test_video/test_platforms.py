@@ -10,21 +10,37 @@ import os
 from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 
-# Imports do projeto
-from aishorts_v2.src.config.video_platforms import (
-    Platform, VideoFormat, VideoCodec, AudioCodec, VideoSpecs,
-    QualityPreset, VideoPlatformConfig, video_config,
-    get_category_config, get_timing_preset, TIMING_PRESETS,
-    CONTENT_CATEGORY_CONFIGS
+# Imports do projeto (ajustados para layout real do snapshot 1bd09aa)
+from src.config.video_platforms import (
+    Platform,
+    VideoFormat,
+    VideoCodec,
+    AudioCodec,
+    VideoSpecs,
+    QualityPreset,
+    VideoPlatformConfig,
+    video_config,
+    get_category_config,
+    get_timing_preset,
+    TIMING_PRESETS,
+    CONTENT_CATEGORY_CONFIGS,
 )
 
-from aishorts_v2.src.video.processing.platform_optimizer import (
-    PlatformOptimizer, VideoProcessingError, optimize_video
+from src.video.processing.platform_optimizer import (
+    PlatformOptimizer,
+    VideoProcessingError,
+    optimize_video,
 )
 
-from aishorts_v2.src.video.generators.visual_templates import (
-    VisualTemplate, VisualTemplateGenerator, TextOverlay, TemplateType, TextStyle,
-    template_generator, get_template, generate_text_overlay
+from src.video.generators.visual_templates import (
+    VisualTemplate,
+    VisualTemplateGenerator,
+    TextOverlay,
+    TemplateType,
+    TextStyle,
+    template_generator,
+    get_template,
+    generate_text_overlay,
 )
 
 

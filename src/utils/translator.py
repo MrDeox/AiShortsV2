@@ -56,11 +56,11 @@ class Translator:
         temperature: float = 0.2,
     ) -> TranslationResult:
         if not text or not text.strip():
-            logger.warning("Texto vazio recebido para tradução")
+logger.warning("Texto vazio recebido para tradução")
             return TranslationResult(success=False, error="empty_text")
 
         target = target_language or self.default_target_language
-        logger.info(f"🌐 Iniciando tradução para {target} (tokens máx: {max_tokens})")
+logger.info(f" Iniciando tradução para {target} (tokens máx: {max_tokens})")
 
         max_tokens = max_tokens or self.default_max_tokens
         temperature = temperature if temperature is not None else self.default_temperature
@@ -92,14 +92,14 @@ class Translator:
                 )
                 translated = response.content.strip()
                 if not translated:
-                    logger.warning(
+logger.warning(
                         f"⚠️ Tradução retornou conteúdo vazio (tentativa {attempt}/{self.max_retries})."
                     )
                     time.sleep(delay)
                     delay *= 2
                     continue
 
-                logger.info("🌐 Tradução concluída com sucesso")
+logger.info(" Tradução concluída com sucesso")
                 return TranslationResult(
                     success=True,
                     translated_text=translated,
@@ -110,7 +110,7 @@ class Translator:
             except RateLimitError as rl_err:
                 wait = rl_err.details.get('wait_time') if isinstance(rl_err.details, dict) else None
                 wait = wait or delay
-                logger.warning(
+logger.warning(
                     f"⚠️ Tradução atingiu rate limit (tentativa {attempt}/{self.max_retries}). "
                     f"Aguardando {wait:.1f}s antes de tentar novamente."
                 )
@@ -119,14 +119,14 @@ class Translator:
                 continue
 
             except OpenRouterError as api_err:
-                logger.error(f"❌ Falha na tradução (OpenRouter): {api_err}")
+logger.error(f" Falha na tradução (OpenRouter): {api_err}")
                 return TranslationResult(success=False, error=str(api_err))
 
             except Exception as exc:
-                logger.error(f"❌ Falha inesperada na tradução: {exc}")
+logger.error(f" Falha inesperada na tradução: {exc}")
                 return TranslationResult(success=False, error=str(exc))
 
-        logger.error("❌ Tradução falhou após múltiplas tentativas")
+logger.error(" Tradução falhou após múltiplas tentativas")
         return TranslationResult(success=False, error="translation_rate_limit_exceeded")
 
 

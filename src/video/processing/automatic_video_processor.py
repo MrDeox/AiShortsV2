@@ -150,10 +150,10 @@ class AutomaticVideoProcessor:
             try:
                 with open(cache_path, 'r', encoding='utf-8') as f:
                     result = json.load(f)
-                self.logger.info(f"Cache hit para {cache_key}")
+self.logger.info(f"Cache hit para {cache_key}")
                 return result
             except Exception as e:
-                self.logger.warning(f"Erro ao carregar cache {cache_key}: {e}")
+self.logger.warning(f"Erro ao carregar cache {cache_key}: {e}")
         
         return None
     
@@ -239,11 +239,11 @@ class AutomaticVideoProcessor:
                     self.stats['total_processing_time'] / self.stats['processed_videos']
                 )
             
-            self.logger.info(f"Segmento processado: {temp_output_path} em {processing_time:.2f}s")
+self.logger.info(f"Segmento processado: {temp_output_path} em {processing_time:.2f}s")
             return temp_output_path
             
         except Exception as e:
-            self.logger.error(f"Erro ao processar segmento: {e}")
+self.logger.error(f"Erro ao processar segmento: {e}")
             return None
     
     def normalize_to_vertical(self, video_path: str) -> Optional[str]:
@@ -345,11 +345,11 @@ class AutomaticVideoProcessor:
                     self.stats['total_processing_time'] / self.stats['processed_videos']
                 )
             
-            self.logger.info(f"Vídeo convertido para vertical: {temp_output_path}")
+self.logger.info(f"Vídeo convertido para vertical: {temp_output_path}")
             return temp_output_path
             
         except Exception as e:
-            self.logger.error(f"Erro ao converter para vertical: {e}")
+self.logger.error(f"Erro ao converter para vertical: {e}")
             return None
     
     def enhance_quality(self, video_path: str) -> Optional[str]:
@@ -421,11 +421,11 @@ class AutomaticVideoProcessor:
                     self.stats['total_processing_time'] / self.stats['processed_videos']
                 )
             
-            self.logger.info(f"Qualidade melhorada: {temp_output_path}")
+self.logger.info(f"Qualidade melhorada: {temp_output_path}")
             return temp_output_path
             
         except Exception as e:
-            self.logger.error(f"Erro ao melhorar qualidade: {e}")
+self.logger.error(f"Erro ao melhorar qualidade: {e}")
             return None
     
     def _apply_professional_filters(self, clip: VideoFileClip) -> VideoFileClip:
@@ -473,7 +473,7 @@ class AutomaticVideoProcessor:
             return filtered_clip
             
         except Exception as e:
-            self.logger.warning(f"Erro ao aplicar filtros profissionais: {e}")
+self.logger.warning(f"Erro ao aplicar filtros profissionais: {e}")
             return clip
     
     def extract_frames_for_analysis(self, video_path: str, num_frames: int = 5) -> List[str]:
@@ -518,11 +518,11 @@ class AutomaticVideoProcessor:
                     frame_pil.save(frame_path, quality=95, optimize=True)
                     frame_paths.append(str(frame_path))
                 
-                self.logger.info(f"Extraídos {len(frame_paths)} frames para análise")
+self.logger.info(f"Extraídos {len(frame_paths)} frames para análise")
                 return frame_paths
                 
         except Exception as e:
-            self.logger.error(f"Erro ao extrair frames: {e}")
+self.logger.error(f"Erro ao extrair frames: {e}")
             return []
     
     def batch_process_videos(self, video_list: List[str], operations: List[str] = None) -> Dict[str, str]:
@@ -542,7 +542,7 @@ class AutomaticVideoProcessor:
         results = {}
         total_videos = len(video_list)
         
-        self.logger.info(f"Iniciando batch process de {total_videos} vídeos")
+self.logger.info(f"Iniciando batch process de {total_videos} vídeos")
         
         def process_single_video(video_path):
             """Processa um único vídeo."""
@@ -564,7 +564,7 @@ class AutomaticVideoProcessor:
                 return video_path, output_path
                 
             except Exception as e:
-                self.logger.error(f"Erro ao processar {video_path}: {e}")
+self.logger.error(f"Erro ao processar {video_path}: {e}")
                 return video_path, None
         
         # Processar em paralelo
@@ -580,7 +580,7 @@ class AutomaticVideoProcessor:
         
         # Estatísticas do batch
         successful = sum(1 for path in results.values() if path is not None)
-        self.logger.info(f"Batch concluído: {successful}/{total_videos} vídeos processados com sucesso")
+self.logger.info(f"Batch concluído: {successful}/{total_videos} vídeos processados com sucesso")
         
         return results
     
@@ -622,10 +622,10 @@ class AutomaticVideoProcessor:
                     cache_file.unlink()
                     removed_count += 1
             
-            self.logger.info(f"Cache limpo: {removed_count} arquivos removidos")
+self.logger.info(f"Cache limpo: {removed_count} arquivos removidos")
             
         except Exception as e:
-            self.logger.error(f"Erro ao limpar cache: {e}")
+self.logger.error(f"Erro ao limpar cache: {e}")
         
         return removed_count
 
@@ -651,27 +651,27 @@ if __name__ == "__main__":
             target_duration=30.0, 
             start_time=10.0
         )
-        print(f"Segmento processado: {result}")
+print(f"Segmento processado: {result}")
         
         # Converter para formato vertical
         vertical_result = processor.normalize_to_vertical(test_videos[0])
-        print(f"Formato vertical: {vertical_result}")
+print(f"Formato vertical: {vertical_result}")
         
         # Melhorar qualidade
         enhanced_result = processor.enhance_quality(test_videos[0])
-        print(f"Qualidade melhorada: {enhanced_result}")
+print(f"Qualidade melhorada: {enhanced_result}")
         
         # Extrair frames para análise
         frames = processor.extract_frames_for_analysis(test_videos[0], num_frames=5)
-        print(f"Frames extraídos: {frames}")
+print(f"Frames extraídos: {frames}")
         
         # Processamento em lote
         batch_results = processor.batch_process_videos(test_videos)
-        print(f"Resultados batch: {batch_results}")
+print(f"Resultados batch: {batch_results}")
         
         # Estatísticas
         stats = processor.get_processing_stats()
-        print(f"Estatísticas: {stats}")
+print(f"Estatísticas: {stats}")
         
     except Exception as e:
-        print(f"Erro durante o teste: {e}")
+print(f"Erro durante o teste: {e}")

@@ -1,0 +1,12 @@
+{
+  "pipeline": "AiShortsOrchestrator",
+  "generated_at": "2025-11-08T00:13:06.005212",
+  "video_segments": [
+    "outputs/video/139NSc53RqQ.mp4"
+  ],
+  "audio_path": "outputs/audio/p/af_diamond/narracao_000655.wav",
+  "captions_count": 10,
+  "quality_validated": true,
+  "composer_version": "1.0.0",
+  "platform_optimized": true
+}

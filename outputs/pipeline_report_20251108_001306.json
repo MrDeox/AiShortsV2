@@ -1,0 +1,322 @@
+{
+  "theme": {
+    "content_en": "**Topic:**  \nThe wood frog freezes solid in winter—literally turns into a \"frogsicle\"—yet thaws back to life in spring. Scientists confirmed it survives by flooding its body with glucose, acting as natural antifreeze to protect cells from deadly ice damage.",
+    "category": "animals",
+    "quality": 0.7,
+    "response_time": 5.581847190856934
+  },
+  "script": {
+    "title": "Curiosidade: **Topic:** The wood frog...",
+    "total_duration": 50.0,
+    "quality_score": 0.8800000000000001,
+    "engagement_score": 0.6,
+    "retention_score": 1.0,
+    "generated_at": "2025-11-08T00:06:28.730512",
+    "content_en": {
+      "hook": "This frog freezes solid... then wakes up alive.",
+      "body": "Meet the wood frog—winter turns it into a literal frogsicle for months. When temps drop, it pumps glucose through its blood like nature's ultimate antifreeze, protecting cells from shattering ice crystals. Scientists watched its heart stop and ice visibly creep under its skin in Alaskan labs, yet it revives completely come spring thaw. That sugar shield keeps vital organs intact while the frog's metabolism flatlines—no heartbeat, no breath, just pure suspended animation. Researchers call it cryoprotection: a survival cheat code so wild, it could revolutionize human organ transplants. Imagine cracking open a frozen pond to find your neighborhood frog popping back to life, croaking like nothing happened.",
+      "conclusion": "Nature's cheat code for death is way cooler than sci-fi. Tag someone who needs this hope—then smash follow for more insane animal superpowers.",
+      "structured_text": "HOOK: This frog freezes solid... then wakes up alive.\nBODY: Meet the wood frog—winter turns it into a literal frogsicle for months. When temps drop, it pumps glucose through its blood like nature's ultimate antifreeze, protecting cells from shattering ice crystals. Scientists watched its heart stop and ice visibly creep under its skin in Alaskan labs, yet it revives completely come spring thaw. That sugar shield keeps vital organs intact while the frog's metabolism flatlines—no heartbeat, no breath, just pure suspended animation. Researchers call it cryoprotection: a survival cheat code so wild, it could revolutionize human organ transplants. Imagine cracking open a frozen pond to find your neighborhood frog popping back to life, croaking like nothing happened.\nCONCLUSION: Nature's cheat code for death is way cooler than sci-fi. Tag someone who needs this hope—then smash follow for more insane animal superpowers.",
+      "plain_text": "This frog freezes solid... then wakes up alive.\nMeet the wood frog—winter turns it into a literal frogsicle for months. When temps drop, it pumps glucose through its blood like nature's ultimate antifreeze, protecting cells from shattering ice crystals. Scientists watched its heart stop and ice visibly creep under its skin in Alaskan labs, yet it revives completely come spring thaw. That sugar shield keeps vital organs intact while the frog's metabolism flatlines—no heartbeat, no breath, just pure suspended animation. Researchers call it cryoprotection: a survival cheat code so wild, it could revolutionize human organ transplants. Imagine cracking open a frozen pond to find your neighborhood frog popping back to life, croaking like nothing happened.\nNature's cheat code for death is way cooler than sci-fi. Tag someone who needs this hope—then smash follow for more insane animal superpowers."
+    },
+    "estimated_duration_from_text": 59.0,
+    "broll_queries": [],
+    "content_pt": "Este sapo congela completamente... e depois acorda vivo.  \nConheça o sapo-de-rosna—o inverno transforma-o literalmente em um sapo congelado por meses. Quando as temperaturas caem, ele bombeia glicose em seu sangue como o anticongelante definitivo da natureza, protegendo as células dos cristais de gelo que as destruiriam. Cientistas observaram seu coração parar e o gelo se espalhar visivelmente sob a pele em laboratórios no Alasca, ainda assim ele revive completamente com o degelo da primavera. Esse escudo de açúcar mantém os órgãos vitais intactos enquanto o metabolismo do sapo entra em colapso—sem batimentos cardíacos, sem respiração, apenas pura animação suspensa. Pesquisadores chamam isso de crioproteção: um código de trapaça para a sobrevivência tão impressionante que poderia revolucionar transplantes de órgãos humanos. Imagine quebrar a superfície de um lago congelado e encontrar seu sapo do bairro voltando à vida, coaxando como se nada tivesse acontecido.  \nO código de trapaça da natureza para a morte é muito mais impressionante que ficção científica. Marque alguém que precise dessa esperança—então d",
+    "translation": {
+      "success": true,
+      "response_time": 21.66422939300537,
+      "usage": {
+        "prompt_tokens": 274,
+        "completion_tokens": 1200,
+        "total_tokens": 1474,
+        "prompt_tokens_details": {
+          "cached_tokens": 6
+        }
+      },
+      "error": null
+    }
+  },
+  "audio": {
+    "success": true,
+    "file_path": "outputs/audio/p/af_diamond/narracao_000655.wav",
+    "duration": 28.199916666666667,
+    "voice": "af_diamond"
+  },
+  "captions": [
+    {
+      "text": "Este sapo congela completamente...",
+      "start_time": 0.0,
+      "end_time": 1.8,
+      "style": {
+        "position": "center",
+        "baseline": "bottom",
+        "font_size": 58,
+        "line_spacing": 12,
+        "font_color": "#FFFFFF",
+        "stroke_color": "#000000",
+        "stroke_width": 3,
+        "background_color": "#101010",
+        "background_opacity": 0.88,
+        "padding_horizontal": 48,
+        "padding_vertical": 28,
+        "max_width_ratio": 0.92,
+        "vertical_margin_ratio": 0.08
+      }
+    },
+    {
+      "text": "e depois acorda vivo.",
+      "start_time": 1.8,
+      "end_time": 3.6,
+      "style": {
+        "position": "center",
+        "baseline": "bottom",
+        "font_size": 58,
+        "line_spacing": 12,
+        "font_color": "#FFFFFF",
+        "stroke_color": "#000000",
+        "stroke_width": 3,
+        "background_color": "#101010",
+        "background_opacity": 0.88,
+        "padding_horizontal": 48,
+        "padding_vertical": 28,
+        "max_width_ratio": 0.92,
+        "vertical_margin_ratio": 0.08
+      }
+    },
+    {
+      "text": "Conheça o sapo-de-rosna—o inverno transforma-o literalmente em um sapo congelado por meses.",
+      "start_time": 3.6,
+      "end_time": 5.64,
+      "style": {
+        "position": "center",
+        "baseline": "bottom",
+        "font_size": 58,
+        "line_spacing": 12,
+        "font_color": "#FFFFFF",
+        "stroke_color": "#000000",
+        "stroke_width": 3,
+        "background_color": "#101010",
+        "background_opacity": 0.88,
+        "padding_horizontal": 48,
+        "padding_vertical": 28,
+        "max_width_ratio": 0.92,
+        "vertical_margin_ratio": 0.08
+      }
+    },
+    {
+      "text": "Quando as temperaturas caem, ele bombeia glicose em seu sangue como o anticongelante definitivo da natureza, protegendo as células dos cristais de gelo que as destruiriam.",
+      "start_time": 5.64,
+      "end_time": 10.06,
+      "style": {
+        "position": "center",
+        "baseline": "bottom",
+        "font_size": 58,
+        "line_spacing": 12,
+        "font_color": "#FFFFFF",
+        "stroke_color": "#000000",
+        "stroke_width": 3,
+        "background_color": "#101010",
+        "background_opacity": 0.88,
+        "padding_horizontal": 48,
+        "padding_vertical": 28,
+        "max_width_ratio": 0.92,
+        "vertical_margin_ratio": 0.08
+      }
+    },
+    {
+      "text": "Cientistas observaram seu coração parar e o gelo se espalhar visivelmente sob a pele em laboratórios no Alasca, ainda assim ele revive completamente com o degelo da primavera.",
+      "start_time": 10.06,
+      "end_time": 14.81,
+      "style": {
+        "position": "center",
+        "baseline": "bottom",
+        "font_size": 58,
+        "line_spacing": 12,
+        "font_color": "#FFFFFF",
+        "stroke_color": "#000000",
+        "stroke_width": 3,
+        "background_color": "#101010",
+        "background_opacity": 0.88,
+        "padding_horizontal": 48,
+        "padding_vertical": 28,
+        "max_width_ratio": 0.92,
+        "vertical_margin_ratio": 0.08
+      }
+    },
+    {
+      "text": "Esse escudo de açúcar mantém os órgãos vitais intactos enquanto o metabolismo do sapo entra em colapso—sem batimentos cardíacos, sem respiração, apenas pura animação suspensa.",
+      "start_time": 14.81,
+      "end_time": 19.06,
+      "style": {
+        "position": "center",
+        "baseline": "bottom",
+        "font_size": 58,
+        "line_spacing": 12,
+        "font_color": "#FFFFFF",
+        "stroke_color": "#000000",
+        "stroke_width": 3,
+        "background_color": "#101010",
+        "background_opacity": 0.88,
+        "padding_horizontal": 48,
+        "padding_vertical": 28,
+        "max_width_ratio": 0.92,
+        "vertical_margin_ratio": 0.08
+      }
+    },
+    {
+      "text": "Pesquisadores chamam isso de crioproteção: um código de trapaça para a sobrevivência tão impressionante que poderia revolucionar transplantes de órgãos humanos.",
+      "start_time": 19.06,
+      "end_time": 22.63,
+      "style": {
+        "position": "center",
+        "baseline": "bottom",
+        "font_size": 58,
+        "line_spacing": 12,
+        "font_color": "#FFFFFF",
+        "stroke_color": "#000000",
+        "stroke_width": 3,
+        "background_color": "#101010",
+        "background_opacity": 0.88,
+        "padding_horizontal": 48,
+        "padding_vertical": 28,
+        "max_width_ratio": 0.92,
+        "vertical_margin_ratio": 0.08
+      }
+    },
+    {
+      "text": "Imagine quebrar a superfície de um lago congelado e encontrar seu sapo do bairro voltando à vida, coaxando como se nada tivesse acontecido.",
+      "start_time": 22.63,
+      "end_time": 24.6,
+      "style": {
+        "position": "center",
+        "baseline": "bottom",
+        "font_size": 58,
+        "line_spacing": 12,
+        "font_color": "#FFFFFF",
+        "stroke_color": "#000000",
+        "stroke_width": 3,
+        "background_color": "#101010",
+        "background_opacity": 0.88,
+        "padding_horizontal": 48,
+        "padding_vertical": 28,
+        "max_width_ratio": 0.92,
+        "vertical_margin_ratio": 0.08
+      }
+    },
+    {
+      "text": "O código de trapaça da natureza para a morte é muito mais impressionante que ficção científica.",
+      "start_time": 24.6,
+      "end_time": 26.4,
+      "style": {
+        "position": "center",
+        "baseline": "bottom",
+        "font_size": 58,
+        "line_spacing": 12,
+        "font_color": "#FFFFFF",
+        "stroke_color": "#000000",
+        "stroke_width": 3,
+        "background_color": "#101010",
+        "background_opacity": 0.88,
+        "padding_horizontal": 48,
+        "padding_vertical": 28,
+        "max_width_ratio": 0.92,
+        "vertical_margin_ratio": 0.08
+      }
+    },
+    {
+      "text": "Marque alguém que precise dessa esperança—então d",
+      "start_time": 26.4,
+      "end_time": 28.2,
+      "style": {
+        "position": "center",
+        "baseline": "bottom",
+        "font_size": 58,
+        "line_spacing": 12,
+        "font_color": "#FFFFFF",
+        "stroke_color": "#000000",
+        "stroke_width": 3,
+        "background_color": "#101010",
+        "background_opacity": 0.88,
+        "padding_horizontal": 48,
+        "padding_vertical": 28,
+        "max_width_ratio": 0.92,
+        "vertical_margin_ratio": 0.08
+      }
+    }
+  ],
+  "broll": {
+    "success": true,
+    "videos": [
+      "outputs/video/139NSc53RqQ.mp4"
+    ],
+    "queries": [
+      "topic wood frog"
+    ],
+    "keywords": [
+      "topic",
+      "wood",
+      "frog",
+      "freezes",
+      "solid",
+      "winter",
+      "literally",
+      "turns",
+      "frogsicle",
+      "yet",
+      "thaws",
+      "back",
+      "life",
+      "spring",
+      "scientists",
+      "confirmed",
+      "survives",
+      "flooding",
+      "its",
+      "body"
+    ],
+    "used_queries": [
+      "topic wood frog"
+    ]
+  },
+  "analysis": {
+    "keywords": [
+      "topic",
+      "wood",
+      "frog",
+      "freezes",
+      "solid",
+      "winter",
+      "literally",
+      "turns",
+      "frogsicle",
+      "yet",
+      "thaws",
+      "back",
+      "life",
+      "spring",
+      "scientists",
+      "confirmed",
+      "survives",
+      "flooding",
+      "its",
+      "body"
+    ],
+    "category": "SPACE",
+    "confidence": 0.017241379310344827
+  },
+  "sync": {
+    "success": true,
+    "audio_path": "outputs/audio/p/af_diamond/narracao_000655.wav",
+    "video_paths": [
+      "outputs/video/139NSc53RqQ.mp4"
+    ]
+  },
+  "final": {
+    "video_path": "outputs/final/video_final_aishorts.mp4",
+    "video_count": 1,
+    "success": true,
+    "captions": 10
+  },
+  "total_time": 433.3390402793884,
+  "status": "success"
+}

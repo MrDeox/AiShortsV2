@@ -24,6 +24,9 @@ class OpenRouterSettings(BaseSettings):
     
     api_key: str = Field(default="", env="OPENROUTER_API_KEY")
     base_url: str = Field(default="https://openrouter.ai/api/v1", env="OPENROUTER_BASE_URL")
+    # Modelo:
+    # - Se OPENROUTER_MODEL definido: usa exatamente esse valor.
+    # - Caso contrário: usa fallback padrão (será sobrescrito por LLM_MODEL em AiShortsConfig se existir).
     model: str = Field(default="qwen/qwen3-235b-a22b:free", env="OPENROUTER_MODEL")
     max_tokens_theme: int = Field(default=2048, env="MAX_TOKENS_THEME")
     temperature_theme: float = Field(default=0.7, env="TEMPERATURE_THEME")
@@ -99,6 +102,30 @@ class RetrySettings(BaseSettings):
     retry_delay: float = Field(default=1.0, env="RETRY_DELAY")
     rate_limit_per_minute: int = Field(default=20, env="RATE_LIMIT_PER_MINUTE")
 
+class LLMIntegrationSettings(BaseSettings):
+    """Configurações das integrações LLM."""
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        extra="ignore"
+    )
+    
+    # Feature flags para controle de quais integrações LLM estão ativas
+    use_llm_theme_strategy: bool = Field(default=True, env="USE_LLM_THEME_STRATEGY")
+    use_llm_script_refiner: bool = Field(default=True, env="USE_LLM_SCRIPT_REFINER")
+    use_llm_broll_planner: bool = Field(default=True, env="USE_LLM_BROLL_PLANNER")
+    use_llm_reranker: bool = Field(default=False, env="USE_LLM_RERANKER")
+    use_llm_co_reviewer: bool = Field(default=False, env="USE_LLM_CO_REVIEWER")
+    use_llm_caption_validator: bool = Field(default=False, env="USE_LLM_CAPTION_VALIDATOR")
+    
+    # Cache de conteúdo LLM
+    enable_content_cache: bool = Field(default=True, env="ENABLE_CONTENT_CACHE")
+    cache_ttl_hours: int = Field(default=24, env="CACHE_TTL_HOURS")
+    
+    # Limites de segurança
+    max_theme_variations: int = Field(default=5, env="MAX_THEME_VARIATIONS")
+    max_script_refinements: int = Field(default=3, env="MAX_SCRIPT_REFINEMENTS")
+    max_broll_queries: int = Field(default=6, env="MAX_BROLL_QUERIES")
+
 class StorageSettings(BaseSettings):
     """Configurações de armazenamento."""
     model_config = SettingsConfigDict(
@@ -142,10 +169,22 @@ class AiShortsConfig:
     def __init__(self):
         self.project = ProjectSettings()
         self.openrouter = OpenRouterSettings()
+
+        # Fallback explícito:
+        # - Se NÃO houver OPENROUTER_MODEL definido no ambiente
+        # - E houver LLM_MODEL definido
+        # => usa LLM_MODEL como modelo principal.
+        env_openrouter_model = os.getenv("OPENROUTER_MODEL")
+        env_llm_model = os.getenv("LLM_MODEL")
+
+        if not env_openrouter_model and env_llm_model:
+            self.openrouter.model = env_llm_model.strip()
+
         self.logging = LoggingSettings()
         self.theme_gen = ThemeGeneratorSettings()
         self.script_gen = ScriptGeneratorSettings()
         self.retry = RetrySettings()
+        self.llm_integration = LLMIntegrationSettings()
         self.storage = StorageSettings()
         
         # Configurar debug baseado no ambiente
@@ -164,9 +203,9 @@ class AiShortsConfig:
                 if not self.openrouter.api_key or self.openrouter.api_key in ["your_openrouter_api_key_here", "sk-test-key-for-testing"]:
                     raise ValueError("OPENROUTER_API_KEY não está configurada ou é inválida")
             
-            # Verificar se o modelo é válido
-            if "qwen3-235b-a22b" not in self.openrouter.model:
-                raise ValueError("Modelo OpenRouter deve ser qwen/qwen3-235b-a22b:free")
+            # Verificar se o modelo está configurado (após aplicar fallback com LLM_MODEL)
+            if not self.openrouter.model:
+                raise ValueError("Modelo OpenRouter não está configurado (use OPENROUTER_MODEL ou LLM_MODEL no .env)")
             
             return True
             
@@ -196,12 +235,12 @@ config = AiShortsConfig()
 
 if __name__ == "__main__":
     # Teste de configuração
-    print("=== AiShorts v2.0 - Configuração ===")
-    print(config.get_summary())
+print("=== AiShorts v2.0 - Configuração ===")
+print(config.get_summary())
     
     # Teste de validação
     try:
         config.validate_config()
-        print("✅ Configuração válida!")
+print(" Configuração válida!")
     except Exception as e:
-        print(f"❌ Erro na configuração: {e}")
+print(f" Erro na configuração: {e}")

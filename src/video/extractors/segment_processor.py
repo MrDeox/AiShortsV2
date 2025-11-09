@@ -42,7 +42,7 @@ class SegmentProcessor:
         # Verificar se FFmpeg está disponível
         self._check_ffmpeg()
         
-        logger.info(f"SegmentProcessor inicializado - Temp: {self.temp_dir}")
+logger.info(f"SegmentProcessor inicializado - Temp: {self.temp_dir}")
     
     def _check_ffmpeg(self):
         """Verifica se FFmpeg está instalado e disponível."""
@@ -58,7 +58,7 @@ class SegmentProcessor:
             
             # Extrair versão do FFmpeg
             version_line = result.stdout.split('\n')[0]
-            logger.info(f"FFmpeg encontrado: {version_line}")
+logger.info(f"FFmpeg encontrado: {version_line}")
             
         except (subprocess.TimeoutExpired, subprocess.SubprocessError, FileNotFoundError) as e:
             raise VideoProcessingError(
@@ -92,7 +92,7 @@ class SegmentProcessor:
         else:
             output_path = Path(output_path)
         
-        logger.info(f"Extraindo segmento: {video_path} ({start}s, {duration}s)")
+logger.info(f"Extraindo segmento: {video_path} ({start}s, {duration}s)")
         
         # Validar parâmetros
         if start < 0:
@@ -125,7 +125,7 @@ class SegmentProcessor:
             
             if result.returncode != 0:
                 error_msg = f"FFmpeg error: {result.stderr}"
-                logger.error(error_msg)
+logger.error(error_msg)
                 raise VideoProcessingError(
                     f"Erro na extração do segmento: {error_msg}",
                     video_path=str(video_path),
@@ -147,12 +147,12 @@ class SegmentProcessor:
                 context=f"extract_segment: {video_path} ({start}s, {duration}s)"
             )
             
-            logger.info(f"Segmento extraído com sucesso: {output_file}")
+logger.info(f"Segmento extraído com sucesso: {output_file}")
             return output_file
             
         except Exception as e:
             error_msg = f"Erro na extração do segmento: {str(e)}"
-            logger.error(error_msg)
+logger.error(error_msg)
             raise VideoProcessingError(error_msg, video_path=str(video_path))
     
     def normalize_video(self, segment_path: str, target_format: str = "mp4",
@@ -183,7 +183,7 @@ class SegmentProcessor:
         else:
             output_path = Path(output_path)
         
-        logger.info(f"Normalizando vídeo: {segment_path}")
+logger.info(f"Normalizando vídeo: {segment_path}")
         
         # Mapear resolução para dimensões
         resolution_map = {
@@ -224,7 +224,7 @@ class SegmentProcessor:
             
             if result.returncode != 0:
                 error_msg = f"FFmpeg error: {result.stderr}"
-                logger.error(error_msg)
+logger.error(error_msg)
                 raise VideoProcessingError(
                     f"Erro na normalização: {error_msg}",
                     video_path=str(segment_path),
@@ -246,12 +246,12 @@ class SegmentProcessor:
                 context=f"normalize_video: {segment_path}"
             )
             
-            logger.info(f"Vídeo normalizado com sucesso: {output_file}")
+logger.info(f"Vídeo normalizado com sucesso: {output_file}")
             return output_file
             
         except Exception as e:
             error_msg = f"Erro na normalização: {str(e)}"
-            logger.error(error_msg)
+logger.error(error_msg)
             raise VideoProcessingError(error_msg, video_path=str(segment_path))
     
     def get_video_info(self, video_path: str) -> Dict[str, Any]:
@@ -271,7 +271,7 @@ class SegmentProcessor:
         if not video_path.exists():
             raise VideoProcessingError(f"Vídeo não encontrado: {video_path}")
         
-        logger.info(f"Analisando vídeo: {video_path}")
+logger.info(f"Analisando vídeo: {video_path}")
         
         # Comando FFprobe para obter informações
         ffprobe_cmd = [
@@ -345,14 +345,14 @@ class SegmentProcessor:
                 'format_long_name': format_info.get('format_long_name'),
             }
             
-            logger.info(f"Análise concluída: {video_info['general']['duration']:.1f}s, "
+logger.info(f"Análise concluída: {video_info['general']['duration']:.1f}s, "
                        f"{video_info['video_stream']['width']}x{video_info['video_stream']['height']}")
             
             return video_info
             
         except (subprocess.TimeoutExpired, subprocess.SubprocessError) as e:
             error_msg = f"Erro na análise do vídeo: {str(e)}"
-            logger.error(error_msg)
+logger.error(error_msg)
             raise VideoProcessingError(error_msg, video_path=str(video_path))
         except json.JSONDecodeError as e:
             error_msg = f"Erro ao parsear JSON do FFprobe: {str(e)}"
@@ -372,7 +372,7 @@ class SegmentProcessor:
             info = self.get_video_info(video_path)
             return info['general']['duration']
         except Exception as e:
-            logger.warning(f"Erro ao obter duração de {video_path}: {e}")
+logger.warning(f"Erro ao obter duração de {video_path}: {e}")
             return 0.0
     
     def cleanup_temp_files(self):
@@ -386,15 +386,15 @@ class SegmentProcessor:
                     file_path.unlink()
                     cleaned += 1
             
-            logger.info(f"Limpeza concluída: {cleaned} arquivos removidos")
+logger.info(f"Limpeza concluída: {cleaned} arquivos removidos")
             
         except Exception as e:
-            logger.warning(f"Erro durante limpeza: {str(e)}")
+logger.warning(f"Erro durante limpeza: {str(e)}")
 
 
 if __name__ == "__main__":
     # Teste básico do processador
-    print("=== Teste do SegmentProcessor ===")
+print("=== Teste do SegmentProcessor ===")
     
     processor = SegmentProcessor()
     
@@ -403,19 +403,19 @@ if __name__ == "__main__":
         test_video = "./test_video.mp4"
         
         if Path(test_video).exists():
-            print(f"\n1. Testando análise de vídeo: {test_video}")
+print(f"\n1. Testando análise de vídeo: {test_video}")
             info = processor.get_video_info(test_video)
-            print(f"Duração: {info['general']['duration']:.1f}s")
+print(f"Duração: {info['general']['duration']:.1f}s")
             if info.get('video_stream'):
-                print(f"Resolução: {info['video_stream']['width']}x{info['video_stream']['height']}")
-                print(f"FPS: {info['video_stream']['fps']:.1f}")
+print(f"Resolução: {info['video_stream']['width']}x{info['video_stream']['height']}")
+print(f"FPS: {info['video_stream']['fps']:.1f}")
         else:
-            print(f"\nVídeo de teste não encontrado: {test_video}")
+print(f"\nVídeo de teste não encontrado: {test_video}")
         
-        print("\n=== Teste concluído ===")
+print("\n=== Teste concluído ===")
         
     except Exception as e:
-        print(f"Erro durante teste: {e}")
+print(f"Erro durante teste: {e}")
         ErrorHandler.handle_error(e, "teste_segment_processor")
     
     finally:

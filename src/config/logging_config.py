@@ -55,17 +55,17 @@ logger.add(
 def setup_logging(level: str = "INFO", environment: str = "development"):
     """Configura o level de logging baseado no ambiente."""
     if environment == "development":
-        logger.remove()
-        logger.add(sys.stderr, level="DEBUG", colorize=True)
-        logger.add(LOG_FILE, level="DEBUG", serialize=True)
+logger.remove()
+logger.add(sys.stderr, level="DEBUG", colorize=True)
+logger.add(LOG_FILE, level="DEBUG", serialize=True)
     else:
-        logger.remove()
-        logger.add(sys.stderr, level="INFO", colorize=False)
-        logger.add(LOG_FILE, level="INFO", serialize=True)
+logger.remove()
+logger.add(sys.stderr, level="INFO", colorize=False)
+logger.add(LOG_FILE, level="INFO", serialize=True)
 
 if __name__ == "__main__":
     # Teste de configuração de logging
-    logger.info("Sistema de logging do AiShorts v2.0 inicializado")
-    logger.debug("Teste de debug - apenas em desenvolvimento")
-    logger.warning("Teste de warning")
-    logger.error("Teste de error")
+logger.info("Sistema de logging do AiShorts v2.0 inicializado")
+logger.debug("Teste de debug - apenas em desenvolvimento")
+logger.warning("Teste de warning")
+logger.error("Teste de error")

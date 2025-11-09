@@ -6,6 +6,8 @@ para todos os testes do sistema.
 """
 
 import sys
+import asyncio
+import os
 from pathlib import Path
 import pytest
 import tempfile
@@ -14,12 +16,41 @@ from unittest.mock import Mock, patch
 
 # Adicionar diretório raiz ao path
 project_root = Path(__file__).parent.parent
+SRC_DIR = project_root / "src"
 sys.path.insert(0, str(project_root))
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(1, str(SRC_DIR))
 
 @pytest.fixture(scope="session")
 def project_root_path():
     """Retorna o diretório raiz do projeto."""
     return project_root
+
+@pytest.fixture(scope="session")
+def event_loop():
+    """Cria um event loop para a sessão de testes."""
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+    yield loop
+    loop.close()
+
+@pytest.fixture(autouse=True)
+def mock_config():
+    """Mock das configurações para evitar dependência de .env."""
+    test_env = {
+        "OPENROUTER_API_KEY": "test-key-for-testing",
+        "OPENROUTER_MODEL": "test-model",
+        "PROJECT_ENV": "testing",
+        "LOG_LEVEL": "ERROR",  # Reduzir logs em testes
+        "USE_LLM_THEME_STRATEGY": "true",
+        "USE_LLM_SCRIPT_REFINER": "true",
+        "USE_LLM_BROLL_PLANNER": "true",
+        "USE_LLM_RERANKER": "false",
+        "USE_LLM_CO_REVIEWER": "false",
+        "USE_LLM_CAPTION_VALIDATOR": "false"
+    }
+    
+    with patch.dict(os.environ, test_env):
+        yield
 
 @pytest.fixture
 def temp_dir():

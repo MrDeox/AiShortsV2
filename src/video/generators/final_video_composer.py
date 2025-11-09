@@ -34,7 +34,29 @@ from moviepy.audio.fx import volumex, audio_loop
 from PIL import Image, ImageDraw, ImageFont
 import imagehash
 
-from config.video_settings import get_config
+def get_config():
+    """
+    Config mínimo embutido para o FinalVideoComposer.
+
+    Evita depender de config.video_settings (que não existe neste snapshot),
+    garantindo que main.py rode com defaults seguros.
+    """
+    return {
+        "final_composition": {
+            "default_resolution": (1080, 1920),
+            "default_fps": 30,
+            "target_bitrate": "5M",
+            "temp_dir": "/tmp/aishorts_final_temp",
+            "output_dir": "outputs/final",
+            "max_quality_retries": 0,
+            "quality_thresholds": {
+                "min_resolution_score": 0.0,
+                "min_audio_sync_score": 0.0,
+                "min_visual_clarity_score": 0.0,
+                "min_overall_score": 0.0,
+            },
+        }
+    }
 
 
 class VideoQuality(Enum):
@@ -145,7 +167,7 @@ class FinalVideoComposer:
             'min_overall_score': 0.8
         })
         
-        self.logger.info("FinalVideoComposer inicializado com sucesso")
+self.logger.info("FinalVideoComposer inicializado com sucesso")
     
     def compose_final_video(
         self,
@@ -171,7 +193,7 @@ class FinalVideoComposer:
             Caminho do vídeo final gerado
         """
         try:
-            self.logger.info(f"Iniciando composição final com {len(video_segments)} segmentos")
+self.logger.info(f"Iniciando composição final com {len(video_segments)} segmentos")
             
             if not audio_path or not os.path.exists(audio_path):
                 raise ValueError(f"Arquivo de áudio não encontrado: {audio_path}")
@@ -229,11 +251,11 @@ class FinalVideoComposer:
             if not quality_valid and (metadata or {}).get('retry_on_quality_fail', True):
                 retry_count = (metadata or {}).get('retry_count', 0)
                 if retry_count >= self.max_retries:
-                    self.logger.warning(
+self.logger.warning(
                         f"Qualidade abaixo do padrão (score baixo) após {retry_count} tentativas. Encerrando retries."
                     )
                     return output_path
-                self.logger.warning("Qualidade abaixo do padrão, tentando novamente...")
+self.logger.warning("Qualidade abaixo do padrão, tentando novamente...")
                 meta_next = {**(metadata or {}), 'retry_count': retry_count + 1}
                 return self._retry_composition_with_improvements(
                     audio_path, video_segments, template_config, captions, output_path, meta_next
@@ -243,11 +265,11 @@ class FinalVideoComposer:
             if metadata:
                 self._save_final_metadata(output_path, metadata, quality_valid)
             
-            self.logger.info(f"Vídeo final gerado com sucesso: {output_path}")
+self.logger.info(f"Vídeo final gerado com sucesso: {output_path}")
             return output_path
             
         except Exception as e:
-            self.logger.error(f"Erro na composição final: {e}")
+self.logger.error(f"Erro na composição final: {e}")
             raise
     
     def apply_final_effects(self, composed_video_path: str) -> str:
@@ -261,7 +283,7 @@ class FinalVideoComposer:
             Caminho do vídeo com efeitos aplicados
         """
         try:
-            self.logger.info(f"Aplicando efeitos finais em: {composed_video_path}")
+self.logger.info(f"Aplicando efeitos finais em: {composed_video_path}")
             
             if not os.path.exists(composed_video_path):
                 raise ValueError(f"Vídeo não encontrado: {composed_video_path}")
@@ -287,11 +309,11 @@ class FinalVideoComposer:
                 # Renderizar
                 self._render_with_optimized_settings(final_video, output_path)
             
-            self.logger.info(f"Efeitos finais aplicados: {output_path}")
+self.logger.info(f"Efeitos finais aplicados: {output_path}")
             return output_path
             
         except Exception as e:
-            self.logger.error(f"Erro ao aplicar efeitos finais: {e}")
+self.logger.error(f"Erro ao aplicar efeitos finais: {e}")
             raise
     
     def add_text_overlays(self, video_path: str, script_sections: List[Dict]) -> str:
@@ -306,7 +328,7 @@ class FinalVideoComposer:
             Caminho do vídeo com texto sobreposto
         """
         try:
-            self.logger.info(f"Adicionando texto sobreposto em: {video_path}")
+self.logger.info(f"Adicionando texto sobreposto em: {video_path}")
             
             if not os.path.exists(video_path):
                 raise ValueError(f"Vídeo não encontrado: {video_path}")
@@ -343,11 +365,11 @@ class FinalVideoComposer:
                 # Renderizar
                 self._render_with_optimized_settings(final_video, output_path)
             
-            self.logger.info(f"Texto sobreposto adicionado: {output_path}")
+self.logger.info(f"Texto sobreposto adicionado: {output_path}")
             return output_path
             
         except Exception as e:
-            self.logger.error(f"Erro ao adicionar texto sobreposto: {e}")
+self.logger.error(f"Erro ao adicionar texto sobreposto: {e}")
             raise
     
     def optimize_for_platform(
@@ -368,7 +390,7 @@ class FinalVideoComposer:
             Caminho do vídeo otimizado
         """
         try:
-            self.logger.info(f"Otimizando para {platform} com qualidade {quality.value}")
+self.logger.info(f"Otimizando para {platform} com qualidade {quality.value}")
             
             if not os.path.exists(final_video_path):
                 raise ValueError(f"Vídeo não encontrado: {final_video_path}")
@@ -406,13 +428,13 @@ class FinalVideoComposer:
             )
             
             if not compliance_check:
-                self.logger.warning(f"Vídeo pode não estar em conformidade com {platform}")
+self.logger.warning(f"Vídeo pode não estar em conformidade com {platform}")
             
-            self.logger.info(f"Vídeo otimizado para {platform}: {output_path}")
+self.logger.info(f"Vídeo otimizado para {platform}: {output_path}")
             return output_path
             
         except Exception as e:
-            self.logger.error(f"Erro na otimização para {platform}: {e}")
+self.logger.error(f"Erro na otimização para {platform}: {e}")
             raise
     
     def generate_thumbnail(
@@ -433,7 +455,7 @@ class FinalVideoComposer:
             Caminho da thumbnail gerada
         """
         try:
-            self.logger.info(f"Gerando thumbnail estilo '{style}' para: {final_video_path}")
+self.logger.info(f"Gerando thumbnail estilo '{style}' para: {final_video_path}")
             
             if not os.path.exists(final_video_path):
                 raise ValueError(f"Vídeo não encontrado: {final_video_path}")
@@ -464,12 +486,12 @@ class FinalVideoComposer:
             
             # Verificar engajamento do thumbnail
             engagement_score = self._calculate_thumbnail_engagement(output_path)
-            self.logger.info(f"Thumbnail gerada (engajamento estimado: {engagement_score:.2f})")
+self.logger.info(f"Thumbnail gerada (engajamento estimado: {engagement_score:.2f})")
             
             return output_path
             
         except Exception as e:
-            self.logger.error(f"Erro ao gerar thumbnail: {e}")
+self.logger.error(f"Erro ao gerar thumbnail: {e}")
             raise
     
     def batch_export(
@@ -490,7 +512,7 @@ class FinalVideoComposer:
             Dicionário com caminhos dos vídeos otimizados por plataforma
         """
         try:
-            self.logger.info(f"Export em lote para {len(platforms)} plataformas")
+self.logger.info(f"Export em lote para {len(platforms)} plataformas")
             
             results = {}
             
@@ -514,20 +536,20 @@ class FinalVideoComposer:
                     
                     results[platform_name] = str(final_path)
                     
-                    self.logger.info(f"✓ Export para {platform_name} concluído")
+self.logger.info(f" Export para {platform_name} concluído")
                     
                 except Exception as e:
-                    self.logger.error(f"✗ Erro no export para {platform}: {e}")
+self.logger.error(f" Erro no export para {platform}: {e}")
                     results[platform_name] = None
             
             # Gerar relatório de export
             self._generate_batch_export_report(export_dir, results)
             
-            self.logger.info(f"Export em lote concluído: {len(results)} vídeos")
+self.logger.info(f"Export em lote concluído: {len(results)} vídeos")
             return results
             
         except Exception as e:
-            self.logger.error(f"Erro no export em lote: {e}")
+self.logger.error(f"Erro no export em lote: {e}")
             raise
     
     def _load_audio_track(self, audio_path: str):
@@ -541,7 +563,7 @@ class FinalVideoComposer:
             return audio_clip
             
         except Exception as e:
-            self.logger.error(f"Erro ao carregar áudio: {e}")
+self.logger.error(f"Erro ao carregar áudio: {e}")
             raise
     
     def _sync_segments_with_audio(
@@ -594,11 +616,11 @@ class FinalVideoComposer:
                 last_segment.duration = audio_duration - last_segment.start_time
                 last_segment.end_time = audio_duration
             
-            self.logger.info(f"Segmentos sincronizados: {len(synchronized_segments)}")
+self.logger.info(f"Segmentos sincronizados: {len(synchronized_segments)}")
             return synchronized_segments
             
         except Exception as e:
-            self.logger.error(f"Erro na sincronização: {e}")
+self.logger.error(f"Erro na sincronização: {e}")
             raise
     
     def _create_video_structure(
@@ -641,7 +663,7 @@ class FinalVideoComposer:
                         video_clips.append(clip)
                         
                 except Exception as e:
-                    self.logger.warning(f"Erro ao processar segmento {segment.path}: {e}")
+self.logger.warning(f"Erro ao processar segmento {segment.path}: {e}")
                     # Criar placeholder se segmento falhar
                     placeholder_clip = self._create_placeholder_clip(
                         template_config, segment.duration
@@ -653,11 +675,11 @@ class FinalVideoComposer:
                 outro_clip = self._create_outro_clip(template_config)
                 video_clips.append(outro_clip)
             
-            self.logger.info(f"Estrutura de vídeo criada: {len(video_clips)} clips")
+self.logger.info(f"Estrutura de vídeo criada: {len(video_clips)} clips")
             return video_clips
             
         except Exception as e:
-            self.logger.error(f"Erro ao criar estrutura de vídeo: {e}")
+self.logger.error(f"Erro ao criar estrutura de vídeo: {e}")
             raise
 
     def _apply_vertical_sandwich_layout(
@@ -688,7 +710,7 @@ class FinalVideoComposer:
         try:
             background = self._create_blurred_background(clip, (target_width, target_height))
         except Exception as blur_error:
-            self.logger.debug(f"Falha ao criar background com blur: {blur_error}")
+self.logger.debug(f"Falha ao criar background com blur: {blur_error}")
             background = ColorClip(size=(target_width, target_height), color=base_color, duration=duration)
         else:
             background = background.set_duration(duration).without_audio()
@@ -747,7 +769,7 @@ class FinalVideoComposer:
             return processed_clips
             
         except Exception as e:
-            self.logger.error(f"Erro ao aplicar transições: {e}")
+self.logger.error(f"Erro ao aplicar transições: {e}")
             return video_clips
 
     def _apply_captions(
@@ -791,7 +813,7 @@ class FinalVideoComposer:
             return composite
 
         except Exception as e:
-            self.logger.error(f"Erro ao aplicar legendas: {e}")
+self.logger.error(f"Erro ao aplicar legendas: {e}")
             return video_clip
     
     def _sync_audio_with_video(self, video_clip, audio_clip):
@@ -810,7 +832,7 @@ class FinalVideoComposer:
             return final_clip
             
         except Exception as e:
-            self.logger.error(f"Erro na sincronização de áudio: {e}")
+self.logger.error(f"Erro na sincronização de áudio: {e}")
             return video_clip
     
     def _apply_template_branding(self, video_clip, template_config):
@@ -823,7 +845,7 @@ class FinalVideoComposer:
             return video_clip
             
         except Exception as e:
-            self.logger.error(f"Erro ao aplicar branding: {e}")
+self.logger.error(f"Erro ao aplicar branding: {e}")
             return video_clip
     
     def _apply_final_video_settings(self, video_clip, template_config):
@@ -842,7 +864,7 @@ class FinalVideoComposer:
             return video_clip
             
         except Exception as e:
-            self.logger.error(f"Erro nas configurações finais: {e}")
+self.logger.error(f"Erro nas configurações finais: {e}")
             return video_clip
     
     def _render_final_video(self, video_clip, output_path, template_config):
@@ -867,7 +889,7 @@ class FinalVideoComposer:
             video_clip.close()
             
         except Exception as e:
-            self.logger.error(f"Erro no render final: {e}")
+self.logger.error(f"Erro no render final: {e}")
             raise
     
     def _validate_final_quality(self, video_path: str, audio_path: str) -> bool:
@@ -886,14 +908,14 @@ class FinalVideoComposer:
             is_valid = all(quality_checks)
             
             if is_valid:
-                self.logger.info(f"Qualidade validada com sucesso (score: {metrics.overall_score:.2f})")
+self.logger.info(f"Qualidade validada com sucesso (score: {metrics.overall_score:.2f})")
             else:
-                self.logger.warning(f"Qualidade abaixo do padrão (score: {metrics.overall_score:.2f})")
+self.logger.warning(f"Qualidade abaixo do padrão (score: {metrics.overall_score:.2f})")
             
             return is_valid
             
         except Exception as e:
-            self.logger.error(f"Erro na validação de qualidade: {e}")
+self.logger.error(f"Erro na validação de qualidade: {e}")
             return False
     
     def _calculate_quality_metrics(self, video_path: str, audio_path: str) -> QualityMetrics:
@@ -935,7 +957,7 @@ class FinalVideoComposer:
             )
             
         except Exception as e:
-            self.logger.error(f"Erro ao calcular métricas: {e}")
+self.logger.error(f"Erro ao calcular métricas: {e}")
             # Retornar valores padrão em caso de erro
             return QualityMetrics(0.5, 0.5, 0.5, 0.5, 0.5, False, 0.5)
     
@@ -956,7 +978,7 @@ class FinalVideoComposer:
             return sharpness_score
             
         except Exception as e:
-            self.logger.error(f"Erro no cálculo de clareza: {e}")
+self.logger.error(f"Erro no cálculo de clareza: {e}")
             return 0.5
     
     def _calculate_compression_efficiency(self, video_path: str) -> float:
@@ -983,7 +1005,7 @@ class FinalVideoComposer:
             return 0.5
             
         except Exception as e:
-            self.logger.error(f"Erro no cálculo de eficiência: {e}")
+self.logger.error(f"Erro no cálculo de eficiência: {e}")
             return 0.5
     
     def _calculate_engagement_potential(self, video_clip) -> float:
@@ -1017,7 +1039,7 @@ class FinalVideoComposer:
             return engagement_score
             
         except Exception as e:
-            self.logger.error(f"Erro no cálculo de engajamento: {e}")
+self.logger.error(f"Erro no cálculo de engajamento: {e}")
             return 0.5
     
     def _load_default_templates(self) -> Dict[str, TemplateConfig]:
@@ -1107,9 +1129,9 @@ class FinalVideoComposer:
             for file_path in self.temp_dir.glob('*'):
                 if file_path.is_file():
                     file_path.unlink()
-            self.logger.info("Arquivos temporários limpos")
+self.logger.info("Arquivos temporários limpos")
         except Exception as e:
-            self.logger.warning(f"Erro na limpeza de temp files: {e}")
+self.logger.warning(f"Erro na limpeza de temp files: {e}")
     
     def _save_final_metadata(self, video_path: str, metadata: Dict, quality_valid: bool):
         """Salva metadados finais do vídeo"""
@@ -1128,10 +1150,10 @@ class FinalVideoComposer:
             with open(metadata_file, 'w', encoding='utf-8') as f:
                 json.dump(final_metadata, f, indent=2, ensure_ascii=False)
             
-            self.logger.info(f"Metadados salvos: {metadata_file}")
+self.logger.info(f"Metadados salvos: {metadata_file}")
             
         except Exception as e:
-            self.logger.error(f"Erro ao salvar metadados: {e}")
+self.logger.error(f"Erro ao salvar metadados: {e}")
     
     def _retry_composition_with_improvements(
         self,
@@ -1144,7 +1166,7 @@ class FinalVideoComposer:
     ) -> str:
         """Sistema de retry com melhorias automáticas"""
         try:
-            self.logger.info("Tentando composição com melhorias...")
+self.logger.info("Tentando composição com melhorias...")
             
             # Aplicar melhorias baseadas nos problemas detectados
             improved_template = self._apply_quality_improvements(template_config)
@@ -1160,7 +1182,7 @@ class FinalVideoComposer:
             )
             
         except Exception as e:
-            self.logger.error(f"Erro no retry: {e}")
+self.logger.error(f"Erro no retry: {e}")
             return output_path  # Retornar vídeo original em caso de falha
     
     def _apply_quality_improvements(self, template_config: TemplateConfig) -> TemplateConfig:
@@ -1241,7 +1263,7 @@ class FinalVideoComposer:
                 b = int(hex_color[4:6], 16)
                 return (r, g, b)
         except ValueError:
-            self.logger.debug(f"Cor inválida recebida: {hex_color}")
+self.logger.debug(f"Cor inválida recebida: {hex_color}")
         return (0, 0, 0)
 
     def _create_blurred_background(
@@ -1336,7 +1358,7 @@ class FinalVideoComposer:
             return caption_clip
 
         except Exception as e:
-            self.logger.error(f"Erro ao criar legenda: {e}")
+self.logger.error(f"Erro ao criar legenda: {e}")
             return None
 
     def _resolve_font_path(self, preferred_path: Optional[str]) -> Optional[str]:
@@ -1421,7 +1443,7 @@ class FinalVideoComposer:
             return text_clip
             
         except Exception as e:
-            self.logger.error(f"Erro ao criar texto: {e}")
+self.logger.error(f"Erro ao criar texto: {e}")
             return None
     
     def _apply_stabilization(self, video_clip) -> VideoFileClip:
@@ -1459,12 +1481,12 @@ class FinalVideoComposer:
                 try:
                     video_clip = video_clip.fx(vfx.colorx, 1.1)
                 except Exception:
-                    self.logger.debug("Efeito brightness_up não suportado para este clip")
+self.logger.debug("Efeito brightness_up não suportado para este clip")
             elif effect == 'contrast_boost':
                 try:
                     video_clip = video_clip.fx(vfx.lum_contrast, contrast=30)
                 except Exception:
-                    self.logger.debug("Efeito contrast_boost não suportado para este clip")
+self.logger.debug("Efeito contrast_boost não suportado para este clip")
 
         return video_clip
     
@@ -1580,7 +1602,7 @@ class FinalVideoComposer:
             return all(compliance_checks)
             
         except Exception as e:
-            self.logger.error(f"Erro na validação de conformidade: {e}")
+self.logger.error(f"Erro na validação de conformidade: {e}")
             return False
     
     def _process_thumbnail_frame(
@@ -1610,7 +1632,7 @@ class FinalVideoComposer:
             return cv2.cvtColor(thumbnail_frame, cv2.COLOR_BGR2RGB)
             
         except Exception as e:
-            self.logger.error(f"Erro no processamento de thumbnail: {e}")
+self.logger.error(f"Erro no processamento de thumbnail: {e}")
             return frame
     
     def _calculate_thumbnail_engagement(self, thumbnail_path: str) -> float:
@@ -1632,7 +1654,7 @@ class FinalVideoComposer:
             return color_score
             
         except Exception as e:
-            self.logger.error(f"Erro no cálculo de engajamento da thumbnail: {e}")
+self.logger.error(f"Erro no cálculo de engajamento da thumbnail: {e}")
             return 0.5
     
     def _generate_batch_export_report(self, export_dir: Path, results: Dict[str, str]):
@@ -1651,10 +1673,10 @@ class FinalVideoComposer:
             with open(report_path, 'w', encoding='utf-8') as f:
                 json.dump(report_data, f, indent=2, ensure_ascii=False)
             
-            self.logger.info(f"Relatório de export salvo: {report_path}")
+self.logger.info(f"Relatório de export salvo: {report_path}")
             
         except Exception as e:
-            self.logger.error(f"Erro ao gerar relatório: {e}")
+self.logger.error(f"Erro ao gerar relatório: {e}")
 
 
 # Exemplo de uso e testes
@@ -1698,8 +1720,8 @@ if __name__ == "__main__":
             )
         ]
         
-        print("Sistema de Composição Final inicializado com sucesso!")
-        print("Pronto para processar vídeos de alta qualidade.")
+print("Sistema de Composição Final inicializado com sucesso!")
+print("Pronto para processar vídeos de alta qualidade.")
         
     except Exception as e:
-        print(f"Erro na inicialização: {e}")
+print(f"Erro na inicialização: {e}")

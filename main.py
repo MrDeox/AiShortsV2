@@ -44,98 +44,124 @@ logger = logging.getLogger("AiShortsMain")
 # --------------------------------------------------------------------------- #
 # Imports das camadas de domínio
 # --------------------------------------------------------------------------- #
-from src.core.openrouter_client import openrouter_client  # noqa: E402
+import asyncio
+import sys
+from src.core.performance_orchestrator import run_optimized_pipeline, run_enhanced_pipeline  # noqa: E402
 from src.generators.prompt_engineering import ThemeCategory  # noqa: E402
-from src.generators.script_generator import ScriptGenerator  # noqa: E402
-from src.generators.theme_generator import ThemeGenerator  # noqa: E402
-from src.pipeline.orchestrator import AiShortsOrchestrator  # noqa: E402
-from src.pipeline.services.broll_query_service import BrollQueryService  # noqa: E402
-from src.pipeline.services.caption_service import CaptionService  # noqa: E402
-from src.tts.kokoro_tts import KokoroTTSClient  # noqa: E402
-from src.utils.translator import translator  # noqa: E402
-from src.video.extractors.youtube_extractor import YouTubeExtractor  # noqa: E402
-from src.video.matching.semantic_analyzer import SemanticAnalyzer  # noqa: E402
-from src.video.processing.video_processor import VideoProcessor  # noqa: E402
-from src.video.sync.audio_video_synchronizer import AudioVideoSynchronizer  # noqa: E402
-
-
-# --------------------------------------------------------------------------- #
-# Fábrica do orquestrador
-# --------------------------------------------------------------------------- #
-def create_orchestrator() -> AiShortsOrchestrator:
-    """Instancia e configura todas as dependências do pipeline."""
-    logger.info("🚀 Inicializando dependências do pipeline AiShorts v2.0...")
-
-    theme_generator = ThemeGenerator()
-    script_generator = ScriptGenerator()
-    tts_client = KokoroTTSClient()
-    youtube_extractor = YouTubeExtractor()
-    semantic_analyzer = SemanticAnalyzer()
-    audio_video_sync = AudioVideoSynchronizer()
-    video_processor = VideoProcessor()
-    broll_query_service = BrollQueryService(openrouter_client)
-    caption_service = CaptionService()
-
-    logger.info("✅ Dependências inicializadas com sucesso!")
-
-    return AiShortsOrchestrator(
-        theme_generator=theme_generator,
-        script_generator=script_generator,
-        translator=translator,
-        tts_client=tts_client,
-        youtube_extractor=youtube_extractor,
-        semantic_analyzer=semantic_analyzer,
-        audio_video_sync=audio_video_sync,
-        video_processor=video_processor,
-        broll_query_service=broll_query_service,
-        caption_service=caption_service,
-        logger=logging.getLogger("AiShortsOrchestrator"),
-    )
+from src.core.memory_monitor import get_memory_monitor  # noqa: E402
 
 
 # --------------------------------------------------------------------------- #
 # CLI
 # --------------------------------------------------------------------------- #
 def main():
-    """Ponto de entrada principal."""
-    print("🎬 AiShorts v2.0 - Geração de Vídeo Curto")
-    print("=" * 50)
+    """Ponto de entrada principal com pipeline otimizado."""
+    print("🎬 AiShorts v2.0 - Pipeline Super Otimizado")
+    print("=" * 55)
 
-    orchestrator = create_orchestrator()
-
-    print("\n🚀 Executando pipeline completo...")
-    results = orchestrator.run(theme_category=ThemeCategory.ANIMALS)
-
-    if results.get("status") == "success":
-        print("\n🎉 SUCESSO! Vídeo gerado com todas as etapas.")
-        print(f"⏱️ Tempo total: {results['total_time']:.2f}s")
-        print("📁 Arquivos gerados:")
-
-        script_hook = results["script"]["content_en"].get("hook") or ""
-        if script_hook:
-            print(f"   • Roteiro (EN) - Hook: {script_hook[:60]}...")
-
-        if results["script"].get("content_pt"):
-            preview_pt = results["script"]["content_pt"].split("\n")[0]
-            print(f"   • Roteiro (PT-BR): {preview_pt[:60]}...")
-
-        llm_queries = results["script"].get("broll_queries") or []
-        if llm_queries:
-            print(f"   • Queries B-roll (LLM): {', '.join(llm_queries)}")
-
-        print(f"   • Áudio: {results['audio']['file_path']}")
-        print(f"   • Vídeos B-roll: {len(results['broll']['videos'])}")
-
-        captions_count = len(results.get("captions") or [])
-        if captions_count:
-            print(f"   • Legendas sincronizadas: {captions_count}")
-
-        print(f"   • Vídeo Final: {results['final']['video_path']}")
-        print("   • Relatório: outputs/pipeline_report_*.json")
+    # Verificar se deve usar enhanced mode
+    use_enhanced = "--enhanced" in sys.argv or "-e" in sys.argv
+    
+    if use_enhanced:
+        print("✨ MODO ENHANCED ATIVADO - Usando otimizações LLM avançadas")
+        print("   • Previsão de viralidade com IA")
+        print("   • Análise de qualidade visual")
+        print("   • B-roll enhancement inteligente")
     else:
-        print(f"\n❌ FALHA: {results.get('error', 'Erro desconhecido')}")
+        print("🚀 MODO PADRÃO - Pipeline otimizado básico")
+        print("   • Use --enhanced ou -e para ativar todas as otimizações")
+    
+    print()
 
-    return results
+    # Iniciar monitoramento de memória
+    memory_monitor = get_memory_monitor()
+    initial_stats = memory_monitor.get_current_stats()
+    
+    print(f"💾 Memória inicial: {initial_stats.process_gb:.2f}GB ({initial_stats.system_percent:.1f}% sistema)")
+    logger.info("✅ Otimizações de memória local ativadas")
+
+    print("\n" + "=" * 73)
+    print("🎬 INICIANDO PIPELINE AISHORTS V2.0 - GERAÇÃO DE VÍDEO")
+    print("=" * 73)
+
+    # Executar pipeline de forma assíncrona
+    try:
+        if use_enhanced:
+            print("🔮 Executando Enhanced Pipeline com IA avançada...")
+            results = asyncio.run(run_enhanced_pipeline(theme_category="animals"))
+        else:
+            print("⚡ Executando Pipeline Otimizado padrão...")
+            results = asyncio.run(run_optimized_pipeline(theme_category="animals", enhanced_mode=False))
+        
+        if results.get("success"):
+            print("\n🎉 SUCESSO! Pipeline concluído com brilhantismo.")
+            
+            # Exibir tipo de pipeline
+            pipeline_type = results.get('pipeline_type', 'unknown')
+            print(f"📊 Pipeline executado: {pipeline_type.replace('_', ' ').title()}")
+            
+            # Exibir métricas de performance
+            perf_metrics = results.get('performance_metrics', {})
+            overall_metrics = perf_metrics.get('overall', {})
+            enhanced_metrics = results.get('enhanced_metrics', {})
+            
+            print(f"⏱️ Tempo total: {results.get('total_time', 0):.2f}s")
+            print(f"🚀 Tempo economizado: {overall_metrics.get('total_time_saved_seconds', 0):.2f}s")
+            print(f"💾 Cache hit rate: {overall_metrics.get('cache_hit_rate', '0%')}")
+            
+            # Métricas enhanced se disponíveis
+            if enhanced_metrics:
+                print(f"\n✨ Métricas Enhanced:")
+                content_insights = enhanced_metrics.get('content_insights', {})
+                print(f"   🔮 Nível viralidade: {content_insights.get('virality_level', 'N/A')}")
+                print(f"   🎬 Score qualidade: {content_insights.get('average_quality_score', 0):.1f}/100")
+                print(f"   🔍 Queries enhanced: {content_insights.get('enhanced_queries_count', 0)}")
+                
+                perf_improvements = enhanced_metrics.get('performance_improvements', {})
+                print(f"   🤖 Otimizações IA ativas: {perf_improvements.get('llm_enhancements_active', 0)}")
+                print(f"   📡 Requests LLM totais: {perf_improvements.get('total_llm_requests', 0)}")
+            
+            print("\n📁 Resultados:")
+            theme = results.get('theme', 'N/A')
+            script = results.get('script', 'N/A')
+            video_count = len(results.get('video_paths', []))
+            
+            if theme != 'N/A':
+                print(f"   • Tema: {theme[:60]}...")
+            if script != 'N/A':
+                print(f"   • Script: {script[:60]}...")
+            print(f"   • Vídeos baixados: {video_count}")
+            
+            # Análises especiais se disponíveis
+            if results.get('virality_analysis'):
+                virality = results['virality_analysis']
+                virality_scores = virality.get('virality_scores', {})
+                print(f"   🔮 Score viralidade: {virality_scores.get('overall_score', 0):.1f}/100")
+                
+            if results.get('quality_analyses'):
+                quality_scores = [qa.get('overall_score', 0) for qa in results['quality_analyses']]
+                avg_quality = sum(quality_scores) / len(quality_scores) if quality_scores else 0
+                print(f"   🎬 Qualidade média vídeos: {avg_quality:.1f}/100")
+            
+            # Exibir estatísticas finais de memória
+            final_stats = memory_monitor.get_current_stats()
+            print(f"\n💾 Memória final: {final_stats.process_gb:.2f}GB ({final_stats.system_percent:.1f}% sistema)")
+            
+        else:
+            error = results.get('error', 'Erro desconhecido')
+            print(f"\n❌ FALHA: {error}")
+            logger.error(f"Pipeline falhou: {error}")
+
+        return results
+
+    except KeyboardInterrupt:
+        print("\n⚠️ Pipeline interrompido pelo usuário.")
+        return {"success": False, "error": "Interrupção do usuário"}
+    
+    except Exception as e:
+        print(f"\n❌ ERRO CRÍTICO: {str(e)}")
+        logger.error(f"Erro crítico no pipeline: {e}", exc_info=True)
+        return {"success": False, "error": str(e)}
 
 
 if __name__ == "__main__":

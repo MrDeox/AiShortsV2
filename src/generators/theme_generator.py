@@ -14,46 +14,24 @@ from pathlib import Path
 from loguru import logger
 
 from src.config.settings import config
+
+# Importar cache de conteúdo
+try:
+    from src.core.content_cache import get_content_cache
+    CONTENT_CACHE_AVAILABLE = True
+except ImportError:
+    CONTENT_CACHE_AVAILABLE = False
+logger.warning("ContentCache não disponível, usando sem cache")
 from src.core.openrouter_client import openrouter_client
 from src.generators.prompt_engineering import PromptEngineering, ThemeCategory, prompt_engineering
 from src.utils.exceptions import ThemeGenerationError, ValidationError, ErrorHandler
 
+# Importar modelos unificados
+from src.models import GeneratedTheme as GeneratedThemeBase
 
-@dataclass
-class GeneratedTheme:
-    """Representa um tema gerado com metadados."""
-    content: str
-    category: ThemeCategory
-    quality_score: float
-    response_time: float
-    timestamp: datetime
-    usage: Optional[Dict[str, int]] = None
-    metrics: Optional[Dict[str, Any]] = None
-    
-    def to_dict(self) -> Dict[str, Any]:
-        """Converte para dicionário para serialização."""
-        return {
-            "content": self.content,
-            "category": self.category.value,
-            "quality_score": self.quality_score,
-            "response_time": self.response_time,
-            "timestamp": self.timestamp.isoformat(),
-            "usage": self.usage,
-            "metrics": self.metrics
-        }
-    
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'GeneratedTheme':
-        """Cria instância a partir de dicionário."""
-        return cls(
-            content=data["content"],
-            category=ThemeCategory(data["category"]),
-            quality_score=data["quality_score"],
-            response_time=data["response_time"],
-            timestamp=datetime.fromisoformat(data["timestamp"]),
-            usage=data.get("usage"),
-            metrics=data.get("metrics")
-        )
+
+# Usar modelo unificado diretamente
+GeneratedTheme = GeneratedThemeBase
 
 
 @dataclass
@@ -107,7 +85,12 @@ class ThemeGenerator:
         self.min_quality_score = 0.7
         self.max_attempts = self.config.max_attempts
         
-        logger.info(f"ThemeGenerator inicializado - Categoria: {self.config.categories}")
+        # Cache de conteúdo
+        self.cache = get_content_cache() if CONTENT_CACHE_AVAILABLE else None
+        if self.cache:
+logger.info(" ThemeGenerator com cache de conteúdo ativado")
+        
+logger.info(f"ThemeGenerator inicializado - Categoria: {self.config.categories}")
     
     def generate_single_theme(self, 
                             category: Optional[ThemeCategory] = None,
@@ -126,6 +109,16 @@ class ThemeGenerator:
         if category is None:
             category = self._choose_random_category()
         
+        # Gerar cache key baseado na categoria e requisitos
+        cache_key = f"theme_{category.value}_{hash(str(custom_requirements))}"
+        
+        # Tentar obter do cache primeiro
+        if self.cache:
+            cached_theme = self.cache.get(cache_key, "theme")
+            if cached_theme:
+logger.info(f" Tema obtido do cache: {cached_theme[:50]}...")
+                return self._create_generated_theme(cached_theme, category)
+        
         try:
             last_error: Optional[Exception] = None
             for attempt in range(1, self.max_attempts + 1):
@@ -141,34 +134,35 @@ class ThemeGenerator:
                         "Start with a hook. Do not add explanations or lists."
                     )
 
-                logger.info(f"📝 SYSTEM MESSAGE (theme) [attempt {attempt}/{self.max_attempts}]:")
-                logger.info(prompt_data["system_message"])
-                logger.info(f"💬 USER PROMPT (theme) [attempt {attempt}/{self.max_attempts}]:")
-                logger.info(prompt_data["user_prompt"])
+logger.info(f" SYSTEM MESSAGE (theme) [attempt {attempt}/{self.max_attempts}]:")
+logger.info(prompt_data["system_message"])
+logger.info(f" USER PROMPT (theme) [attempt {attempt}/{self.max_attempts}]:")
+logger.info(prompt_data["user_prompt"])
 
                 # Log do início da geração
-                logger.info(
+logger.info(
                     f"Iniciando geração de tema - Categoria: {category.value} (tentativa {attempt})"
                 )
 
-                # Gerar conteúdo usando OpenRouter
+                # Gerar conteúdo usando OpenRouter com max_tokens automático
                 start_time = time.time()
                 try:
                     response = self.openrouter.generate_content(
                         prompt=prompt_data["user_prompt"],
                         system_message=prompt_data["system_message"],
-                        max_tokens=config.openrouter.max_tokens_theme,
-                        temperature=0.8  # Mais criatividade para temas
+                        max_tokens=None,  # Auto-detectar
+                        temperature=0.8,  # Mais criatividade para temas
+                        task_type="theme"  # Tipo de tarefa para otimização
                     )
                 except Exception as gen_exc:
                     last_error = gen_exc
-                    logger.warning(f"⚠️ Falha na requisição (tentativa {attempt}): {gen_exc}")
+logger.warning(f" Falha na requisição (tentativa {attempt}): {gen_exc}")
                     if attempt < self.max_attempts:
                         continue
                     break
 
-                logger.info("🧾 RESPOTA BRUTA (theme):")
-                logger.info(response.content)
+logger.info("🧾 RESPOTA BRUTA (theme):")
+logger.info(response.content)
 
                 generation_time = time.time() - start_time
 
@@ -177,7 +171,7 @@ class ThemeGenerator:
 
                 # Checar vazio/curto
                 if not theme_content or len(theme_content.split()) < 5:
-                    logger.warning(
+logger.warning(
                         f"⚠️ Resposta vazia/curta na tentativa {attempt}. Conteúdo: '{theme_content}'"
                     )
                     last_error = ValueError("Tema muito curto ou vazio")
@@ -190,7 +184,7 @@ class ThemeGenerator:
                     self._validate_theme_response(theme_content, category)
                 except Exception as val_exc:
                     last_error = val_exc
-                    logger.warning(
+logger.warning(
                         f"⚠️ Validação falhou na tentativa {attempt}: {val_exc}"
                     )
                     if attempt < self.max_attempts:
@@ -211,9 +205,14 @@ class ThemeGenerator:
                     usage=response.usage,
                     metrics=quality_metrics
                 )
+                
+                # Salvar no cache se qualidade for boa
+                if self.cache and quality_score >= 0.8:
+                    self.cache.set(cache_key, theme_content, "theme", ttl_hours=48.0)
+logger.debug(f" Tema salvo no cache (qualidade: {quality_score:.2f})")
 
                 # Log do resultado
-                logger.info(
+logger.info(
                     f"Tema gerado - Categoria: {category.value}, "
                     f"Qualidade: {quality_score:.2f}, "
                     f"Tempo: {generation_time:.2f}s"
@@ -228,7 +227,7 @@ class ThemeGenerator:
             )
 
         except Exception as e:
-            logger.error(f"Erro na geração de tema - Categoria: {category.value}, Erro: {e}")
+logger.error(f"Erro na geração de tema - Categoria: {category.value}, Erro: {e}")
             raise ThemeGenerationError(f"Falha na geração: {str(e)}", category=category.value)
     
     def generate_multiple_themes(self, 
@@ -260,7 +259,7 @@ class ThemeGenerator:
             "response_times": []
         }
         
-        logger.info(f"Iniciando geração de {count} temas")
+logger.info(f"Iniciando geração de {count} temas")
         
         for attempt in range(count * 2):  # Tentar até 2x mais para garantir qualidade
             if len(themes) >= count:
@@ -287,13 +286,13 @@ class ThemeGenerator:
                     generation_stats["quality_scores"].append(theme.quality_score)
                     generation_stats["response_times"].append(theme.response_time)
                     
-                    logger.info(f"Tema aceito - Score: {theme.quality_score:.2f}")
+logger.info(f"Tema aceito - Score: {theme.quality_score:.2f}")
                 else:
-                    logger.warning(f"Tema rejeitado - Score baixo: {theme.quality_score:.2f}")
+logger.warning(f"Tema rejeitado - Score baixo: {theme.quality_score:.2f}")
                     generation_stats["failed_generations"] += 1
                 
             except Exception as e:
-                logger.error(f"Falha na tentativa {attempt + 1}: {e}")
+logger.error(f"Falha na tentativa {attempt + 1}: {e}")
                 generation_stats["failed_generations"] += 1
         
         total_time = time.time() - start_time
@@ -320,7 +319,7 @@ class ThemeGenerator:
             generation_stats=generation_stats
         )
         
-        logger.info(
+logger.info(
             f"Geração concluída - {len(themes)}/{count} temas aceitos, "
             f"Melhor score: {(best_theme.quality_score if best_theme else 0.0):.2f}, "
             f"Tempo total: {total_time:.2f}s"
@@ -370,13 +369,13 @@ class ThemeGenerator:
         Raises:
             ValidationError: Se a resposta for inválida
         """
-        logger.debug(f"Validando resposta da categoria {category.value}:\n{response}")
+logger.debug(f"Validando resposta da categoria {category.value}:\n{response}")
         
         if not response or len(response.strip()) < 5:  # Reduzido para 5 caracteres
             raise ValidationError("Tema muito curto ou vazio", field="content", value=response)
         
         if len(response) > 300:  # Aumentado para 300 caracteres
-            logger.warning(f"Resposta muito longa, truncando: {response[:300]}")
+logger.warning(f"Resposta muito longa, truncando: {response[:300]}")
             response = response[:300]
         
         # Verificar formato - tornar mais flexível
@@ -384,12 +383,12 @@ class ThemeGenerator:
             if not prompt_engineering.validate_prompt_format(response):
                 # Se a validação falhar, tentar validação manual básica
                 if len(response.strip()) >= 10 and any(char.isalpha() for char in response):
-                    logger.info("Validação manual passou para resposta")
+logger.info("Validação manual passou para resposta")
                     pass
                 else:
                     raise ValidationError("Formato de tema inválido", field="format", value=response)
         except Exception as e:
-            logger.warning(f"Erro na validação de formato: {e}, usando validação manual")
+logger.warning(f"Erro na validação de formato: {e}, usando validação manual")
             if len(response.strip()) >= 10:
                 pass  # Passa na validação manual
             else:
@@ -400,12 +399,12 @@ class ThemeGenerator:
         has_curiosity = any(word in response.lower() for word in curiosity_words)
         
         if not has_curiosity:
-            logger.warning(f"Tema pode não ter formato de curiosidade: {response}")
+logger.warning(f"Tema pode não ter formato de curiosidade: {response}")
             # Não levantar erro, apenas warning
         
         # Verificar se é realmente uma pergunta ou curiosidade
         if not any(word in response.lower() for word in ['?', 'por que', 'como', 'o que', 'quando', 'onde', 'será que', 'você sabia']):
-            logger.warning(f"Tema pode não ter formato de curiosidade: {response}")
+logger.warning(f"Tema pode não ter formato de curiosidade: {response}")
     
     def save_generation_result(self, result: ThemeGenerationResult, filename: str = None) -> Path:
         """
@@ -425,7 +424,7 @@ class ThemeGenerator:
         filepath = config.storage.output_dir / filename
         result.save_to_file(filepath)
         
-        logger.info(f"Resultado salvo em: {filepath}")
+logger.info(f"Resultado salvo em: {filepath}")
         return filepath
     
     def analyze_themes(self, themes: List[GeneratedTheme]) -> Dict[str, Any]:
@@ -543,31 +542,31 @@ theme_generator = ThemeGenerator()
 
 if __name__ == "__main__":
     # Teste do gerador de temas
-    print("=== Teste do Gerador de Tema ===")
+print("=== Teste do Gerador de Tema ===")
     
     try:
         # Teste de geração única
-        print("1. Teste de geração única:")
+print("1. Teste de geração única:")
         theme = theme_generator.generate_single_theme(ThemeCategory.SCIENCE)
-        print(f"📝 Tema: {theme.content}")
-        print(f"⭐ Qualidade: {theme.quality_score:.2f}")
-        print(f"⏱️ Tempo: {theme.response_time:.2f}s")
+print(f" Tema: {theme.content}")
+print(f" Qualidade: {theme.quality_score:.2f}")
+print(f"⏱ Tempo: {theme.response_time:.2f}s")
         
         # Teste de geração múltipla
-        print("\n2. Teste de geração múltipla:")
+print("\n2. Teste de geração múltipla:")
         result = theme_generator.generate_multiple_themes(count=3)
-        print(f"✅ {len(result.themes)} temas gerados")
-        print(f"🏆 Melhor: {result.best_theme.content if result.best_theme else 'Nenhum'}")
+print(f" {len(result.themes)} temas gerados")
+print(f" Melhor: {result.best_theme.content if result.best_theme else 'Nenhum'}")
         
         # Salvar resultado
         filepath = theme_generator.save_generation_result(result)
-        print(f"💾 Salvo em: {filepath}")
+print(f" Salvo em: {filepath}")
         
         # Análise
-        print("\n3. Análise dos temas:")
+print("\n3. Análise dos temas:")
         analysis = theme_generator.analyze_themes(result.themes)
         for key, value in analysis.items():
-            print(f"   {key}: {value}")
+print(f"   {key}: {value}")
     
     except Exception as e:
-        print(f"❌ Erro no teste: {e}")
+print(f" Erro no teste: {e}")

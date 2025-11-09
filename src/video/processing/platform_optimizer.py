@@ -52,7 +52,7 @@ class PlatformOptimizer:
             Dict com informações da otimização
         """
         try:
-            self.logger.info(f"Otimizando {video_path} para {platform.value}")
+self.logger.info(f"Otimizando {video_path} para {platform.value}")
             
             # Validar vídeo de entrada
             validation = self._validate_input_video(video_path)
@@ -90,7 +90,7 @@ class PlatformOptimizer:
             }
             
         except Exception as e:
-            self.logger.error(f"Erro na otimização: {str(e)}")
+self.logger.error(f"Erro na otimização: {str(e)}")
             return {
                 "success": False,
                 "error": str(e),
@@ -112,7 +112,7 @@ class PlatformOptimizer:
             Dict com informações do ajuste de timing
         """
         try:
-            self.logger.info(f"Ajustando timing de {video_path} para {platform.value}")
+self.logger.info(f"Ajustando timing de {video_path} para {platform.value}")
             
             platform_config = self.config.get_platform_specs(platform)
             category_config = get_category_config(category)
@@ -141,7 +141,7 @@ class PlatformOptimizer:
             }
             
         except Exception as e:
-            self.logger.error(f"Erro no ajuste de timing: {str(e)}")
+self.logger.error(f"Erro no ajuste de timing: {str(e)}")
             return {
                 "success": False,
                 "error": str(e),
@@ -160,7 +160,7 @@ class PlatformOptimizer:
             Dict com informações da aplicação de configurações
         """
         try:
-            self.logger.info(f"Aplicando configurações de {platform.value} para {video_path}")
+self.logger.info(f"Aplicando configurações de {platform.value} para {video_path}")
             
             platform_config = self.config.get_platform_config(platform)
             specs = platform_config["specifications"]
@@ -185,7 +185,7 @@ class PlatformOptimizer:
             }
             
         except Exception as e:
-            self.logger.error(f"Erro na aplicação de configurações: {str(e)}")
+self.logger.error(f"Erro na aplicação de configurações: {str(e)}")
             return {
                 "success": False,
                 "error": str(e),
@@ -433,7 +433,7 @@ if __name__ == "__main__":
     # Teste básico
     import tempfile
     
-    print("=== Teste do PlatformOptimizer ===")
+print("=== Teste do PlatformOptimizer ===")
     
     # Criar arquivo de teste temporário (simulado)
     with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as temp_file:
@@ -443,7 +443,7 @@ if __name__ == "__main__":
     try:
         optimizer = PlatformOptimizer()
         result = optimizer.adjust_timing(test_video_path, Platform.TIKTOK, "SPACE")
-        print(f"Resultado do ajuste de timing: {result}")
+print(f"Resultado do ajuste de timing: {result}")
     finally:
         if os.path.exists(test_video_path):
             os.unlink(test_video_path)

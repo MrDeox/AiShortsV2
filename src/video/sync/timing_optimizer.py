@@ -71,7 +71,7 @@ class TimingOptimizer:
             'cross_dissolve': TransitionEffect('cross_dissolve', 0.6, 0.6, ['dissolve', 'blend'])
         }
         
-        logger.info("TimingOptimizer inicializado")
+logger.info("TimingOptimizer inicializado")
     
     def optimize_transitions(self, 
                            video_segments: List, 
@@ -87,7 +87,7 @@ class TimingOptimizer:
             Dict com transições otimizadas e metadados
         """
         try:
-            logger.info("Otimizando transições vídeo-aúdio")
+logger.info("Otimizando transições vídeo-aúdio")
             
             # Analisar timing atual dos segmentos
             timing_analysis = self._analyze_current_timing(video_segments, audio_timing)
@@ -130,7 +130,7 @@ class TimingOptimizer:
             }
             
         except Exception as e:
-            logger.error(f"Erro na otimização de transições: {e}")
+logger.error(f"Erro na otimização de transições: {e}")
             return {
                 'success': False,
                 'error': str(e)
@@ -147,7 +147,7 @@ class TimingOptimizer:
             Dict com efeitos aplicados e configurações
         """
         try:
-            logger.info("Adicionando efeitos de transição")
+logger.info("Adicionando efeitos de transição")
             
             enhanced_segments = []
             applied_effects = []
@@ -206,7 +206,7 @@ class TimingOptimizer:
             }
             
         except Exception as e:
-            logger.error(f"Erro ao adicionar efeitos de transição: {e}")
+logger.error(f"Erro ao adicionar efeitos de transição: {e}")
             return {
                 'success': False,
                 'error': str(e)
@@ -226,7 +226,7 @@ class TimingOptimizer:
             Dict com duração otimizada e justificativas
         """
         try:
-            logger.info("Calculando duração ideal para segmento")
+logger.info("Calculando duração ideal para segmento")
             
             # Análise do texto
             word_count = len(segment_text.split())
@@ -282,7 +282,7 @@ class TimingOptimizer:
             }
             
         except Exception as e:
-            logger.error(f"Erro ao calcular duração ideal: {e}")
+logger.error(f"Erro ao calcular duração ideal: {e}")
             return {
                 'success': False,
                 'error': str(e)
@@ -338,7 +338,7 @@ class TimingOptimizer:
             }
             
         except Exception as e:
-            logger.error(f"Erro na análise de timing: {e}")
+logger.error(f"Erro na análise de timing: {e}")
             return {}
     
     def _detect_optimal_transitions(self, audio_timing: Dict[str, Any]) -> List[float]:
@@ -364,7 +364,7 @@ class TimingOptimizer:
             return transition_points
             
         except Exception as e:
-            logger.error(f"Erro na detecção de transições: {e}")
+logger.error(f"Erro na detecção de transições: {e}")
             return []
     
     def _calculate_optimal_durations(self, 
@@ -392,7 +392,7 @@ class TimingOptimizer:
             return optimal_durations
             
         except Exception as e:
-            logger.error(f"Erro no cálculo de durações: {e}")
+logger.error(f"Erro no cálculo de durações: {e}")
             return [5.0] * len(video_segments)
     
     def _select_transition_effects(self, 

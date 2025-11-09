@@ -12,7 +12,23 @@ from PIL import Image
 import cv2
 from pathlib import Path
 import logging
-from config.video_settings import SIMILARITY_MATCHING, get_config
+# Configurações locais enquanto não temos video_settings
+SIMILARITY_MATCHING = {
+    "threshold": 0.3,
+    "model_name": "openai/clip-vit-base-patch32",
+    "max_frames": 10
+}
+
+def get_config():
+    return SIMILARITY_MATCHING
+
+# Importar ModelManager para otimização de memória
+try:
+    from src.core.model_manager import get_model_manager
+    MODEL_MANAGER_AVAILABLE = True
+except ImportError:
+    MODEL_MANAGER_AVAILABLE = False
+    logging.warning("ModelManager não disponível, usando carregamento tradicional")
 
 
 class ContentMatcher:
@@ -28,7 +44,7 @@ class ContentMatcher:
     
     def __init__(self, config: Optional[Dict] = None):
         """
-        Inicializa o content matcher.
+        Inicializa o content matcher com lazy loading.
         
         Args:
             config: Configurações customizadas (opcional)
@@ -39,26 +55,36 @@ class ContentMatcher:
         # Configurar logging
         self.logger = logging.getLogger(__name__)
         
-        # Carregar modelo CLIP
-        self.model_name = self.config.get('model_name', 'clip-ViT-B-32')
-        self._load_clip_model()
+        # Lazy loading - não carregar modelo imediatamente
+        self.model_name = self.config.get('model_name', 'openai/clip-vit-base-patch32')
+        self.model = None
+        self.processor = None
+        
+        # ModelManager para otimização
+        self._model_manager = get_model_manager() if MODEL_MANAGER_AVAILABLE else None
+        self._use_model_manager = MODEL_MANAGER_AVAILABLE and self._model_manager is not None
         
         # Cache para embeddings
         self.embedding_cache = {}
         self.similarity_threshold = self.config.get('similarity_threshold', 0.8)
         self.max_matches = self.config.get('max_matches', 5)
+        
+        if self._use_model_manager:
+self.logger.info("ContentMatcher inicializado com ModelManager otimizado")
+        else:
+self.logger.info("ContentMatcher inicializado com lazy loading tradicional")
     
     def _load_clip_model(self):
         """Carrega o modelo CLIP."""
         try:
-            self.logger.info(f"Carregando modelo CLIP: {self.model_name}")
+self.logger.info(f"Carregando modelo CLIP: {self.model_name}")
             self.model = CLIPModel.from_pretrained(self.model_name)
             self.processor = CLIPProcessor.from_pretrained(self.model_name)
             self.model.to(self.device)
             self.model.eval()
-            self.logger.info("Modelo CLIP carregado com sucesso")
+self.logger.info("Modelo CLIP carregado com sucesso")
         except Exception as e:
-            self.logger.error(f"Erro ao carregar modelo CLIP: {e}")
+self.logger.error(f"Erro ao carregar modelo CLIP: {e}")
             raise
     
     def extract_image_features(self, image_path: str) -> Optional[np.ndarray]:
@@ -98,7 +124,7 @@ class ContentMatcher:
             return features
             
         except Exception as e:
-            self.logger.error(f"Erro ao extrair features de {image_path}: {e}")
+self.logger.error(f"Erro ao extrair features de {image_path}: {e}")
             return None
     
     def extract_text_features(self, text: str) -> Optional[np.ndarray]:
@@ -136,7 +162,7 @@ class ContentMatcher:
             return features
             
         except Exception as e:
-            self.logger.error(f"Erro ao extrair features de texto: {e}")
+self.logger.error(f"Erro ao extrair features de texto: {e}")
             return None
     
     def calculate_similarity(self, features1: np.ndarray, features2: np.ndarray) -> float:
@@ -155,7 +181,7 @@ class ContentMatcher:
             similarity = cosine_similarity([features1], [features2])[0][0]
             return float(similarity)
         except Exception as e:
-            self.logger.error(f"Erro ao calcular similaridade: {e}")
+self.logger.error(f"Erro ao calcular similaridade: {e}")
             return 0.0
     
     def find_similar_images(self, query_image: str, image_database: List[str]) -> List[Dict]:
@@ -291,7 +317,7 @@ class ContentMatcher:
     def clear_cache(self):
         """Limpa o cache de embeddings."""
         self.embedding_cache.clear()
-        self.logger.info("Cache de embeddings limpo")
+self.logger.info("Cache de embeddings limpo")
     
     def get_cache_stats(self) -> Dict:
         """
@@ -321,15 +347,15 @@ if __name__ == "__main__":
         # Extrair features
         features = matcher.extract_image_features(test_image)
         if features is not None:
-            print(f"Features extraídas com sucesso: shape {features.shape}")
+print(f"Features extraídas com sucesso: shape {features.shape}")
         
         # Buscar conteúdo por texto
         results = matcher.find_content_by_text("uma paisagem bonita", [test_image])
-        print(f"Resultados da busca: {len(results)} encontrados")
+print(f"Resultados da busca: {len(results)} encontrados")
         
         # Estatísticas do cache
         stats = matcher.get_cache_stats()
-        print(f"Estatísticas do cache: {stats}")
+print(f"Estatísticas do cache: {stats}")
         
     except Exception as e:
-        print(f"Erro durante o teste: {e}")
+print(f"Erro durante o teste: {e}")

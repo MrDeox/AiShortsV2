@@ -5,6 +5,9 @@ Extrator de vídeos do YouTube usando yt-dlp.
 
 import os
 import tempfile
+import time
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import List, Dict, Any, Optional
 from pathlib import Path
 
@@ -46,7 +49,7 @@ class YouTubeExtractor:
         self.temp_dir.mkdir(parents=True, exist_ok=True)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
-        # Configurações do yt-dlp
+        # Configurações do yt-dlp otimizadas para paralelismo
         self.ydl_opts = {
             'format': 'best[height<=720]',  # Resolução máxima 720p
             'outtmpl': str(self.temp_dir / '%(id)s.%(ext)s'),
@@ -54,9 +57,18 @@ class YouTubeExtractor:
             'extract_flat': False,
             'writesubtitles': False,
             'writeautomaticsub': False,
+            # Otimização agressiva de delays
+            'sleep_interval_requests': 0.5,  # Reduzido para 0.5s
+            'sleep_interval_subtitles': 0,
+            'sleep_interval': 0,  # Remover delay geral
+            'max_sleep_interval': 1,  # Máximo 1s entre requests
         }
         
-        logger.info(f"YouTubeExtractor inicializado - Temp: {self.temp_dir}, Output: {self.output_dir}")
+        # Controle de paralelismo
+        self.max_parallel_downloads = 3
+        self.download_semaphore = threading.Semaphore(self.max_parallel_downloads)
+        
+logger.info(f"YouTubeExtractor inicializado - Temp: {self.temp_dir}, Output: {self.output_dir}")
     
     def search_videos(self, query: str, max_results: int = 10) -> List[Dict[str, Any]]:
         """
@@ -72,7 +84,7 @@ class YouTubeExtractor:
         Raises:
             YouTubeExtractionError: Se houver erro na busca
         """
-        logger.info(f"Pesquisando vídeos para: '{query}' (max_results: {max_results})")
+logger.info(f"Pesquisando vídeos para: '{query}' (max_results: {max_results})")
         
         def _search():
             search_opts = {
@@ -92,7 +104,7 @@ class YouTubeExtractor:
             )
             
             if not result or 'entries' not in result:
-                logger.warning(f"Nenhum vídeo encontrado para query: {query}")
+logger.warning(f"Nenhum vídeo encontrado para query: {query}")
                 return []
             
             videos = []
@@ -110,12 +122,12 @@ class YouTubeExtractor:
                     }
                     videos.append(video_info)
             
-            logger.info(f"Encontrados {len(videos)} vídeos para '{query}'")
+logger.info(f"Encontrados {len(videos)} vídeos para '{query}'")
             return videos
             
         except Exception as e:
             error_msg = f"Erro na busca de vídeos para '{query}': {str(e)}"
-            logger.error(error_msg)
+logger.error(error_msg)
             raise YouTubeExtractionError(error_msg, youtube_error=str(e))
     
     def extract_video_info(self, video_url: str) -> Dict[str, Any]:
@@ -133,7 +145,7 @@ class YouTubeExtractor:
             NetworkError: Se houver problema de conectividade
             YouTubeExtractionError: Outros erros de extração
         """
-        logger.info(f"Extraindo informações do vídeo: {video_url}")
+logger.info(f"Extraindo informações do vídeo: {video_url}")
         
         def _extract_info():
             with yt_dlp.YoutubeDL(self.ydl_opts) as ydl:
@@ -183,7 +195,7 @@ class YouTubeExtractor:
                 'automatic_captions': info.get('automatic_captions', {}),
             }
             
-            logger.info(f"Informações extraídas com sucesso para: {video_info['title']}")
+logger.info(f"Informações extraídas com sucesso para: {video_info['title']}")
             return video_info
             
         except VideoUnavailableError:
@@ -229,7 +241,7 @@ class YouTubeExtractor:
             VideoUnavailableError: Se vídeo não estiver disponível
             YouTubeExtractionError: Se houver erro no download
         """
-        logger.info(f"Baixando vídeo completo: {video_url}")
+logger.info(f"Baixando vídeo completo: {video_url}")
         
         try:
             # Definir diretório de saída
@@ -271,14 +283,14 @@ class YouTubeExtractor:
                 delay=3.0
             )
             
-            logger.info(f"Vídeo baixado com sucesso: {file_path}")
+logger.info(f"Vídeo baixado com sucesso: {file_path}")
             return file_path
             
         except (VideoUnavailableError, VideoTooShortError):
             raise
         except Exception as e:
             error_msg = f"Erro no download do vídeo {video_url}: {str(e)}"
-            logger.error(error_msg)
+logger.error(error_msg)
             raise YouTubeExtractionError(error_msg, video_url=video_url, youtube_error=str(e))
 
     def download_segment(self, video_url: str, start_time: float, duration: float, output_dir: Optional[str] = None) -> str:
@@ -298,7 +310,7 @@ class YouTubeExtractor:
             VideoUnavailableError: Se vídeo não estiver disponível
             YouTubeExtractionError: Se houver erro no download
         """
-        logger.info(f"Baixando segmento: {start_time}s por {duration}s de {video_url}")
+logger.info(f"Baixando segmento: {start_time}s por {duration}s de {video_url}")
         
         # Validar parâmetros
         if start_time < 0:
@@ -362,14 +374,14 @@ class YouTubeExtractor:
                 delay=3.0
             )
             
-            logger.info(f"Segmento baixado com sucesso: {file_path}")
+logger.info(f"Segmento baixado com sucesso: {file_path}")
             return file_path
             
         except (VideoUnavailableError, VideoTooShortError):
             raise
         except Exception as e:
             error_msg = f"Erro no download do segmento de {video_url}: {str(e)}"
-            logger.error(error_msg)
+logger.error(error_msg)
             raise YouTubeExtractionError(error_msg, video_url=video_url, youtube_error=str(e))
     
     def _extract_format_info(self, formats: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -428,45 +440,174 @@ class YouTubeExtractor:
                     file_path.unlink()
                     cleaned += 1
             
-            logger.info(f"Limpeza concluída: {cleaned} arquivos removidos")
+logger.info(f"Limpeza concluída: {cleaned} arquivos removidos")
             
         except Exception as e:
-            logger.warning(f"Erro durante limpeza: {str(e)}")
+logger.warning(f"Erro durante limpeza: {str(e)}")
+    
+    def download_videos_parallel(self, video_urls: List[str], output_dir: Optional[str] = None, max_workers: int = 3) -> List[str]:
+        """
+        Baixa múltiplos vídeos em paralelo.
+        
+        Args:
+            video_urls: Lista de URLs dos vídeos
+            output_dir: Diretório de saída (opcional)
+            max_workers: Número máximo de workers paralelos
+            
+        Returns:
+            Lista de caminhos dos vídeos baixados
+            
+        Raises:
+            YouTubeExtractionError: Se houver erro nos downloads
+        """
+logger.info(f"Iniciando download paralelo de {len(video_urls)} vídeos (max_workers: {max_workers})")
+        
+        downloaded_paths = []
+        failed_urls = []
+        
+        def download_single_video(url: str) -> Optional[str]:
+            """Função wrapper para download individual com semáforo."""
+            try:
+                with self.download_semaphore:
+logger.debug(f" Baixando vídeo: {url}")
+                    path = self.download_video(url, output_dir)
+logger.debug(f" Vídeo baixado: {path}")
+                    return path
+            except Exception as e:
+logger.warning(f" Falha no download de {url}: {e}")
+                failed_urls.append(url)
+                return None
+        
+        # Usar ThreadPoolExecutor para downloads paralelos
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # Submeter todos os downloads
+            future_to_url = {
+                executor.submit(download_single_video, url): url 
+                for url in video_urls
+            }
+            
+            # Processar resultados conforme completam
+            for future in as_completed(future_to_url):
+                url = future_to_url[future]
+                try:
+                    result = future.result(timeout=60)  # 60s timeout por vídeo
+                    if result:
+                        downloaded_paths.append(result)
+                except Exception as e:
+logger.warning(f"Timeout ou erro no download de {url}: {e}")
+                    failed_urls.append(url)
+        
+        # Log dos resultados
+        success_count = len(downloaded_paths)
+        total_count = len(video_urls)
+        
+logger.info(
+            f"📊 Downloads paralelos concluídos: "
+            f"{success_count}/{total_count} bem-sucedidos"
+        )
+        
+        if failed_urls:
+logger.warning(f" Falhas nos downloads: {failed_urls}")
+        
+        return downloaded_paths
+    
+    def search_and_download_parallel(self, 
+                                   queries: List[str], 
+                                   max_results_per_query: int = 3,
+                                   max_total_downloads: int = 3,
+                                   max_workers: int = 3) -> List[str]:
+        """
+        Busca e baixa vídeos em paralelo para múltiplas queries.
+        
+        Args:
+            queries: Lista de queries de busca
+            max_results_per_query: Máximo de resultados por query
+            max_total_downloads: Máximo total de downloads
+            max_workers: Workers paralelos
+            
+        Returns:
+            Lista de caminhos dos vídeos baixados
+        """
+logger.info(f" Buscando e baixando vídeos para {len(queries)} queries")
+        
+        # Fase 1: Busca paralela de vídeos
+        all_candidates = []
+        
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # Buscar vídeos para cada query em paralelo
+            future_to_query = {
+                executor.submit(self.search_videos, query, max_results_per_query): query 
+                for query in queries
+            }
+            
+            for future in as_completed(future_to_query):
+                query = future_to_query[future]
+                try:
+                    results = future.result(timeout=30)  # 30s timeout por busca
+                    all_candidates.extend(results)
+logger.debug(f" Encontrados {len(results)} vídeos para query: {query}")
+                except Exception as e:
+logger.warning(f" Erro na busca para '{query}': {e}")
+        
+        if not all_candidates:
+logger.warning(" Nenhum vídeo encontrado em nenhuma query")
+            return []
+        
+logger.info(f" Total de candidatos encontrados: {len(all_candidates)}")
+        
+        # Fase 2: Download paralelo dos melhores candidatos
+        # Priorizar vídeos mais recentes e com melhor qualidade
+        sorted_candidates = sorted(
+            all_candidates, 
+            key=lambda x: (x.get('upload_date', ''), x.get('view_count', 0)), 
+            reverse=True
+        )[:max_total_downloads]
+        
+        video_urls = [video['webpage_url'] for video in sorted_candidates]
+        
+        # Download paralelo
+        downloaded_paths = self.download_videos_parallel(
+            video_urls, 
+            max_workers=max_workers
+        )
+        
+logger.info(f" Processo concluído: {len(downloaded_paths)} vídeos baixados")
+        return downloaded_paths
 
 
 if __name__ == "__main__":
     # Teste básico do extrator
-    print("=== Teste do YouTubeExtractor ===")
+print("=== Teste do YouTubeExtractor ===")
     
     extractor = YouTubeExtractor()
     
     try:
         # Teste de busca
-        print("\n1. Testando busca de vídeos...")
+print("\n1. Testando busca de vídeos...")
         results = extractor.search_videos("gatos engraçados", max_results=3)
-        print(f"Encontrados: {len(results)} vídeos")
+print(f"Encontrados: {len(results)} vídeos")
         for video in results:
-            print(f"  - {video['title']} ({video['duration']}s)")
+print(f"  - {video['title']} ({video['duration']}s)")
         
         # Teste de extração de informações (se houver resultados)
         if results:
-            print("\n2. Testando extração de informações...")
+print("\n2. Testando extração de informações...")
             first_video = results[0]
             info = extractor.extract_video_info(first_video['url'])
-            print(f"Título: {info['title']}")
-            print(f"Duração: {info['duration']}s")
-            print(f"Uploader: {info['uploader']}")
+print(f"Título: {info['title']}")
+print(f"Duração: {info['duration']}s")
+print(f"Uploader: {info['uploader']}")
         
         # Teste de download de segmento (opcional, pode ser lento)
         if results and info['duration'] > 10:
-            print("\n3. Testando download de segmento (primeiros 3s)...")
+print("\n3. Testando download de segmento (primeiros 3s)...")
             segment_path = extractor.download_segment(first_video['url'], 0, 3)
-            print(f"Segmento salvo em: {segment_path}")
+print(f"Segmento salvo em: {segment_path}")
         
-        print("\n=== Teste concluído com sucesso ===")
+print("\n=== Teste concluído com sucesso ===")
         
     except Exception as e:
-        print(f"Erro durante teste: {e}")
+print(f"Erro durante teste: {e}")
         ErrorHandler.handle_error(e, "teste_youtube_extractor")
     
     finally:

@@ -14,6 +14,10 @@ class SemanticAnalyzer:
     """
     Classe para análise semântica de texto usando spaCy.
     Extrai palavras-chave, analisa tom emocional e categoriza conteúdo.
+
+    A partir da integração com o LLM central (OpenRouterClient), também
+    suporta geração de listas otimizadas de keywords para busca de B-roll,
+    em vez de apenas quebrar o texto em palavras frequentes.
     """
     
     # Mapeamento de categorias para palavras-chave
@@ -58,27 +62,160 @@ class SemanticAnalyzer:
             # Tenta carregar modelo português do spaCy
             self.nlp = spacy.load("pt_core_news_sm")
             self.use_spacy = True
-            print("Modelo spaCy pt_core_news_sm carregado com sucesso.")
+print("Modelo spaCy pt_core_news_sm carregado com sucesso.")
         except OSError:
-            print("Modelo spaCy pt_core_news_sm não encontrado. Usando fallback básico.")
+print("Modelo spaCy pt_core_news_sm não encontrado. Usando fallback básico.")
             self.use_spacy = False
             self.nlp = None
+
+        # Import lazy para evitar dependência circular pesada na importação de módulo.
+        try:
+            from src.core.openrouter_client import openrouter_client  # type: ignore
+            self._llm = openrouter_client
+        except Exception:
+            self._llm = None
     
     def extract_keywords(self, text: str, max_keywords: int = 20) -> List[str]:
         """
-        Extrai palavras-chave importantes do texto.
-        
-        Args:
-            text (str): Texto para análise
-            max_keywords (int): Número máximo de palavras-chave a retornar
-            
-        Returns:
-            List[str]: Lista de palavras-chave extraídas
+        Extrai palavras-chave importantes do texto para usos genéricos (logging, análise).
+        Mantida como heurística local (spaCy ou fallback) para não depender sempre de LLM.
         """
         if self.use_spacy and self.nlp:
             return self._extract_keywords_spacy(text, max_keywords)
         else:
             return self._extract_keywords_fallback(text, max_keywords)
+
+    # ------------------------------------------------------------------ #
+    # Geração de keywords otimizadas para B-roll via LLM
+    # ------------------------------------------------------------------ #
+    def generate_broll_keywords_via_llm(
+        self,
+        script_text: str,
+        max_queries: int = 6,
+        max_keywords_per_query: int = 4,
+    ) -> List[str]:
+        """
+        Usa o LLM central para gerar queries otimizadas de B-roll,
+        em vez de apenas dividir o texto em palavras.
+
+        Retorna uma lista de strings já prontas para serem usadas como:
+            - termos de busca no YouTube
+            - prompts para bancos de vídeo/stock
+
+        Exemplo de saída:
+            [
+              "wood frog freezing thawing time-lapse macro nature",
+              "close-up of frozen forest floor ice crystals",
+              ...
+            ]
+        """
+        script_text = (script_text or "").strip()
+        if not script_text:
+            return []
+
+        # Se LLM não estiver disponível, faz fallback para heurística local.
+        if not self._llm:
+            base_keywords = self.extract_keywords(script_text, max_keywords=max_queries * max_keywords_per_query)
+            if not base_keywords:
+                return []
+            queries: List[str] = []
+            step = max(1, max_keywords_per_query)
+            for i in range(0, min(len(base_keywords), max_queries * max_keywords_per_query), step):
+                chunk = base_keywords[i : i + max_keywords_per_query]
+                if chunk:
+                    queries.append(" ".join(chunk))
+            return queries[:max_queries]
+
+        system_message = (
+            "You are a video content assistant that generates ultra-focused B-roll search queries. "
+            "Given a short script, you must return concise search queries that a YouTube/stock-footage search "
+            "engine can use to find visually relevant clips. "
+            "Rules:\n"
+            "- Focus ONLY on concrete visual elements and scenes.\n"
+            "- Prefer nouns and short noun phrases; include 1-2 key modifiers if useful.\n"
+            "- Each line = ONE query (no bullets, no numbering).\n"
+            "- Do NOT repeat almost identical queries.\n"
+            "- Do NOT include explanations, only the raw queries.\n"
+        )
+
+        user_prompt = (
+            "Script:\n"
+            f"{script_text}\n\n"
+            f"Generate up to {max_queries} distinct search queries. "
+            f"Each query should have up to {max_keywords_per_query} focused keywords."
+        )
+
+        try:
+            response = self._llm.generate_content(
+                prompt=user_prompt,
+                system_message=system_message,
+                max_tokens=256,
+                temperature=0.4,
+            )
+            raw = (response.content or "").strip()
+        except Exception:
+            # Fallback hard caso LLM falhe
+            base_keywords = self.extract_keywords(script_text, max_keywords=max_queries * max_keywords_per_query)
+            if not base_keywords:
+                return []
+            queries: List[str] = []
+            step = max(1, max_keywords_per_query)
+            for i in range(0, min(len(base_keywords), max_queries * max_keywords_per_query), step):
+                chunk = base_keywords[i : i + max_keywords_per_query]
+                if chunk:
+                    queries.append(" ".join(chunk))
+            return queries[:max_queries]
+
+        # Parse simples das linhas retornadas pelo LLM.
+        raw_queries: List[str] = []
+        for line in raw.splitlines():
+            q = line.strip().lstrip("-").lstrip("*").strip()
+            if not q:
+                continue
+            # Remove prefixos tipo "1.", "Query:", etc.
+            q = re.sub(r"^\d+[\).\-\:]\s*", "", q)
+            q = re.sub(r"^(query|q)[\s\:\-]+", "", q, flags=re.IGNORECASE).strip()
+            if q:
+                raw_queries.append(q)
+
+        # Normalização em formato de keysearch:
+        # - minúsculas
+        # - espaço simples
+        # - evitar termos muito curtos ou genéricos
+        # - remover duplicadas mantendo ordem
+        banned = {"hook", "body", "conclusion", "b-roll", "b roll", "search query", "search"}
+        seen: set[str] = set()
+        normalized: List[str] = []
+
+        for q in raw_queries:
+            q_norm = re.sub(r"\s+", " ", q.lower()).strip()
+            if len(q_norm) < 8:
+                continue
+            if q_norm in banned:
+                continue
+            if q_norm in seen:
+                continue
+            seen.add(q_norm)
+            normalized.append(q_norm)
+
+        # Se o modelo respondeu só com tokens soltos, tenta compactar em frases curtas:
+        if not normalized and raw_queries:
+            tokens = []
+            for frag in raw_queries:
+                tokens.extend(re.findall(r"[a-zA-Z0-9]+", frag.lower()))
+            # agrupa em pacotes de 3-5 termos
+            step = 4
+            for i in range(0, min(len(tokens), max_queries * step), step):
+                chunk = tokens[i : i + step]
+                if len(chunk) >= 2:
+                    q_norm = " ".join(chunk)
+                    if q_norm not in seen:
+                        seen.add(q_norm)
+                        normalized.append(q_norm)
+                        if len(normalized) >= max_queries:
+                            break
+
+        return normalized[:max_queries] or []
     
     def _extract_keywords_spacy(self, text: str, max_keywords: int) -> List[str]:
         """Extrai palavras-chave usando spaCy."""
@@ -275,7 +412,7 @@ class SemanticAnalyzer:
                     else:
                         return None
             except Exception as e:
-                print(f"Erro ao gerar embedding: {e}")
+print(f"Erro ao gerar embedding: {e}")
                 return None
         else:
             return self._generate_fallback_embedding(text)

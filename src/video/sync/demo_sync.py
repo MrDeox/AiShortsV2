@@ -35,7 +35,7 @@ class AudioVideoSyncDemo:
         self.output_dir = Path("outputs/video/sync_demo")
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
-        logger.info("AudioVideoSyncDemo inicializado")
+logger.info("AudioVideoSyncDemo inicializado")
     
     def create_sample_script(self) -> Script:
         """Cria script de exemplo para demo"""
@@ -124,14 +124,14 @@ class AudioVideoSyncDemo:
     def demo_complete_sync(self):
         """Demonstração completa do sistema de sincronização"""
         try:
-            logger.info("🎬 Iniciando demo completa de sincronização áudio-vídeo")
+logger.info(" Iniciando demo completa de sincronização áudio-vídeo")
             
             # 1. Criar script de exemplo
-            logger.info("📝 Criando script de exemplo...")
+logger.info(" Criando script de exemplo...")
             script = self.create_sample_script()
             
             # 2. Gerar áudio TTS
-            logger.info("🗣️ Gerando narração TTS...")
+logger.info(" Gerando narração TTS...")
             tts_result = self.tts_client.script_to_audio(
                 script, 
                 output_prefix="demo_golfinhos",
@@ -139,7 +139,7 @@ class AudioVideoSyncDemo:
             )
             
             if not tts_result:
-                logger.error("❌ Falha na geração de áudio TTS")
+logger.error(" Falha na geração de áudio TTS")
                 return
             
             # Salvar script timing
@@ -149,11 +149,11 @@ class AudioVideoSyncDemo:
                 json.dump(tts_result, f, ensure_ascii=False, indent=2)
             
             # 3. Criar segmentos de vídeo de exemplo
-            logger.info("🎥 Criando segmentos de vídeo...")
+logger.info(" Criando segmentos de vídeo...")
             video_segments = self.create_sample_video_segments()
             
             # 4. Sincronizar áudio com vídeo
-            logger.info("⚡ Sincronizando áudio com vídeo...")
+logger.info(" Sincronizando áudio com vídeo...")
             sync_result = self.synchronizer.sync_audio_with_video(
                 audio_path=tts_result['full_audio']['audio_path'],
                 video_segments=video_segments,
@@ -161,18 +161,18 @@ class AudioVideoSyncDemo:
             )
             
             # 5. Otimizar transições
-            logger.info("🎨 Otimizando transições...")
+logger.info(" Otimizando transições...")
             optimization_result = self.optimizer.optimize_transitions(
                 video_segments=video_segments,
                 audio_timing=tts_result
             )
             
             # 6. Adicionar efeitos de transição
-            logger.info("✨ Adicionando efeitos de transição...")
+logger.info(" Adicionando efeitos de transição...")
             effects_result = self.optimizer.add_transition_effects(video_segments)
             
             # 7. Calcular durações otimizadas para segmentos
-            logger.info("⏱️ Calculando durações otimizadas...")
+logger.info("⏱ Calculando durações otimizadas...")
             duration_results = []
             for section in script.sections:
                 duration_opt = self.optimizer.calculate_optimal_duration(
@@ -182,7 +182,7 @@ class AudioVideoSyncDemo:
                 duration_results.append(duration_opt)
             
             # 8. Gerar relatório final
-            logger.info("📊 Gerando relatório final...")
+logger.info(" Gerando relatório final...")
             final_report = self.generate_final_report(
                 tts_result=tts_result,
                 sync_result=sync_result,
@@ -196,8 +196,8 @@ class AudioVideoSyncDemo:
             with open(report_path, 'w', encoding='utf-8') as f:
                 f.write(final_report)
             
-            logger.info("✅ Demo concluída com sucesso!")
-            logger.info(f"📁 Resultados salvos em: {self.output_dir}")
+logger.info(" Demo concluída com sucesso!")
+logger.info(f" Resultados salvos em: {self.output_dir}")
             
             return {
                 'success': True,
@@ -210,13 +210,13 @@ class AudioVideoSyncDemo:
             }
             
         except Exception as e:
-            logger.error(f"❌ Erro na demo completa: {e}")
+logger.error(f" Erro na demo completa: {e}")
             return {'success': False, 'error': str(e)}
     
     def demo_beat_detection(self):
         """Demonstração específica de detecção de beats"""
         try:
-            logger.info("🎵 Iniciando demo de detecção de beats")
+logger.info(" Iniciando demo de detecção de beats")
             
             # Criar áudio simples para teste
             test_text = "Beat detection é essencial para sincronização perfeita!"
@@ -231,9 +231,9 @@ class AudioVideoSyncDemo:
                     audio_result['audio_path']
                 )
                 
-                logger.info(f"🎼 Detectados {len(beat_points)} pontos de sincronização:")
+logger.info(f" Detectados {len(beat_points)} pontos de sincronização:")
                 for i, point in enumerate(beat_points[:10]):  # Mostrar apenas os primeiros 10
-                    logger.info(f"  Beat {i+1}: {point:.2f}s")
+logger.info(f"  Beat {i+1}: {point:.2f}s")
                 
                 return {
                     'success': True,
@@ -243,7 +243,7 @@ class AudioVideoSyncDemo:
                 }
             
         except Exception as e:
-            logger.error(f"❌ Erro na demo de beats: {e}")
+logger.error(f" Erro na demo de beats: {e}")
             return {'success': False, 'error': str(e)}
     
     def generate_final_report(self, 
@@ -361,42 +361,42 @@ class AudioVideoSyncDemo:
 
 def main():
     """Função principal da demo"""
-    print("🎬 DEMO: SISTEMA DE SINCRONIZAÇÃO ÁUDIO-VÍDEO")
-    print("=" * 60)
+print(" DEMO: SISTEMA DE SINCRONIZAÇÃO ÁUDIO-VÍDEO")
+print("=" * 60)
     
     # Inicializar demo
     demo = AudioVideoSyncDemo()
     
     # Executar demo de beats primeiro (mais rápido)
-    print("\n🎵 Demo 1: Detecção de Beats")
+print("\n Demo 1: Detecção de Beats")
     beat_result = demo.demo_beat_detection()
     
     if beat_result.get('success'):
-        print(f"✅ Beats detectados: {beat_result['total_beats']}")
+print(f" Beats detectados: {beat_result['total_beats']}")
     else:
-        print(f"❌ Erro: {beat_result.get('error')}")
+print(f" Erro: {beat_result.get('error')}")
     
     # Executar demo completa
-    print("\n🎬 Demo 2: Sincronização Completa")
-    print("(⚠️ Esta demo pode levar alguns minutos...)")
+print("\n Demo 2: Sincronização Completa")
+print("( Esta demo pode levar alguns minutos...)")
     
     complete_result = demo.demo_complete_sync()
     
     if complete_result.get('success'):
-        print("✅ Sincronização concluída com sucesso!")
-        print(f"📁 Relatório salvo em: {complete_result['report_path']}")
+print(" Sincronização concluída com sucesso!")
+print(f" Relatório salvo em: {complete_result['report_path']}")
         
         # Mostrar estatísticas finais
         sync_result = complete_result['sync_result']
-        print(f"\n📊 Estatísticas:")
-        print(f"  - Segmentos: {sync_result.get('segments_count', 0)}")
-        print(f"  - Duração: {sync_result.get('total_duration', 0):.1f}s")
-        print(f"  - Beats: {len(sync_result.get('beat_points', []))}")
+print(f"\nStatistics:")
+print(f"  - Segmentos: {sync_result.get('segments_count', 0)}")
+print(f"  - Duração: {sync_result.get('total_duration', 0):.1f}s")
+print(f"  - Beats: {len(sync_result.get('beat_points', []))}")
     else:
-        print(f"❌ Erro na sincronização: {complete_result.get('error')}")
+print(f" Erro na sincronização: {complete_result.get('error')}")
     
-    print("\n🎉 Demo finalizada!")
-    print(f"📁 Verifique os resultados em: {demo.output_dir}")
+print("\n Demo finalizada!")
+print(f" Verifique os resultados em: {demo.output_dir}")
 
 
 if __name__ == "__main__":

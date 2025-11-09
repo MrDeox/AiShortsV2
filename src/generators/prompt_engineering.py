@@ -608,32 +608,32 @@ prompt_engineering = PromptEngineering()
 
 if __name__ == "__main__":
     # Teste do sistema de prompts
-    print("=== Sistema de Prompt Engineering ===")
+print("=== Sistema de Prompt Engineering ===")
     
     # Listar categorias
     categories = prompt_engineering.get_all_categories()
-    print(f"Categorias disponíveis ({len(categories)}):")
+print(f"Categorias disponíveis ({len(categories)}):")
     for cat in categories:
-        print(f"  - {cat.value}")
+print(f"  - {cat.value}")
     
     # Testar prompt para science
-    print("\nTeste - Categoria Science:")
+print("\nTeste - Categoria Science:")
     science_prompt = prompt_engineering.create_generation_prompt(ThemeCategory.SCIENCE)
-    print("System Message (primeiras linhas):")
-    print(science_prompt["system_message"][:100] + "...")
-    print("\nUser Prompt:")
-    print(science_prompt["user_prompt"])
+print("System Message (primeiras linhas):")
+print(science_prompt["system_message"][:100] + "...")
+print("\nUser Prompt:")
+print(science_prompt["user_prompt"])
     
     # Testar validação
-    print("\nValidação de formato:")
+print("\nValidação de formato:")
     good_response = "Por que o gelo é mais leve que a água?"
     bad_response = "O gelo é mais leve que a água porque a densidade é menor"
     
-    print(f"Bom formato: {prompt_engineering.validate_prompt_format(good_response)}")
-    print(f"Formato ruim: {prompt_engineering.validate_prompt_format(bad_response)}")
+print(f"Bom formato: {prompt_engineering.validate_prompt_format(good_response)}")
+print(f"Formato ruim: {prompt_engineering.validate_prompt_format(bad_response)}")
     
     # Testar métricas de qualidade
-    print("\nMétricas de qualidade:")
+print("\nMétricas de qualidade:")
     metrics = prompt_engineering.get_quality_metrics(good_response, ThemeCategory.SCIENCE)
     for key, value in metrics.items():
-        print(f"  {key}: {value}")
+print(f"  {key}: {value}")

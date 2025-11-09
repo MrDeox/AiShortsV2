@@ -24,6 +24,14 @@ from transformers import CLIPProcessor, CLIPModel
 import requests
 import tempfile
 
+# Importar ModelManager para otimização de memória
+try:
+    from src.core.model_manager import get_model_manager
+    MODEL_MANAGER_AVAILABLE = True
+except ImportError:
+    MODEL_MANAGER_AVAILABLE = False
+    logging.warning("ModelManager não disponível, usando carregamento tradicional")
+
 logger = logging.getLogger(__name__)
 
 
@@ -41,7 +49,7 @@ class CLIPRelevanceScorer:
     
     def __init__(self, cache_dir: Optional[str] = None, device: str = "auto"):
         """
-        Inicializa o CLIP Relevance Scorer.
+        Inicializa o CLIP Relevance Scorer com lazy loading.
         
         Args:
             cache_dir: Diretório para cache de embeddings
@@ -60,19 +68,24 @@ class CLIPRelevanceScorer:
         # Configurar dispositivo
         self.device = self._setup_device(device)
         
-        # Inicializar modelo CLIP
+        # Lazy loading - não carregar modelo imediatamente
         self.model = None
         self.processor = None
         self.model_name = "openai/clip-vit-base-patch32"
+        
+        # ModelManager para otimização
+        self._model_manager = get_model_manager() if MODEL_MANAGER_AVAILABLE else None
+        self._use_model_manager = MODEL_MANAGER_AVAILABLE and self._model_manager is not None
         
         # Inicializar com fallback TF-IDF
         self.tfidf_scorer = None
         self._init_fallback_scorer()
         
-        # Tentar carregar modelo CLIP
-        self._init_clip_model()
-        
-        self.logger.info("CLIPRelevanceScorer inicializado")
+        # NÃO carregar modelo CLIP imediatamente (lazy loading)
+        if not self._use_model_manager:
+self.logger.info("CLIPRelevanceScorer inicializado com lazy loading tradicional")
+        else:
+self.logger.info("CLIPRelevanceScorer inicializado com ModelManager otimizado")
     
     def _setup_device(self, device: str) -> torch.device:
         """Configura o dispositivo para inferência."""
@@ -86,10 +99,40 @@ class CLIPRelevanceScorer:
         else:
             return torch.device(device)
     
-    def _init_clip_model(self):
-        """Inicializa modelo CLIP com tratamento de erros."""
+    @property
+    def clip_model_loaded(self) -> bool:
+        """Verifica se o modelo CLIP está carregado"""
+        if self._use_model_manager:
+            model_data = self._model_manager.get_model("clip_relevance_scorer")
+            return model_data is not None
+        else:
+            return self.model is not None and self.processor is not None
+    
+    def _ensure_clip_model_loaded(self):
+        """Garante que o modelo CLIP está carregado (lazy loading)"""
+        if self.clip_model_loaded:
+            return
+        
+        if self._use_model_manager:
+            # Usar ModelManager
+self.logger.info("Carregando CLIP model via ModelManager...")
+            model_data = self._model_manager.get_model("clip_relevance_scorer")
+            if model_data:
+                self.model = model_data['model']
+                self.processor = model_data['processor']
+                self.device = model_data['device']
+                self.model_name = model_data['model_name']
+self.logger.info("CLIP model carregado via ModelManager")
+            else:
+self.logger.error("Falha ao carregar CLIP model via ModelManager")
+        else:
+            # Carregamento tradicional
+            self._init_clip_model_traditional()
+    
+    def _init_clip_model_traditional(self):
+        """Inicializa modelo CLIP de forma tradicional (backup)"""
         try:
-            self.logger.info(f"Carregando modelo CLIP: {self.model_name}")
+self.logger.info(f"Carregando modelo CLIP tradicional: {self.model_name}")
             
             # Baixar modelo
             self.processor = CLIPProcessor.from_pretrained(self.model_name)
@@ -111,11 +154,11 @@ class CLIPRelevanceScorer:
                 outputs = self.model(**test_inputs)
                 test_similarity = outputs.logits_per_image.item()
                 
-            self.logger.info(f"Modelo CLIP carregado com sucesso. Teste: {test_similarity:.3f}")
+self.logger.info(f"Modelo CLIP carregado com sucesso. Teste: {test_similarity:.3f}")
             
         except Exception as e:
-            self.logger.error(f"Erro ao carregar modelo CLIP: {e}")
-            self.logger.info("Usando fallback TF-IDF para scoring")
+self.logger.error(f"Erro ao carregar modelo CLIP: {e}")
+self.logger.info("Usando fallback TF-IDF para scoring")
             self.model = None
             self.processor = None
     
@@ -133,7 +176,7 @@ class CLIPRelevanceScorer:
             self.tfidf_available = True
             
         except ImportError:
-            self.logger.warning("sklearn não disponível, usando similarity básica")
+self.logger.warning("sklearn não disponível, usando similarity básica")
             self.tfidf_vectorizer = None
             self.tfidf_available = False
     
@@ -159,12 +202,19 @@ class CLIPRelevanceScorer:
                 return self._score_with_fallback(text, video_path)
                 
         except Exception as e:
-            self.logger.error(f"Erro ao calcular relevância: {e}")
+self.logger.error(f"Erro ao calcular relevância: {e}")
             return 0.0
     
     def _score_with_clip(self, text: str, video_path: str) -> float:
-        """Calcula score usando modelo CLIP."""
+        """Calcula score usando modelo CLIP com lazy loading."""
         try:
+            # Garante que o modelo está carregado (lazy loading)
+            self._ensure_clip_model_loaded()
+            
+            if not self.clip_model_loaded:
+self.logger.warning("Modelo CLIP não disponível, usando fallback")
+                return self._score_with_fallback(text, video_path)
+            
             # Extrair frames do vídeo
             video_frames = self._extract_video_frames(video_path)
             if not video_frames:
@@ -197,7 +247,7 @@ class CLIPRelevanceScorer:
                 return max(0.0, min(1.0, normalized_score))
                 
         except Exception as e:
-            self.logger.error(f"Erro no scoring CLIP: {e}")
+self.logger.error(f"Erro no scoring CLIP: {e}")
             return self._score_with_fallback(text, video_path)
     
     def _score_with_fallback(self, text: str, video_path: str) -> float:
@@ -213,7 +263,7 @@ class CLIPRelevanceScorer:
                 return self._score_with_basic_similarity(text, video_text)
                 
         except Exception as e:
-            self.logger.error(f"Erro no fallback scoring: {e}")
+self.logger.error(f"Erro no fallback scoring: {e}")
             return 0.0
     
     def _score_with_tfidf(self, text1: str, text2: str) -> float:
@@ -236,7 +286,7 @@ class CLIPRelevanceScorer:
             return float(max(0.0, similarity))
             
         except Exception as e:
-            self.logger.error(f"Erro TF-IDF: {e}")
+self.logger.error(f"Erro TF-IDF: {e}")
             return self._score_with_basic_similarity(text1, text2)
     
     def _score_with_basic_similarity(self, text1: str, text2: str) -> float:
@@ -256,7 +306,7 @@ class CLIPRelevanceScorer:
             return intersection / union
             
         except Exception as e:
-            self.logger.error(f"Erro similarity básica: {e}")
+self.logger.error(f"Erro similarity básica: {e}")
             return 0.0
     
     def _extract_video_frames(self, video_path: str, max_frames: int = 5) -> List[Image.Image]:
@@ -313,7 +363,7 @@ class CLIPRelevanceScorer:
             return frames
             
         except Exception as e:
-            self.logger.error(f"Erro ao extrair frames: {e}")
+self.logger.error(f"Erro ao extrair frames: {e}")
             return []
     
     def _download_video_temp(self, url: str) -> Optional[str]:
@@ -338,7 +388,7 @@ class CLIPRelevanceScorer:
             return temp_path
             
         except Exception as e:
-            self.logger.error(f"Erro ao baixar vídeo: {e}")
+self.logger.error(f"Erro ao baixar vídeo: {e}")
             return None
     
     def _extract_video_text_info(self, video_path: str) -> str:
@@ -389,11 +439,11 @@ class CLIPRelevanceScorer:
             # Ordenar por relevância
             scored_videos.sort(key=lambda x: x['relevance_score'], reverse=True)
             
-            self.logger.info(f"Rankeados {len(scored_videos)} vídeos por relevância")
+self.logger.info(f"Rankeados {len(scored_videos)} vídeos por relevância")
             return scored_videos
             
         except Exception as e:
-            self.logger.error(f"Erro no ranking: {e}")
+self.logger.error(f"Erro no ranking: {e}")
             return video_list  # Retornar lista original em caso de erro
     
     def get_visual_embedding(self, video_path: str) -> Optional[np.ndarray]:
@@ -444,7 +494,7 @@ class CLIPRelevanceScorer:
                 return None
                 
         except Exception as e:
-            self.logger.error(f"Erro ao gerar visual embedding: {e}")
+self.logger.error(f"Erro ao gerar visual embedding: {e}")
             return None
     
     def get_text_embedding(self, text: str) -> Optional[np.ndarray]:
@@ -492,7 +542,7 @@ class CLIPRelevanceScorer:
                 return None
                 
         except Exception as e:
-            self.logger.error(f"Erro ao gerar text embedding: {e}")
+self.logger.error(f"Erro ao gerar text embedding: {e}")
             return None
     
     def _get_video_path(self, video: Dict) -> Optional[str]:
@@ -560,7 +610,7 @@ class CLIPRelevanceScorer:
             }
             
         except Exception as e:
-            self.logger.error(f"Erro no cálculo multicritério: {e}")
+self.logger.error(f"Erro no cálculo multicritério: {e}")
             return {
                 'semantic_score': semantic_score,
                 'quality_score': 0.0,
@@ -595,10 +645,10 @@ class CLIPRelevanceScorer:
             with open(cache_file, 'wb') as f:
                 pickle.dump(cache_data, f)
             
-            self.logger.info(f"Cache salvo: {cache_file}")
+self.logger.info(f"Cache salvo: {cache_file}")
             
         except Exception as e:
-            self.logger.error(f"Erro ao salvar cache: {e}")
+self.logger.error(f"Erro ao salvar cache: {e}")
     
     def load_cache(self, cache_file: Optional[str] = None):
         """Carrega cache de arquivo."""
@@ -612,18 +662,18 @@ class CLIPRelevanceScorer:
                 self.text_cache = cache_data.get('text_cache', {})
                 self.video_cache = cache_data.get('video_cache', {})
                 
-                self.logger.info(f"Cache carregado: {len(self.text_cache)} textos, {len(self.video_cache)} vídeos")
+self.logger.info(f"Cache carregado: {len(self.text_cache)} textos, {len(self.video_cache)} vídeos")
             else:
-                self.logger.info("Arquivo de cache não encontrado, iniciando com cache vazio")
+self.logger.info("Arquivo de cache não encontrado, iniciando com cache vazio")
                 
         except Exception as e:
-            self.logger.error(f"Erro ao carregar cache: {e}")
+self.logger.error(f"Erro ao carregar cache: {e}")
     
     def clear_cache(self):
         """Limpa caches em memória."""
         self.text_cache.clear()
         self.video_cache.clear()
-        self.logger.info("Cache limpo")
+self.logger.info("Cache limpo")
     
     def get_performance_stats(self) -> Dict[str, Any]:
         """Retorna estatísticas de performance."""
@@ -637,7 +687,7 @@ class CLIPRelevanceScorer:
         }
     
     def cleanup(self):
-        """Limpeza de recursos."""
+        """Limpeza de recursos com otimização ModelManager."""
         # Salvar cache antes de limpar
         self.save_cache()
         
@@ -648,14 +698,27 @@ class CLIPRelevanceScorer:
         if hasattr(self, 'temp_dir'):
             self.temp_dir.cleanup()
         
-        # Limpar modelo
-        if self.model:
-            del self.model
-            del self.processor
-            self.model = None
-            self.processor = None
+        # Cleanup com ModelManager ou tradicional
+        if self._use_model_manager and self._model_manager:
+            # Usar ModelManager para cleanup otimizado
+            self._model_manager.unload_model("clip_relevance_scorer")
+        else:
+            # Cleanup tradicional
+            if self.model:
+                del self.model
+                del self.processor
+                self.model = None
+                self.processor = None
         
-        self.logger.info("CLIPRelevanceScorer finalizado")
+        # Limpar memória GPU se disponível
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        
+        # Garbage collection
+        import gc
+        gc.collect()
+        
+self.logger.info("CLIPRelevanceScorer finalizado com cleanup otimizado")
 
 
 # Exemplo de uso
@@ -675,25 +738,25 @@ if __name__ == "__main__":
     A lua é um satélite natural da Terra que influencia as marés dos oceanos.
     """
     
-    print("=== Teste CLIP Relevance Scorer ===")
-    print(f"Texto: {texto_roteiro.strip()}")
-    print()
+print("=== Teste CLIP Relevance Scorer ===")
+print(f"Texto: {texto_roteiro.strip()}")
+print()
     
     # Estatísticas de performance
     stats = scorer.get_performance_stats()
-    print("Estatísticas:")
+print("Estatísticas:")
     for key, value in stats.items():
-        print(f"  - {key}: {value}")
-    print()
+print(f"  - {key}: {value}")
+print()
     
     # Teste de embedding textual
     text_embedding = scorer.get_text_embedding(texto_roteiro)
     if text_embedding is not None:
-        print(f"Embedding textual: shape {text_embedding.shape}")
-        print(f"Embedding (primeiros 5 valores): {text_embedding[:5]}")
+print(f"Embedding textual: shape {text_embedding.shape}")
+print(f"Embedding (primeiros 5 valores): {text_embedding[:5]}")
     else:
-        print("Embedding textual: None (modelo não disponível)")
-    print()
+print("Embedding textual: None (modelo não disponível)")
+print()
     
     # Teste com vídeo de exemplo (se disponível)
     sample_videos = [
@@ -717,14 +780,14 @@ if __name__ == "__main__":
         }
     ]
     
-    print("Ranking de vídeos:")
+print("Ranking de vídeos:")
     ranked_videos = scorer.rank_videos_by_relevance(texto_roteiro, sample_videos)
     
     for i, video in enumerate(ranked_videos, 1):
-        print(f"{i}. {video['title']}")
-        print(f"   Score: {video.get('relevance_score', 0):.3f}")
-        print(f"   Método: {video.get('scoring_method', 'none')}")
-        print()
+print(f"{i}. {video['title']}")
+print(f"   Score: {video.get('relevance_score', 0):.3f}")
+print(f"   Método: {video.get('scoring_method', 'none')}")
+print()
     
     # Teste de score multicritério
     if ranked_videos:
@@ -740,13 +803,13 @@ if __name__ == "__main__":
             diversity_bonus=0.1
         )
         
-        print("Score multicritério (primeiro vídeo):")
+print("Score multicritério (primeiro vídeo):")
         for key, value in multi_score.items():
             if key != 'components':
-                print(f"  - {key}: {value}")
-        print()
+print(f"  - {key}: {value}")
+print()
     
     # Cleanup
     scorer.cleanup()
     
-    print("=== Teste concluído ===")
+print("=== Teste concluído ===")

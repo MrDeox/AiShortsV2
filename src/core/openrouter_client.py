@@ -16,6 +16,14 @@ from loguru import logger
 from src.config.settings import config
 from src.utils.exceptions import OpenRouterError, RateLimitError, ErrorHandler
 
+# Importar detector de capacidades de modelos
+try:
+    from src.core.model_capacity_detector import get_model_detector
+    MODEL_DETECTOR_AVAILABLE = True
+except ImportError:
+    MODEL_DETECTOR_AVAILABLE = False
+logger.warning("ModelCapacityDetector não disponível, usando max_tokens fixo")
+
 
 @dataclass
 class OpenRouterResponse:
@@ -91,20 +99,49 @@ class OpenRouterClient:
             time_window=60
         )
         
-        logger.info(f"OpenRouterClient inicializado - Modelo: {self.config.model}")
+        # Detector automático de capacidades (inicializado automaticamente)
+        if MODEL_DETECTOR_AVAILABLE:
+            self.model_detector = get_model_detector()
+            # Se o detector ainda não tiver API key, inicializar com a nossa
+            if self.model_detector and not self.model_detector.api_key:
+                self.model_detector = ModelCapacityDetector(openrouter_api_key=self.config.api_key)
+        else:
+            self.model_detector = None
+        
+        if self.model_detector:
+            try:
+                limits = self.model_detector.get_model_limits(self.config.model)
+logger.info(f"OpenRouterClient initialized - Modelo: {self.config.model}")
+logger.info(f"Rate limits detected via API: {limits.max_output_tokens:,} tokens output, {limits.max_context_tokens:,} contexto")
+logger.info(f" Fonte: {limits.model_info.get('source', 'unknown')}")
+logger.info(f"Auto max tokens enabled (seguro: {limits.safe_output:,} tokens)")
+            except RuntimeError as e:
+logger.error(f" Erro ao detectar limites via API: {e}")
+logger.warning(" Usando max_tokens fixo como fallback")
+                self.model_detector = None  # Desativar detector em caso de erro
+        else:
+logger.info(f"OpenRouterClient inicializado - Modelo: {self.config.model}")
+logger.warning(" Detector de capacidades não disponível, usando max_tokens fixo")
+        
+logger.info(
+            "OpenRouterClient usando base_url=%s; configure OPENROUTER_MODEL/OPENROUTER_BASE_URL no .env para mudar o provider/modelo.",
+            self.config.base_url,
+        )
     
     def _make_request(self, 
                      messages: List[Dict[str, str]], 
                      max_tokens: Optional[int] = None,
                      temperature: Optional[float] = None,
+                     task_type: str = "general",
                      **kwargs) -> Dict[str, Any]:
         """
-        Faz uma requisição à API OpenRouter.
+        Faz uma requisição à API OpenRouter com max_tokens automático.
         
         Args:
             messages: Lista de mensagens no formato OpenAI
-            max_tokens: Máximo de tokens na resposta
+            max_tokens: Máximo de tokens na resposta (opcional, auto-detected se None)
             temperature: Temperatura do modelo
+            task_type: Tipo de tarefa para otimizar tokens (theme, script, general)
             **kwargs: Parâmetros adicionais
         
         Returns:
@@ -114,11 +151,30 @@ class OpenRouterClient:
             OpenRouterError: Erro na API
             RateLimitError: Rate limit excedido
         """
+        # Calcular max_tokens automático se não fornecido
+        if max_tokens is None and self.model_detector:
+            # Estimar tokens de entrada
+            input_text = " ".join([msg.get("content", "") for msg in messages])
+            input_tokens_estimate = len(input_text.split()) * 1.3  # Estimativa粗糙
+            
+            # Calcular max_tokens ótimo para o modelo e tarefa
+            max_tokens = self.model_detector.calculate_optimal_max_tokens(
+                self.config.model, 
+                int(input_tokens_estimate), 
+                task_type
+            )
+            
+logger.debug(f" Max tokens auto-ajustado: {max_tokens} para {task_type}")
+        
+        # Fallback para configuração fixa se detector não disponível
+        if max_tokens is None:
+            max_tokens = self.config.max_tokens_theme
+        
         # Preparar payload
         payload = {
             "model": self.config.model,
             "messages": messages,
-            "max_tokens": max_tokens or self.config.max_tokens_theme,
+            "max_tokens": max_tokens,
             "temperature": temperature or self.config.temperature_theme,
             **kwargs
         }
@@ -146,7 +202,7 @@ class OpenRouterClient:
                 self.rate_limiter.add_request()
                 
                 # Log da requisição
-                logger.debug(f"OpenRouter request - Tempo: {response_time:.2f}s, Status: {response.status_code}")
+logger.debug(f"OpenRouter request - Tempo: {response_time:.2f}s, Status: {response.status_code}")
                 
                 # Verificar resposta
                 if response.status_code == 200:
@@ -236,7 +292,7 @@ class OpenRouterClient:
             # Extrair informações de uso se disponíveis
             usage = response_data.get("usage", {})
             
-            logger.info(f"Conteúdo gerado - Tempo: {response_time:.2f}s, Tokens: {usage.get('total_tokens', 'N/A')}")
+logger.info(f"Conteúdo gerado - Tempo: {response_time:.2f}s, Tokens: {usage.get('total_tokens', 'N/A')}")
             
             return OpenRouterResponse(
                 content=content,
@@ -271,11 +327,11 @@ class OpenRouterClient:
                 temperature=0.1
             )
             
-            logger.info(f"Conexão OpenRouter testada: {response.content[:50]}...")
+logger.info(f"Conexão OpenRouter testada: {response.content[:50]}...")
             return True
         
         except Exception as e:
-            logger.error(f"Erro no teste de conexão OpenRouter: {e}")
+logger.error(f"Erro no teste de conexão OpenRouter: {e}")
             return False
     
     def get_model_info(self) -> Dict[str, Any]:
@@ -300,34 +356,34 @@ openrouter_client = OpenRouterClient()
 
 if __name__ == "__main__":
     # Teste do cliente OpenRouter
-    print("=== Teste do OpenRouter Client ===")
+print("=== Teste do OpenRouter Client ===")
     
     try:
         # Teste de conexão
-        print("1. Testando conexão...")
+print("1. Testando conexão...")
         if openrouter_client.test_connection():
-            print("✅ Conexão estabelecida com sucesso!")
+print(" Conexão estabelecida com sucesso!")
         else:
-            print("❌ Falha na conexão")
+print(" Falha na conexão")
         
         # Informações do modelo
-        print("\n2. Informações do modelo:")
+print("\n2. Informações do modelo:")
         model_info = openrouter_client.get_model_info()
         for key, value in model_info.items():
-            print(f"   {key}: {value}")
+print(f"   {key}: {value}")
         
         # Teste de geração
-        print("\n3. Teste de geração de conteúdo:")
+print("\n3. Teste de geração de conteúdo:")
         response = openrouter_client.generate_content(
             prompt="Sugira um tema interessante sobre ciência para um vídeo curto.",
             system_message="Você é um especialista em criação de conteúdo viral."
         )
         
-        print(f"📝 Tema gerado: {response.content}")
-        print(f"⏱️ Tempo: {response.response_time:.2f}s")
+print(f" Tema gerado: {response.content}")
+print(f"⏱ Tempo: {response.response_time:.2f}s")
         
         if response.usage:
-            print(f"🔢 Tokens usados: {response.usage}")
+print(f" Tokens usados: {response.usage}")
     
     except Exception as e:
-        print(f"❌ Erro no teste: {e}")
+print(f" Erro no teste: {e}")

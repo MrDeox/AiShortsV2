@@ -1,64 +1,53 @@
 [project]
-name = "workspace"
-version = "0.1.0"
-description = "Workspace"
-requires-python = "==3.12.5"
+name = "aishorts-v2"
+version = "2.0.0"
+description = "Automated pipeline for generating viral short videos"
+requires-python = ">=3.9"
 
 dependencies = [
- "aiohttp==3.11.16",
- "pandas>=2.2.3",
- "numpy>=1.26.4",
- "matplotlib>=3.10.1",
- "seaborn>=0.13.2",
- "requests>=2.32.3",
- "docstring-parser>=0.16",
- "pyyaml>=6.0.2",
- "httpx>=0.28.1",
+ # Core dependencies
  "pydantic>=2.10.6",
- "openpyxl>=3.1.5",
- "python-docx>=1.1.2",
- "python-pptx>=1.0.2",
- # PDF处理
- "pymupdf>=1.24.0",
- "PyPDF2>=3.0.1",
- "pdfplumber>=0.11.0",
- # Excel处理
- "xlrd>=2.0.1",
- # 音频处理
- "edge-tts>=6.1.12",
- "librosa>=0.10.2",
- "numba>=0.59.0",
- "soundfile>=0.12.1",
- # 图像处理
- "opencv-python>=4.9.0.80",
- "pillow>=10.2.0",
- # 科学计算
- "scipy>=1.12.0",
- "statsmodels>=0.14.1",
- "scikit-learn>=1.4.0",
- # 自然语言处理
- "nltk>=3.8.1",
- "wordcloud>=1.9.3",
- # 图论网络分析
- "networkx>=3.2.1",
- # 网络爬虫
- "beautifulsoup4>=4.12.3",
- "lxml>=5.1.0",
- "html5lib>=1.1",
- "wget>=3.2",
- # 文档处理
- "docx2txt>=0.8",
- "reportlab>=4.0.9",
- "playwright==1.52.0",
- "mypy>=1.16.1",
- # PDF处理
- "weasyprint>=65.1",
- "loguru>=0.7.3",
  "pydantic-settings>=2.11.0",
  "python-dotenv>=1.2.1",
- "yt-dlp>=2025.10.22",
- "spacy>=3.8.7",
+ "httpx>=0.28.1",
+ "loguru>=0.7.3",
+ 
+ # AI/ML dependencies
+ "torch>=2.2.0",
+ "transformers>=4.30.0",
+ "opencv-python>=4.9.0.80",
+ "librosa>=0.10.2",
+ "soundfile>=0.12.1",
+ "numpy>=1.26.4",
+ "scipy>=1.12.0",
+ "scikit-learn>=1.4.0",
+ 
+ # Video processing
  "moviepy>=2.2.1",
+ "yt-dlp>=2025.10.22",
+ "pillow>=10.2.0",
+ "imagehash>=4.3.0",
+ 
+ # TTS (Kokoro)
+ "kokoro-onnx>=0.1.0",
+ 
+ # NLP
+ "spacy>=3.8.7",
+ 
+ # System utilities
+ "psutil>=5.9.0",
+ 
+ # Development tools (optional-dependencies)
+]
+
+[project.optional-dependencies]
+dev = [
+ "pytest>=7.0.0",
+ "pytest-asyncio>=0.21.0",
+ "pytest-cov>=4.0.0",
+ "black>=23.0.0",
+ "mypy>=1.16.1",
+ "ruff>=0.1.0",
 ]
 
 [build-system]
@@ -69,8 +58,19 @@ build-backend = "hatchling.build"
 allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
-packages = ["code"]
+packages = ["src"]
 
-[[tool.uv.index]]
-url = "http://mirrors.cloud.aliyuncs.com/pypi/simple"
-default = true
+[tool.ruff]
+line-length = 88
+target-version = "py39"
+select = ["E", "F", "I", "W", "N", "UP"]
+ignore = ["E501", "W503"]
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true

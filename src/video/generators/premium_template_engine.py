@@ -851,7 +851,7 @@ def generate_ab_test_variants(base_config: Dict[str, Any],
     return premium_engine.generate_variants_for_ab_testing(base_config, variant_count)
 
 if __name__ == "__main__":
-    print("=== Teste do Premium Template Engine ===")
+print("=== Teste do Premium Template Engine ===")
     
     # Teste de geração de template premium
     content = {
@@ -867,20 +867,20 @@ if __name__ == "__main__":
         MonetizationCategory.TIKKOK_ENGAGING
     )
     
-    print(f"Template gerado: {premium_config['monetization_type'].value}")
-    print(f"Plataforma: {list(Platform)[list(Platform).index(Platform.TIKTOK)].value}")
-    print(f"Elementos de engajamento: {len(premium_config['engagement_elements'])}")
-    print(f"Elementos de branding: {len(premium_config['branding'])}")
+print(f"Template gerado: {premium_config['monetization_type'].value}")
+print(f"Plataforma: {list(Platform)[list(Platform).index(Platform.TIKTOK)].value}")
+print(f"Elementos de engajamento: {len(premium_config['engagement_elements'])}")
+print(f"Elementos de branding: {len(premium_config['branding'])}")
     
     # Teste de análise do template
     analytics = premium_engine.get_template_analytics(premium_config)
-    print(f"\nAnálise do Template:")
-    print(f"Score de engajamento: {analytics['engagement_score']:.2f}")
-    print(f"Potencial de monetização: {analytics['monetization_potential']['potential_score']:.2f}")
-    print(f"Recomendações: {len(analytics['recommendations'])}")
+print(f"\nAnálise do Template:")
+print(f"Score de engajamento: {analytics['engagement_score']:.2f}")
+print(f"Potencial de monetização: {analytics['monetization_potential']['potential_score']:.2f}")
+print(f"Recomendações: {len(analytics['recommendations'])}")
     
     # Teste de geração de variantes A/B
     variants = generate_ab_test_variants(premium_config, 3)
-    print(f"\nVariantes A/B geradas: {len(variants)}")
+print(f"\nVariantes A/B geradas: {len(variants)}")
     for i, variant in enumerate(variants):
-        print(f"  Variante {i+1}: {variant['variant_id']}")
+print(f"  Variante {i+1}: {variant['variant_id']}")

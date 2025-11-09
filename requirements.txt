@@ -29,6 +29,11 @@ pydub>=0.25.0
 scipy>=1.9.0
 numba>=0.58.0
 
+# === KOKORO TTS (PRIMARY BACKEND) ===
+# Alinhar nome/versão com guia oficial Kokoro-TTS---Guia-de-uso.
+kokoro-tts>=0.9.4
+torch>=2.2.0
+
 # === AI & MACHINE LEARNING ===
 torch>=2.0.0
 torchaudio>=2.0.0

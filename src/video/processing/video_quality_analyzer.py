@@ -25,7 +25,20 @@ import statistics
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from .automatic_video_processor import AutomaticVideoProcessor
-from config.video_settings import get_config
+
+def get_config():
+    """Config fallback para video_quality_analyzer."""
+    return {
+        "quality_analysis": {
+            "enable_brightness_check": True,
+            "enable_sharpness_check": True,
+            "enable_motion_analysis": True,
+            "min_brightness": 0.2,
+            "max_brightness": 0.8,
+            "min_sharpness": 0.3,
+            "max_motion_level": 0.7
+        }
+    }
 
 
 @dataclass
@@ -253,11 +266,11 @@ class VideoQualityAnalyzer:
                 overall_score=quality_score
             )
             
-            self.logger.info(f"Análise de qualidade concluída: {quality_score:.2f}/100")
+self.logger.info(f"Análise de qualidade concluída: {quality_score:.2f}/100")
             return metrics
             
         except Exception as e:
-            self.logger.error(f"Erro ao analisar qualidade do vídeo: {e}")
+self.logger.error(f"Erro ao analisar qualidade do vídeo: {e}")
             # Retornar métricas padrão em caso de erro
             return QualityMetrics(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 50.0)
     
@@ -330,11 +343,11 @@ class VideoQualityAnalyzer:
                 'analyzed_at': datetime.now().isoformat()
             }
             
-            self.logger.info(f"Verificação de compatibilidade concluída para {platform}: {overall_compatibility:.1f}%")
+self.logger.info(f"Verificação de compatibilidade concluída para {platform}: {overall_compatibility:.1f}%")
             return result
             
         except Exception as e:
-            self.logger.error(f"Erro ao verificar compatibilidade: {e}")
+self.logger.error(f"Erro ao verificar compatibilidade: {e}")
             return {
                 'platform': platform,
                 'error': str(e),
@@ -414,11 +427,11 @@ class VideoQualityAnalyzer:
                 'generated_at': datetime.now().isoformat()
             }
             
-            self.logger.info(f"Sugestões de melhoria geradas para {video_path}")
+self.logger.info(f"Sugestões de melhoria geradas para {video_path}")
             return result
             
         except Exception as e:
-            self.logger.error(f"Erro ao gerar sugestões: {e}")
+self.logger.error(f"Erro ao gerar sugestões: {e}")
             return {
                 'video_path': video_path,
                 'error': str(e),
@@ -639,7 +652,7 @@ class VideoQualityAnalyzer:
         results = {}
         total_videos = len(video_list)
         
-        self.logger.info(f"Iniciando análise em lote de {total_videos} vídeos")
+self.logger.info(f"Iniciando análise em lote de {total_videos} vídeos")
         
         def analyze_single_video(video_path):
             """Analisa um único vídeo."""
@@ -693,7 +706,7 @@ class VideoQualityAnalyzer:
             'analyzed_at': datetime.now().isoformat()
         }
         
-        self.logger.info(f"Análise em lote concluída: {len(successful_analyses)}/{total_videos} sucessos")
+self.logger.info(f"Análise em lote concluída: {len(successful_analyses)}/{total_videos} sucessos")
         return result_summary
     
     def generate_quality_report(self, video_path: str, output_path: str) -> bool:
@@ -738,11 +751,11 @@ class VideoQualityAnalyzer:
             with open(output_path, 'w', encoding='utf-8') as f:
                 json.dump(report, f, indent=2, ensure_ascii=False)
             
-            self.logger.info(f"Relatório de qualidade gerado: {output_path}")
+self.logger.info(f"Relatório de qualidade gerado: {output_path}")
             return True
             
         except Exception as e:
-            self.logger.error(f"Erro ao gerar relatório: {e}")
+self.logger.error(f"Erro ao gerar relatório: {e}")
             return False
     
     def _get_quality_grade(self, score: float) -> str:
@@ -818,20 +831,20 @@ if __name__ == "__main__":
     try:
         # Análise de qualidade
         metrics = analyzer.analyze_video_quality(test_video)
-        print(f"Métricas de qualidade: {metrics}")
+print(f"Métricas de qualidade: {metrics}")
         
         # Verificar compatibilidade com TikTok
         tiktok_compat = analyzer.check_platform_compatibility(test_video, 'tiktok')
-        print(f"Compatibilidade TikTok: {tiktok_compat}")
+print(f"Compatibilidade TikTok: {tiktok_compat}")
         
         # Gerar sugestões de melhoria
         suggestions = analyzer.suggest_improvements(test_video)
-        print(f"Sugestões: {suggestions}")
+print(f"Sugestões: {suggestions}")
         
         # Gerar relatório completo
         report_path = "/tmp/quality_report.json"
         success = analyzer.generate_quality_report(test_video, report_path)
-        print(f"Relatório gerado: {success}")
+print(f"Relatório gerado: {success}")
         
     except Exception as e:
-        print(f"Erro durante o teste: {e}")
+print(f"Erro durante o teste: {e}")

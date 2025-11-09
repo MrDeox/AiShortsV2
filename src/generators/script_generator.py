@@ -19,110 +19,14 @@ from src.core.openrouter_client import openrouter_client
 from src.generators.theme_generator import GeneratedTheme
 from src.utils.exceptions import ScriptGenerationError, ValidationError, ErrorHandler
 
-
-@dataclass
-class ScriptSection:
-    """Representa uma seção do roteiro."""
-    name: str  # 'hook', 'development', 'conclusion'
-    content: str
-    duration_seconds: float
-    purpose: str
-    key_elements: List[str]
-    
-    def to_dict(self) -> Dict[str, Any]:
-        """Converte para dicionário."""
-        return {
-            "name": self.name,
-            "content": self.content,
-            "duration_seconds": self.duration_seconds,
-            "purpose": self.purpose,
-            "key_elements": self.key_elements
-        }
+# Importar modelos unificados
+from src.models import GeneratedScript as GeneratedScriptBase, ScriptSection as ScriptSectionBase, ScriptGenerationResult as ScriptGenerationResultBase
 
 
-@dataclass
-class GeneratedScript:
-    """Representa um roteiro completo gerado."""
-    title: str
-    theme: GeneratedTheme
-    sections: List[ScriptSection]
-    total_duration: float
-    quality_score: float
-    engagement_score: float
-    retention_score: float
-    response_time: float
-    timestamp: datetime
-    usage: Optional[Dict[str, int]] = None
-    metrics: Optional[Dict[str, Any]] = None
-    
-    @property
-    def hook(self) -> ScriptSection:
-        """Retorna a seção de hook."""
-        return next((s for s in self.sections if s.name == "hook"), None)
-    
-    @property
-    def development(self) -> ScriptSection:
-        """Retorna a seção de desenvolvimento."""
-        return next((s for s in self.sections if s.name == "development"), None)
-    
-    @property
-    def conclusion(self) -> ScriptSection:
-        """Retorna a seção de conclusão."""
-        return next((s for s in self.sections if s.name == "conclusion"), None)
-    
-    def get_hook_preview(self, max_chars: int = 100) -> str:
-        """Retorna preview do hook (para吸引 atenção)."""
-        if self.hook:
-            content = self.hook.content[:max_chars]
-            return content + "..." if len(self.hook.content) > max_chars else content
-        return ""
-    
-    def get_script_text(self) -> str:
-        """Retorna texto completo do roteiro."""
-        return " ".join([section.content for section in self.sections])
-    
-    def save_to_file(self, filepath: Path) -> None:
-        """Salva roteiro em arquivo JSON."""
-        data = {
-            "title": self.title,
-            "theme": self.theme.to_dict(),
-            "sections": [section.to_dict() for section in self.sections],
-            "total_duration": self.total_duration,
-            "quality_score": self.quality_score,
-            "engagement_score": self.engagement_score,
-            "retention_score": self.retention_score,
-            "response_time": self.response_time,
-            "timestamp": self.timestamp.isoformat(),
-            "usage": self.usage,
-            "metrics": self.metrics
-        }
-        
-        filepath.parent.mkdir(parents=True, exist_ok=True)
-        with open(filepath, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-
-
-@dataclass
-class ScriptGenerationResult:
-    """Resultado da geração de múltiplos roteiros."""
-    scripts: List[GeneratedScript]
-    best_script: Optional[GeneratedScript]
-    total_time: float
-    generation_stats: Dict[str, Any]
-    
-    def save_to_file(self, filepath: Path) -> None:
-        """Salva resultado em arquivo JSON."""
-        data = {
-            "scripts": [script.to_dict() for script in self.scripts],
-            "best_script": self.best_script.to_dict() if self.best_script else None,
-            "total_time": self.total_time,
-            "generation_stats": self.generation_stats,
-            "timestamp": datetime.now().isoformat()
-        }
-        
-        filepath.parent.mkdir(parents=True, exist_ok=True)
-        with open(filepath, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+# Usar modelos unificados diretamente (herança para compatibilidade)
+GeneratedScript = GeneratedScriptBase
+ScriptSection = ScriptSectionBase  
+ScriptGenerationResult = ScriptGenerationResultBase
 
 
 class ScriptGenerator:
@@ -145,7 +49,7 @@ class ScriptGenerator:
         # Modo de teste (para validações mais flexíveis)
         self._test_mode = False
         
-        logger.info(f"ScriptGenerator inicializado - Duração alvo: {self.target_duration}s")
+logger.info(f"ScriptGenerator inicializado - Duração alvo: {self.target_duration}s")
     
     def generate_single_script(self, 
                              theme: GeneratedTheme,
@@ -170,7 +74,7 @@ class ScriptGenerator:
             prompt_data = self._create_script_prompt(theme, custom_requirements, target_platform)
             
             # Log do início da geração
-            logger.info(f"Iniciando geração de roteiro - Tema: {theme.content[:50]}...")
+logger.info(f"Iniciando geração de roteiro - Tema: {theme.content[:50]}...")
             
             # Gerar roteiro usando OpenRouter
             start_time = time.time()
@@ -212,7 +116,7 @@ class ScriptGenerator:
             )
             
             # Log do resultado
-            logger.info(
+logger.info(
                 f"Roteiro gerado - Duração: {total_duration:.1f}s, "
                 f"Qualidade: {quality_metrics['overall_quality']:.2f}, "
                 f"Engajamento: {quality_metrics['engagement_score']:.2f}, "
@@ -222,7 +126,7 @@ class ScriptGenerator:
             return script
         
         except Exception as e:
-            logger.error(f"Erro na geração de roteiro - Tema: {theme.content[:50]}..., Erro: {e}")
+logger.error(f"Erro na geração de roteiro - Tema: {theme.content[:50]}..., Erro: {e}")
             raise ScriptGenerationError(f"Falha na geração: {str(e)}", theme_content=theme.content)
     
     def generate_multiple_scripts(self, 
@@ -256,7 +160,7 @@ class ScriptGenerator:
             "response_times": []
         }
         
-        logger.info(f"Iniciando geração de {count} roteiros de {len(themes)} temas")
+logger.info(f"Iniciando geração de {count} roteiros de {len(themes)} temas")
         
         for attempt in range(min(count * 2, len(themes) * 2)):
             if len(scripts) >= count:
@@ -281,13 +185,13 @@ class ScriptGenerator:
                     generation_stats["retention_scores"].append(script.retention_score)
                     generation_stats["response_times"].append(script.response_time)
                     
-                    logger.info(f"Roteiro aceito - Score: {script.quality_score:.2f}, Duração: {script.total_duration:.1f}s")
+logger.info(f"Roteiro aceito - Score: {script.quality_score:.2f}, Duração: {script.total_duration:.1f}s")
                 else:
-                    logger.warning(f"Roteiro rejeitado - Score baixo: {script.quality_score:.2f}")
+logger.warning(f"Roteiro rejeitado - Score baixo: {script.quality_score:.2f}")
                     generation_stats["failed_generations"] += 1
                 
             except Exception as e:
-                logger.error(f"Falha na tentativa {attempt + 1}: {e}")
+logger.error(f"Falha na tentativa {attempt + 1}: {e}")
                 generation_stats["failed_generations"] += 1
         
         total_time = time.time() - start_time
@@ -314,7 +218,7 @@ class ScriptGenerator:
             generation_stats=generation_stats
         )
         
-        logger.info(
+logger.info(
             f"Geração concluída - {len(scripts)}/{count} roteiros aceitos, "
             f"Melhor score: {(best_script.quality_score if best_script else 0.0):.2f}, "
             f"Tempo total: {total_time:.2f}s"
@@ -424,7 +328,7 @@ Now craft the script:"""
         current_content = []
         
         # Debug: Log da resposta para análise
-        logger.debug(f"Parseando resposta: {response[:200]}...")
+logger.debug(f"Parseando resposta: {response[:200]}...")
         
         for line in lines:
             line_upper = line.upper()
@@ -495,7 +399,7 @@ Now craft the script:"""
         
         # Se não encontrou a estrutura esperada, usar abordagem simples
         if not sections:
-            logger.warning("Estrutura de roteiro não encontrada, usando parse simples")
+logger.warning("Estrutura de roteiro não encontrada, usando parse simples")
             sections = self._simple_parse_script(response, theme)
         elif current_section and current_content:
             # Fechar última seção se ainda não foi fechada
@@ -563,7 +467,7 @@ Now craft the script:"""
     def _validate_script_sections(self, sections: List[ScriptSection], theme: GeneratedTheme) -> None:
         """Valida se as seções do roteiro estão corretas."""
         
-        logger.debug(f"Validando roteiro com {len(sections)} seções")
+logger.debug(f"Validando roteiro com {len(sections)} seções")
         
         if len(sections) < 2:
             raise ValidationError("Roteiro deve ter pelo menos hook e desenvolvimento", field="sections", value=len(sections))
@@ -576,20 +480,20 @@ Now craft the script:"""
         # Verificar duração total
         total_duration = sum(section.duration_seconds for section in sections)
         if total_duration > 90:  # Muito longo
-            logger.warning(f"Roteiro muito longo: {total_duration:.1f}s, pode ser truncado")
+logger.warning(f"Roteiro muito longo: {total_duration:.1f}s, pode ser truncado")
         elif total_duration < 30:  # Muito curto
-            logger.warning(f"Roteiro muito curto: {total_duration:.1f}s, pode precisar de mais conteúdo")
+logger.warning(f"Roteiro muito curto: {total_duration:.1f}s, pode precisar de mais conteúdo")
         
         # Verificar conteúdo básico
         for section in sections:
             if len(section.content) < 5:
-                logger.warning(f"Seção {section.name} muito curta: {len(section.content)} chars")
+logger.warning(f"Seção {section.name} muito curta: {len(section.content)} chars")
                 # Em ambiente de teste, continuar em vez de falhar
                 if hasattr(self, '_test_mode') and self._test_mode:
                     continue
                 raise ValidationError(f"Seção {section.name} muito curta", field=section.name, value=len(section.content))
         
-        logger.debug(f"Validação OK - Duração total: {total_duration:.1f}s")
+logger.debug(f"Validação OK - Duração total: {total_duration:.1f}s")
     
     def _calculate_script_quality(self, sections: List[ScriptSection], theme: GeneratedTheme) -> Dict[str, float]:
         """Calcula métricas de qualidade do roteiro."""
@@ -703,7 +607,7 @@ Now craft the script:"""
         filepath = config.storage.output_dir / filename
         result.save_to_file(filepath)
         
-        logger.info(f"Resultado salvo em: {filepath}")
+logger.info(f"Resultado salvo em: {filepath}")
         return filepath
     
     def analyze_scripts(self, scripts: List[GeneratedScript]) -> Dict[str, Any]:
@@ -775,34 +679,34 @@ script_generator = ScriptGenerator()
 
 if __name__ == "__main__":
     # Teste do gerador de roteiro
-    print("=== Teste do Gerador de Roteiro ===")
+print("=== Teste do Gerador de Roteiro ===")
     
     try:
         # Importar e usar o gerador de temas
         from src.generators.theme_generator import theme_generator, ThemeCategory
         
         # Primeiro, gerar um tema
-        print("1. Gerando tema base...")
+print("1. Gerando tema base...")
         theme = theme_generator.generate_single_theme(ThemeCategory.SCIENCE)
-        print(f"📝 Tema: {theme.content}")
+print(f" Tema: {theme.content}")
         
         # Depois, gerar roteiro
-        print("\n2. Gerando roteiro...")
+print("\n2. Gerando roteiro...")
         script = script_generator.generate_single_script(theme)
-        print(f"🎬 Título: {script.title}")
-        print(f"⏱️ Duração: {script.total_duration:.1f}s")
-        print(f"⭐ Qualidade: {script.quality_score:.2f}")
+print(f" Título: {script.title}")
+print(f"⏱ Duração: {script.total_duration:.1f}s")
+print(f" Qualidade: {script.quality_score:.2f}")
         
         # Mostrar estrutura
-        print("\n3. Estrutura do roteiro:")
+print("\n3. Estrutura do roteiro:")
         for section in script.sections:
-            print(f"   {section.name.upper()}: {section.content[:50]}... ({section.duration_seconds:.1f}s)")
+print(f"   {section.name.upper()}: {section.content[:50]}... ({section.duration_seconds:.1f}s)")
         
         # Teste de geração múltipla
-        print("\n4. Teste de geração múltipla:")
+print("\n4. Teste de geração múltipla:")
         themes = [theme_generator.generate_single_theme(ThemeCategory.NATURE) for _ in range(2)]
         result = script_generator.generate_multiple_scripts(themes, count=2)
-        print(f"✅ {len(result.scripts)} roteiros gerados")
+print(f" {len(result.scripts)} roteiros gerados")
         
     except Exception as e:
-        print(f"❌ Erro no teste: {e}")
+print(f" Erro no teste: {e}")

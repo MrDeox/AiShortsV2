@@ -75,7 +75,7 @@ class AudioVideoSynchronizer:
         self.max_gap_compensation = 0.5  # segundos
         self.optimal_transition_duration = 0.3
         
-        logger.info("AudioVideoSynchronizer inicializado")
+logger.info("AudioVideoSynchronizer inicializado")
     
     def sync_audio_with_video(self, 
                              audio_path: str, 
@@ -93,7 +93,7 @@ class AudioVideoSynchronizer:
             Dict com timeline sincronizado e metadados
         """
         try:
-            logger.info("Iniciando sincronização áudio-vídeo")
+logger.info("Iniciando sincronização áudio-vídeo")
             
             # Carregar e analisar áudio principal
             audio_info = self._load_and_analyze_audio(audio_path)
@@ -132,7 +132,7 @@ class AudioVideoSynchronizer:
             }
             
         except Exception as e:
-            logger.error(f"Erro na sincronização áudio-vídeo: {e}")
+logger.error(f"Erro na sincronização áudio-vídeo: {e}")
             return {
                 'success': False,
                 'error': str(e)
@@ -151,7 +151,7 @@ class AudioVideoSynchronizer:
         Returns:
             Lista de entradas do timeline
         """
-        logger.info("Criando timeline combinado")
+logger.info("Criando timeline combinado")
         
         try:
             # Carregar duração do áudio
@@ -184,11 +184,11 @@ class AudioVideoSynchronizer:
                     sync_point=False
                 ))
             
-            logger.info(f"Timeline criado com {len(timeline)} entradas")
+logger.info(f"Timeline criado com {len(timeline)} entradas")
             return timeline
             
         except Exception as e:
-            logger.error(f"Erro ao criar timeline: {e}")
+logger.error(f"Erro ao criar timeline: {e}")
             return []
     
     def detect_beat_points(self, audio_path: str) -> List[float]:
@@ -202,7 +202,7 @@ class AudioVideoSynchronizer:
             Lista de timestamps dos beats detectados
         """
         try:
-            logger.info("Detectando pontos de beat no áudio")
+logger.info("Detectando pontos de beat no áudio")
             
             # Carregar áudio
             y, sr = librosa.load(audio_path, sr=22050)
@@ -235,11 +235,11 @@ class AudioVideoSynchronizer:
                 if not filtered_points or point - filtered_points[-1] > 0.2:
                     filtered_points.append(point)
             
-            logger.info(f"Detectados {len(filtered_points)} pontos de sincronização")
+logger.info(f"Detectados {len(filtered_points)} pontos de sincronização")
             return filtered_points
             
         except Exception as e:
-            logger.error(f"Erro na detecção de beats: {e}")
+logger.error(f"Erro na detecção de beats: {e}")
             return []
     
     def align_segments(self, 
@@ -256,7 +256,7 @@ class AudioVideoSynchronizer:
             Dict com alinhamentos e metadados
         """
         try:
-            logger.info("Alinhando segmentos áudio-vídeo")
+logger.info("Alinhando segmentos áudio-vídeo")
             
             alignments = []
             total_audio_duration = sum(seg.duration for seg in audio_segments)
@@ -267,7 +267,7 @@ class AudioVideoSynchronizer:
             
             # Ajustar velocidades se necessário
             if abs(duration_ratio - 1.0) > 0.1:  # Diferença de mais de 10%
-                logger.warning(f"Razão de duração diferente: {duration_ratio:.2f}")
+logger.warning(f"Razão de duração diferente: {duration_ratio:.2f}")
             
             # Alinhar cada segmento
             current_audio_time = 0.0
@@ -306,11 +306,11 @@ class AudioVideoSynchronizer:
                 'segments_count': len(alignments)
             }
             
-            logger.info(f"Alinhamento concluído: {len(alignments)} segmentos")
+logger.info(f"Alinhamento concluído: {len(alignments)} segmentos")
             return result
             
         except Exception as e:
-            logger.error(f"Erro no alinhamento de segmentos: {e}")
+logger.error(f"Erro no alinhamento de segmentos: {e}")
             return {
                 'success': False,
                 'error': str(e)
@@ -348,7 +348,7 @@ class AudioVideoSynchronizer:
             }
             
         except Exception as e:
-            logger.error(f"Erro ao analisar áudio: {e}")
+logger.error(f"Erro ao analisar áudio: {e}")
             return {'success': False, 'error': str(e)}
     
     def _create_audio_segments(self, 
@@ -374,7 +374,7 @@ class AudioVideoSynchronizer:
     def _compensate_gaps_overlaps(self, timeline: List[TimelineEntry]) -> List[TimelineEntry]:
         """Compensa automaticamente gaps e overlaps no timeline"""
         try:
-            logger.info("Compensando gaps e overlaps")
+logger.info("Compensando gaps e overlaps")
             
             if not timeline:
                 return timeline
@@ -403,7 +403,7 @@ class AudioVideoSynchronizer:
             return compensated_timeline
             
         except Exception as e:
-            logger.error(f"Erro na compensação: {e}")
+logger.error(f"Erro na compensação: {e}")
             return timeline
     
     def _generate_synchronized_video(self, 
@@ -411,7 +411,7 @@ class AudioVideoSynchronizer:
                                    audio_path: str) -> Dict[str, Any]:
         """Gera vídeo sincronizado final"""
         try:
-            logger.info("Gerando vídeo sincronizado")
+logger.info("Gerando vídeo sincronizado")
             
             if not timeline:
                 return {'success': False, 'error': 'Timeline vazio'}
@@ -472,5 +472,5 @@ class AudioVideoSynchronizer:
             }
             
         except Exception as e:
-            logger.error(f"Erro ao gerar vídeo sincronizado: {e}")
+logger.error(f"Erro ao gerar vídeo sincronizado: {e}")
             return {'success': False, 'error': str(e)}

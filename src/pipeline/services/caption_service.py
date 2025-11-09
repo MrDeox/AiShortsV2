@@ -19,7 +19,7 @@ class CaptionService:
     def build_captions(self, text: Optional[str], audio_duration: float) -> List[Dict[str, Any]]:
         """Gera legendas aproximadas distribuindo a duração proporcionalmente às palavras."""
         if not text or audio_duration <= 0:
-            self._logger.debug("Legenda não gerada: texto vazio ou áudio inválido.")
+self._logger.debug("Legenda não gerada: texto vazio ou áudio inválido.")
             return []
 
         sentences = self._split_into_sentences(text)
@@ -59,7 +59,7 @@ class CaptionService:
 
             start_time = end_time
 
-        self._logger.info("Legendas geradas: %d segmentos", len(captions))
+self._logger.info("Legendas geradas: %d segmentos", len(captions))
         return captions
 
     def _split_into_sentences(self, text: str) -> List[str]:

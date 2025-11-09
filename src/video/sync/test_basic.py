@@ -12,29 +12,29 @@ sys.path.append(str(Path(__file__).parent.parent.parent))
 
 def test_imports():
     """Testa se todos os módulos podem ser importados"""
-    print("🧪 Testando imports dos módulos...")
+print("🧪 Testando imports dos módulos...")
     
     try:
         from src.video.sync import AudioVideoSynchronizer, TimingOptimizer
-        print("✅ Imports principais: OK")
+print(" Imports principais: OK")
         
         # Testar se classes podem ser instanciadas
         sync = AudioVideoSynchronizer()
         opt = TimingOptimizer()
-        print("✅ Instanciação de classes: OK")
+print(" Instanciação de classes: OK")
         
         return True
     except ImportError as e:
-        print(f"❌ Erro de import: {e}")
+print(f" Erro de import: {e}")
         return False
     except Exception as e:
-        print(f"❌ Erro geral: {e}")
+print(f" Erro geral: {e}")
         return False
 
 
 def test_basic_functionality():
     """Testa funcionalidades básicas sem arquivos reais"""
-    print("\n🔧 Testando funcionalidades básicas...")
+print("\n Testando funcionalidades básicas...")
     
     try:
         from src.video.sync import AudioVideoSynchronizer, TimingOptimizer
@@ -70,7 +70,7 @@ def test_basic_functionality():
             transition_effect="fade"
         )
         
-        print("✅ Criação de estruturas de dados: OK")
+print(" Criação de estruturas de dados: OK")
         
         # Testar TimingOptimizer
         opt = TimingOptimizer()
@@ -83,7 +83,7 @@ def test_basic_functionality():
             applicable_types=["fade", "dissolve"]
         )
         
-        print("✅ Criação de efeitos de transição: OK")
+print(" Criação de efeitos de transição: OK")
         
         # Testar método de cálculo de duração
         duration_result = opt.calculate_optimal_duration(
@@ -91,19 +91,19 @@ def test_basic_functionality():
             video_length=60.0
         )
         
-        print("✅ Cálculo de duração: OK")
-        print(f"   Duração calculada: {duration_result.get('final_duration', 0):.1f}s")
+print(" Cálculo de duração: OK")
+print(f"   Duração calculada: {duration_result.get('final_duration', 0):.1f}s")
         
         return True
         
     except Exception as e:
-        print(f"❌ Erro nas funcionalidades básicas: {e}")
+print(f" Erro nas funcionalidades básicas: {e}")
         return False
 
 
 def test_timeline_creation():
     """Testa criação de timeline combinado"""
-    print("\n📊 Testando criação de timeline...")
+print("\n Testando criação de timeline...")
     
     try:
         from src.video.sync import AudioVideoSynchronizer
@@ -132,23 +132,23 @@ def test_timeline_creation():
         # Criar timeline (simulado - não precisa de arquivo de áudio real)
         timeline = sync.create_timeline("dummy_audio.wav", video_segments)
         
-        print(f"✅ Timeline criado com {len(timeline)} entradas")
+print(f" Timeline criado com {len(timeline)} entradas")
         
         # Verificar estrutura do timeline
         for i, entry in enumerate(timeline):
             if hasattr(entry, 'timestamp') and hasattr(entry, 'video_segment'):
-                print(f"   Entrada {i+1}: {entry.timestamp:.1f}s - {entry.video_segment.description}")
+print(f"   Entrada {i+1}: {entry.timestamp:.1f}s - {entry.video_segment.description}")
         
         return True
         
     except Exception as e:
-        print(f"❌ Erro na criação de timeline: {e}")
+print(f" Erro na criação de timeline: {e}")
         return False
 
 
 def test_transition_effects():
     """Testa sistema de efeitos de transição"""
-    print("\n🎨 Testando efeitos de transição...")
+print("\n Testando efeitos de transição...")
     
     try:
         from src.video.sync import TimingOptimizer
@@ -158,9 +158,9 @@ def test_transition_effects():
         # Verificar se efeitos estão disponíveis
         effects = opt.transition_effects
         
-        print(f"✅ Efeitos disponíveis: {len(effects)}")
+print(f" Efeitos disponíveis: {len(effects)}")
         for name, effect in effects.items():
-            print(f"   - {name}: {effect.duration}s, intensidade {effect.intensity}")
+print(f"   - {name}: {effect.duration}s, intensidade {effect.intensity}")
         
         # Testar seleção de efeitos
         video_segments = [
@@ -170,43 +170,43 @@ def test_transition_effects():
         
         effects_result = opt.add_transition_effects(video_segments)
         
-        print(f"✅ Efeitos aplicados: {effects_result.get('total_effects', 0)}")
+print(f" Efeitos aplicados: {effects_result.get('total_effects', 0)}")
         
         return True
         
     except Exception as e:
-        print(f"❌ Erro nos efeitos de transição: {e}")
+print(f" Erro nos efeitos de transição: {e}")
         return False
 
 
 def test_integration_points():
     """Testa pontos de integração com sistema TTS"""
-    print("\n🔗 Testando integração com TTS...")
+print("\n Testando integração com TTS...")
     
     try:
         # Testar import do sistema TTS
         from src.tts.kokoro_tts import KokoroTTSClient
-        print("✅ Import do sistema TTS: OK")
+print(" Import do sistema TTS: OK")
         
         # Verificar se podemos instanciar cliente TTS
         tts = KokoroTTSClient()
-        print("✅ Instanciação do cliente TTS: OK")
+print(" Instanciação do cliente TTS: OK")
         
         # Verificar vozes disponíveis
         voices = tts.get_voice_list()
-        print(f"✅ Vozes disponíveis: {len(voices)}")
+print(f" Vozes disponíveis: {len(voices)}")
         
         return True
         
     except Exception as e:
-        print(f"❌ Erro na integração TTS: {e}")
+print(f" Erro na integração TTS: {e}")
         return False
 
 
 def main():
     """Executa todos os testes"""
-    print("🧪 INICIANDO TESTES DO SISTEMA DE SINCRONIZAÇÃO ÁUDIO-VÍDEO")
-    print("=" * 65)
+print("🧪 INICIANDO TESTES DO SISTEMA DE SINCRONIZAÇÃO ÁUDIO-VÍDEO")
+print("=" * 65)
     
     tests = [
         ("Imports", test_imports),
@@ -219,39 +219,39 @@ def main():
     results = []
     
     for test_name, test_func in tests:
-        print(f"\n{'='*20} {test_name} {'='*20}")
+print(f"\n{'='*20} {test_name} {'='*20}")
         try:
             result = test_func()
             results.append((test_name, result))
         except Exception as e:
-            print(f"❌ Erro crítico em {test_name}: {e}")
+print(f" Erro crítico em {test_name}: {e}")
             results.append((test_name, False))
     
     # Relatório final
-    print(f"\n{'='*65}")
-    print("📊 RELATÓRIO FINAL DOS TESTES")
-    print(f"{'='*65}")
+print(f"\n{'='*65}")
+print(" RELATÓRIO FINAL DOS TESTES")
+print(f"{'='*65}")
     
     passed = 0
     total = len(results)
     
     for test_name, result in results:
         status = "✅ PASSOU" if result else "❌ FALHOU"
-        print(f"{test_name:.<40} {status}")
+print(f"{test_name:.<40} {status}")
         if result:
             passed += 1
     
-    print(f"\nResultado: {passed}/{total} testes passaram ({passed/total*100:.1f}%)")
+print(f"\nResultado: {passed}/{total} testes passaram ({passed/total*100:.1f}%)")
     
     if passed == total:
-        print("🎉 TODOS OS TESTES PASSARAM! Sistema pronto para uso.")
-        print("\nPara usar o sistema:")
-        print("1. Instale dependências: pip install -r requirements_sync.txt")
-        print("2. Execute demo: python src/video/sync/demo_sync.py")
+print(" TODOS OS TESTES PASSARAM! Sistema pronto para uso.")
+print("\nPara usar o sistema:")
+print("1. Instale dependências: pip install -r requirements_sync.txt")
+print("2. Execute demo: python src/video/sync/demo_sync.py")
     else:
-        print("⚠️ Alguns testes falharam. Verifique as dependências:")
-        print("- pip install -r requirements_sync.txt")
-        print("- Verifique se Python >= 3.7")
+print(" Alguns testes falharam. Verifique as dependências:")
+print("- pip install -r requirements_sync.txt")
+print("- Verifique se Python >= 3.7")
     
     return passed == total
 

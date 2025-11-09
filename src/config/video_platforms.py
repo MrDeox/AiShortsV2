@@ -355,16 +355,16 @@ def get_timing_preset(timing_name: str) -> Dict[str, int]:
 
 if __name__ == "__main__":
     # Teste das configurações
-    print("=== Configurações de Plataforma de Vídeo ===")
-    print(f"Plataformas configuradas: {list(video_config.platforms.keys())}")
-    print(f"Presets de qualidade: {[p.name for p in video_config.quality_presets]}")
+print("=== Configurações de Plataforma de Vídeo ===")
+print(f"Plataformas configuradas: {list(video_config.platforms.keys())}")
+print(f"Presets de qualidade: {[p.name for p in video_config.quality_presets]}")
     
     # Teste de especificações do TikTok
     tiktok_specs = video_config.get_platform_specs(Platform.TIKTOK)
-    print(f"\nTikTok - Resolução: {tiktok_specs.resolution_str}")
-    print(f"TikTok - Duração: {tiktok_specs.duration_min}s - {tiktok_specs.duration_max}s")
-    print(f"TikTok - FPS: {tiktok_specs.fps}")
+print(f"\nTikTok - Resolução: {tiktok_specs.resolution_str}")
+print(f"TikTok - Duração: {tiktok_specs.duration_min}s - {tiktok_specs.duration_max}s")
+print(f"TikTok - FPS: {tiktok_specs.fps}")
     
     # Teste de configurações de categoria
-    print(f"\nConfiguração SPACE: {get_category_config('SPACE')}")
-    print(f"Timing EDUCATIONAL: {get_timing_preset('educational')}")
+print(f"\nConfiguração SPACE: {get_category_config('SPACE')}")
+print(f"Timing EDUCATIONAL: {get_timing_preset('educational')}")

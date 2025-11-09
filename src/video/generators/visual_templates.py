@@ -887,21 +887,21 @@ def get_category_palette(category: str) -> List[str]:
     return template_generator.get_color_palette(category)
 
 if __name__ == "__main__":
-    print("=== Teste do Gerador de Templates Visuais ===")
+print("=== Teste do Gerador de Templates Visuais ===")
     
     # Teste de obtenção de template
     space_title = get_template("SPACE", TemplateType.TITLE_SLIDE)
-    print(f"Template SPACE Título: {space_title.name if space_title else 'None'}")
+print(f"Template SPACE Título: {space_title.name if space_title else 'None'}")
     
     # Teste de geração de texto
     text_overlay = generate_text_overlay("Teste de Texto", "ANIMALS", "center")
-    print(f"Texto overlay: {text_overlay.text}, Cor: {text_overlay.color}")
+print(f"Texto overlay: {text_overlay.text}, Cor: {text_overlay.color}")
     
     # Teste de paleta de cores
     palette = get_category_palette("SCIENCE")
-    print(f"Paleta SCIENCE: {palette}")
+print(f"Paleta SCIENCE: {palette}")
     
     # Teste de sequência
     content = ["Título do Vídeo", "Primeiro Fato", "Segundo Fato", "Conclusão"]
     sequence = template_generator.create_sequence_template("SPACE", content)
-    print(f"Sequência criada com {len(sequence)} templates")
+print(f"Sequência criada com {len(sequence)} templates")

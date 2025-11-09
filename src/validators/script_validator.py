@@ -200,7 +200,7 @@ class ScriptValidator:
     def __init__(self):
         """Inicializa o validador."""
         self.platform_requirements = self.PLATFORM_REQUIREMENTS
-        logger.info("ScriptValidator inicializado com sucesso")
+logger.info("ScriptValidator inicializado com sucesso")
 
     def validate_script(self, script: GeneratedScript, platform: PlatformType = PlatformType.TIKTOK) -> ValidationReport:
         """
@@ -213,7 +213,7 @@ class ScriptValidator:
         Returns:
             Relatório completo de validação
         """
-        logger.info(f"Iniciando validação do roteiro '{script.title}' para {platform.value}")
+logger.info(f"Iniciando validação do roteiro '{script.title}' para {platform.value}")
         
         start_time = datetime.now()
         
@@ -258,7 +258,7 @@ class ScriptValidator:
         )
         
         elapsed_time = (datetime.now() - start_time).total_seconds()
-        logger.info(f"Validação concluída em {elapsed_time:.2f}s - Score: {overall_score:.3f}")
+logger.info(f"Validação concluída em {elapsed_time:.2f}s - Score: {overall_score:.3f}")
         
         return report
 
@@ -783,7 +783,7 @@ class ScriptValidator:
                 report = self.validate_script(script, platform)
                 reports[platform] = report
             except Exception as e:
-                logger.error(f"Erro ao validar para {platform.value}: {e}")
+logger.error(f"Erro ao validar para {platform.value}: {e}")
                 continue
         
         return reports
@@ -827,7 +827,7 @@ class ScriptValidator:
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
         
-        logger.info(f"Relatório de validação salvo em: {filepath}")
+logger.info(f"Relatório de validação salvo em: {filepath}")
 
     def _issue_to_dict(self, issue: ValidationIssue) -> Dict[str, Any]:
         """Converte ValidationIssue para dicionário."""
@@ -848,7 +848,7 @@ script_validator = ScriptValidator()
 
 if __name__ == "__main__":
     # Teste do validador
-    print("=== Teste do Script Validator ===")
+print("=== Teste do Script Validator ===")
     
     try:
         # Importar gerador de temas e roteiro
@@ -856,34 +856,34 @@ if __name__ == "__main__":
         from src.generators.script_generator import script_generator
         
         # Gerar tema e roteiro para teste
-        print("1. Gerando tema e roteiro de teste...")
+print("1. Gerando tema e roteiro de teste...")
         theme = theme_generator.generate_single_theme(ThemeCategory.SCIENCE)
         script = script_generator.generate_single_script(theme)
         
-        print(f"Roteiro: {script.title}")
+print(f"Roteiro: {script.title}")
         
         # Testar validação
-        print("\n2. Testando validação...")
+print("\n2. Testando validação...")
         
         # Validar para TikTok
         report_tiktok = script_validator.validate_script(script, PlatformType.TIKTOK)
-        print(f"Validação TikTok - Score: {report_tiktok.overall_score:.2f}")
-        print(f"Aprovado: {'Sim' if report_tiktok.is_approved else 'Não'}")
+print(f"Validação TikTok - Score: {report_tiktok.overall_score:.2f}")
+print(f"Aprovado: {'Sim' if report_tiktok.is_approved else 'Não'}")
         
         # Validar para múltiplas plataformas
-        print("\n3. Validação multiplataforma...")
+print("\n3. Validação multiplataforma...")
         reports = script_validator.validate_multiple_platforms(script)
         
         for platform, report in reports.items():
-            print(f"  {platform.value}: {report.overall_score:.2f} ({'✅' if report.is_approved else '❌'})")
+print(f"  {platform.value}: {report.overall_score:.2f} ({'' if report.is_approved else ''})")
         
         # Salvar relatório
-        print("\n4. Salvando relatório...")
+print("\n4. Salvando relatório...")
         report_path = Path("validation_report.json")
         script_validator.save_validation_report(report_tiktok, report_path)
-        print(f"Relatório salvo em: {report_path}")
+print(f"Relatório salvo em: {report_path}")
         
     except Exception as e:
-        print(f"❌ Erro no teste: {e}")
+print(f" Erro no teste: {e}")
         import traceback
         traceback.print_exc()

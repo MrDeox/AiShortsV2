@@ -81,7 +81,7 @@ class VideoGenerator:
             True se gerado com sucesso
         """
         try:
-            self.logger.info(f"Iniciando geração de vídeo: {output_path}")
+self.logger.info(f"Iniciando geração de vídeo: {output_path}")
             
             # Validar sequência de conteúdo
             if not content_sequence:
@@ -137,11 +137,11 @@ class VideoGenerator:
             if metadata:
                 self._save_metadata(output_path, metadata)
             
-            self.logger.info(f"Vídeo gerado com sucesso: {output_path}")
+self.logger.info(f"Vídeo gerado com sucesso: {output_path}")
             return True
             
         except Exception as e:
-            self.logger.error(f"Erro ao gerar vídeo: {e}")
+self.logger.error(f"Erro ao gerar vídeo: {e}")
             return False
     
     def _create_content_clip(self, content_item: Dict, index: int) -> Optional[VideoFileClip]:
@@ -161,7 +161,7 @@ class VideoGenerator:
             duration = content_item.get('duration', 3.0)
             
             if not source_path or not os.path.exists(source_path):
-                self.logger.warning(f"Arquivo não encontrado: {source_path}")
+self.logger.warning(f"Arquivo não encontrado: {source_path}")
                 return None
             
             if content_type == 'image':
@@ -190,7 +190,7 @@ class VideoGenerator:
             return clip
             
         except Exception as e:
-            self.logger.error(f"Erro ao criar clip de conteúdo: {e}")
+self.logger.error(f"Erro ao criar clip de conteúdo: {e}")
             return None
     
     def _create_text_clip(self, text_config: Dict, duration: float) -> Optional[TextClip]:
@@ -242,7 +242,7 @@ class VideoGenerator:
             return text_clip
             
         except Exception as e:
-            self.logger.error(f"Erro ao criar clip de texto: {e}")
+self.logger.error(f"Erro ao criar clip de texto: {e}")
             return None
     
     def _apply_transitions(self, clips: List[VideoFileClip]) -> List[VideoFileClip]:
@@ -281,7 +281,7 @@ class VideoGenerator:
             return processed_clips
             
         except Exception as e:
-            self.logger.error(f"Erro ao aplicar transições: {e}")
+self.logger.error(f"Erro ao aplicar transições: {e}")
             return clips
     
     def _add_audio_track(self, video_clip: VideoFileClip, audio_path: str) -> VideoFileClip:
@@ -317,7 +317,7 @@ class VideoGenerator:
             return final_clip
             
         except Exception as e:
-            self.logger.error(f"Erro ao adicionar áudio: {e}")
+self.logger.error(f"Erro ao adicionar áudio: {e}")
             return video_clip
     
     def _apply_final_settings(self, video_clip: VideoFileClip) -> VideoFileClip:
@@ -342,7 +342,7 @@ class VideoGenerator:
             return video_clip
             
         except Exception as e:
-            self.logger.error(f"Erro ao aplicar configurações finais: {e}")
+self.logger.error(f"Erro ao aplicar configurações finais: {e}")
             return video_clip
     
     def _save_metadata(self, video_path: str, metadata: Dict):
@@ -370,10 +370,10 @@ class VideoGenerator:
             with open(metadata_file, 'w', encoding='utf-8') as f:
                 json.dump(final_metadata, f, indent=2, ensure_ascii=False)
             
-            self.logger.info(f"Metadados salvos: {metadata_file}")
+self.logger.info(f"Metadados salvos: {metadata_file}")
             
         except Exception as e:
-            self.logger.error(f"Erro ao salvar metadados: {e}")
+self.logger.error(f"Erro ao salvar metadados: {e}")
     
     def optimize_for_platform(self, video_path: str, platform: str, output_path: str) -> bool:
         """
@@ -429,11 +429,11 @@ class VideoGenerator:
                     audio_codec='aac'
                 )
             
-            self.logger.info(f"Vídeo otimizado para {platform}: {output_path}")
+self.logger.info(f"Vídeo otimizado para {platform}: {output_path}")
             return True
             
         except Exception as e:
-            self.logger.error(f"Erro ao otimizar para {platform}: {e}")
+self.logger.error(f"Erro ao otimizar para {platform}: {e}")
             return False
     
     def create_slideshow(self, images: List[str], output_path: str, duration_per_slide: float = 3.0) -> bool:
@@ -453,7 +453,7 @@ class VideoGenerator:
                 images, output_path, duration_per_slide
             )
         except Exception as e:
-            self.logger.error(f"Erro ao criar slideshow: {e}")
+self.logger.error(f"Erro ao criar slideshow: {e}")
             return False
 
 
@@ -489,7 +489,7 @@ if __name__ == "__main__":
             metadata={'title': 'Teste AI Shorts', 'category': 'demo'}
         )
         
-        print(f"Geração de vídeo: {'Sucesso' if success else 'Falha'}")
+print(f"Geração de vídeo: {'Sucesso' if success else 'Falha'}")
         
         # Otimizar para TikTok
         if success:
@@ -499,7 +499,7 @@ if __name__ == "__main__":
                 "tiktok", 
                 optimized_path
             )
-            print(f"Otimização para TikTok: {'Sucesso' if optimized else 'Falha'}")
+print(f"Otimização para TikTok: {'Sucesso' if optimized else 'Falha'}")
         
     except Exception as e:
-        print(f"Erro durante o teste: {e}")
+print(f"Erro durante o teste: {e}")

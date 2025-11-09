@@ -122,6 +122,78 @@ class NetworkError(AiShortsError):
             "status_code": status_code
         })
 
+class TTSError(AiShortsError):
+    """Erro na síntese de áudio TTS."""
+    
+    def __init__(self, message: str, text_preview: Optional[str] = None, voice: Optional[str] = None):
+        super().__init__(message, "TTS_ERROR", {
+            "text_preview": text_preview[:100] if text_preview else None,
+            "voice": voice
+        })
+
+class TranslationError(AiShortsError):
+    """Erro na tradução de conteúdo."""
+    
+    def __init__(self, message: str, source_text: Optional[str] = None, target_lang: Optional[str] = None):
+        super().__init__(message, "TRANSLATION_ERROR", {
+            "source_text_preview": source_text[:100] if source_text else None,
+            "target_lang": target_lang
+        })
+
+class BrollExtractionError(AiShortsError):
+    """Erro na extração de vídeos B-roll."""
+    
+    def __init__(self, message: str, query: Optional[str] = None, total_candidates: Optional[int] = None):
+        super().__init__(message, "BROLL_EXTRACTION_ERROR", {
+            "query": query,
+            "total_candidates": total_candidates
+        })
+
+class VideoSyncError(AiShortsError):
+    """Erro na sincronização áudio-vídeo."""
+    
+    def __init__(self, message: str, audio_path: Optional[str] = None, video_count: Optional[int] = None):
+        super().__init__(message, "VIDEO_SYNC_ERROR", {
+            "audio_path": audio_path,
+            "video_count": video_count
+        })
+
+class VideoCompositionError(AiShortsError):
+    """Erro na composição do vídeo final."""
+    
+    def __init__(self, message: str, segment_count: Optional[int] = None, template: Optional[str] = None):
+        super().__init__(message, "VIDEO_COMPOSITION_ERROR", {
+            "segment_count": segment_count,
+            "template": template
+        })
+
+class ServiceError(AiShortsError):
+    """Erro genérico de serviços do pipeline."""
+    
+    def __init__(self, message: str, service_name: Optional[str] = None, operation: Optional[str] = None):
+        super().__init__(message, "SERVICE_ERROR", {
+            "service_name": service_name,
+            "operation": operation
+        })
+
+class MemoryError(AiShortsError):
+    """Erro relacionado à gestão de memória."""
+    
+    def __init__(self, message: str, current_usage: Optional[float] = None, threshold: Optional[float] = None):
+        super().__init__(message, "MEMORY_ERROR", {
+            "current_usage_gb": current_usage,
+            "threshold_gb": threshold
+        })
+
+class ContentAnalysisError(AiShortsError):
+    """Erro na análise de conteúdo (CLIP/semantic)."""
+    
+    def __init__(self, message: str, content_preview: Optional[str] = None, analysis_type: Optional[str] = None):
+        super().__init__(message, "CONTENT_ANALYSIS_ERROR", {
+            "content_preview": content_preview[:100] if content_preview else None,
+            "analysis_type": analysis_type
+        })
+
 class ErrorHandler:
     """Handler centralizado para tratamento de erros."""
     
@@ -152,7 +224,7 @@ class ErrorHandler:
             error_info["context"] = context
         
         # Log do erro
-        logger.error(f"Erro capturado: {error_info}")
+logger.error(f"Erro capturado: {error_info}")
         
         return error_info
     
@@ -205,12 +277,12 @@ class ErrorHandler:
                 
                 if attempt < max_retries:
                     wait_time = delay * (2 ** attempt)  # Backoff exponencial
-                    logger.warning(f"Tentativa {attempt + 1} falhou, tentando novamente em {wait_time:.2f}s")
+logger.warning(f"Tentativa {attempt + 1} falhou, tentando novamente em {wait_time:.2f}s")
                     
                     import time
                     time.sleep(wait_time)
                 else:
-                    logger.error(f"Todas as {max_retries + 1} tentativas falharam")
+logger.error(f"Todas as {max_retries + 1} tentativas falharam")
                     ErrorHandler.handle_error(e, f"retry_with_backoff - max_retries: {max_retries}")
         
         # Se chegou aqui, todas as tentativas falharam
@@ -218,14 +290,14 @@ class ErrorHandler:
 
 if __name__ == "__main__":
     # Teste do sistema de exceções
-    print("=== Teste do Sistema de Exceções ===")
+print("=== Teste do Sistema de Exceções ===")
     
     # Teste de exceção customizada
     try:
         raise ThemeGenerationError("Teste de erro de geração", attempt=1, category="science")
     except AiShortsError as e:
         error_info = ErrorHandler.handle_error(e, "teste_categoria")
-        print(f"Erro processado: {error_info}")
+print(f"Erro processado: {error_info}")
     
     # Teste de execução segura
     def funcao_test():
@@ -234,7 +306,7 @@ if __name__ == "__main__":
         return "sucesso"
     
     result = ErrorHandler.safe_execute(funcao_test, fallback_return="fallback", context="teste_seguro")
-    print(f"Resultado seguro: {result}")
+print(f"Resultado seguro: {result}")
     
     # Teste de retry
     try:
@@ -245,6 +317,6 @@ if __name__ == "__main__":
         
         # Teste sem erro simulado
         result = ErrorHandler.retry_with_backoff(lambda: "sucesso", max_retries=1, delay=0.1)
-        print(f"Resultado retry: {result}")
+print(f"Resultado retry: {result}")
     except Exception as e:
-        print(f"Erro no retry: {e}")
+print(f"Erro no retry: {e}")

@@ -1,24 +1,48 @@
-import contextlib
+"""
+AiShortsOrchestrator - Versão refatorada com serviços especializados.
+Este arquivo substitui o orchestrator.py original, delegando responsabilidades
+para serviços específicos e reduzindo complexidade.
+"""
+
 import json
 import logging
 import time
-import wave
-from dataclasses import replace
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from src.generators.prompt_engineering import ThemeCategory
-from src.video.generators.final_video_composer import (
-    FinalVideoComposer,
-    TemplateConfig,
-    VideoSegment,
+from src.models.unified_models import (
+    PipelineResult,
+    TranslationResult,
+    TTSAudioResult,
+    BrollMatchResult,
+    VideoSyncPlan
 )
-from src.utils.exceptions import ScriptGenerationError
+from src.pipeline.services.content_generation_service import ContentGenerationService
+from src.pipeline.services.media_acquisition_service import MediaAcquisitionService
+from src.pipeline.services.video_assembly_service import VideoAssemblyService
+from src.core.graceful_degradation import get_degradation_manager
+from src.core.health_checker import get_health_checker, setup_default_health_checks
+
+# Importar otimizações de memória local
+try:
+    from src.core.model_manager import get_model_manager
+    from src.core.memory_monitor import get_memory_monitor
+    MEMORY_OPTIMIZATIONS_AVAILABLE = True
+except ImportError:
+    MEMORY_OPTIMIZATIONS_AVAILABLE = False
 
 
 class AiShortsOrchestrator:
-    """Responsável por executar o pipeline end-to-end do AiShorts."""
+    """
+    Responsável por executar o pipeline end-to-end do AiShorts.
+    
+    Versão refatorada que delega responsabilidades para serviços especializados:
+    - ContentGenerationService: geração de tema, script e TTS
+    - MediaAcquisitionService: busca e análise de B-roll
+    - VideoAssemblyService: sincronização e composição final
+    """
 
     def __init__(
         self,
@@ -33,506 +57,470 @@ class AiShortsOrchestrator:
         video_processor,
         broll_query_service,
         caption_service,
-        video_composer_factory: Optional[Callable[[], FinalVideoComposer]] = None,
+        video_composer_factory: Optional[Any] = None,
+        script_validator: Optional[Any] = None,
         logger: Optional[logging.Logger] = None,
     ):
-        self.theme_generator = theme_generator
-        self.script_generator = script_generator
-        self.translator = translator
-        self.tts_client = tts_client
-        self.youtube_extractor = youtube_extractor
-        self.semantic_analyzer = semantic_analyzer
-        self.audio_video_sync = audio_video_sync
-        self.video_processor = video_processor
-        self.broll_query_service = broll_query_service
-        self.caption_service = caption_service
-        self._composer_factory = video_composer_factory or (lambda: FinalVideoComposer())
-
         self.logger = logger or logging.getLogger(self.__class__.__name__)
-        self._setup_directories()
+        
+        # Inicializar serviços especializados
+        self.content_service = ContentGenerationService(
+            theme_generator=theme_generator,
+            script_generator=script_generator,
+            translator=translator,
+            tts_client=tts_client,
+            script_validator=script_validator,
+            logger=self.logger
+        )
+        
+        self.media_service = MediaAcquisitionService(
+            youtube_extractor=youtube_extractor,
+            semantic_analyzer=semantic_analyzer,
+            broll_query_service=broll_query_service,
+            logger=self.logger
+        )
+        
+        self.video_service = VideoAssemblyService(
+            video_processor=video_processor,
+            caption_service=caption_service,
+            video_composer_factory=video_composer_factory,
+            logger=self.logger
+        )
 
-    # --------------------------------------------------------------------- #
-    # Public API
-    # --------------------------------------------------------------------- #
+        # Sistema de graceful degradation
+        self.graceful_degradation = get_degradation_manager()
+        self._setup_graceful_degradation()
+
+        # Otimizações de memória local
+        if MEMORY_OPTIMIZATIONS_AVAILABLE:
+            self.model_manager = get_model_manager()
+            self.memory_monitor = get_memory_monitor()
+self.logger.info(" Otimizações de memória local ativadas")
+        else:
+            self.model_manager = None
+            self.memory_monitor = None
+self.logger.warning(" Otimizações de memória não disponíveis")
+        
+        self._setup_directories()
+        
+        # Sistema de health checks
+        self.health_checker = get_health_checker()
+        self._setup_health_checks()
+    
+    def _setup_health_checks(self):
+        """Configura health checks para os serviços."""
+        try:
+            # Setup checks padrão
+            setup_default_health_checks()
+            
+            # Adicionar checks específicos do orchestrator
+            self.health_checker.register_check(
+                "content_service",
+                self._check_content_service
+            )
+            
+            self.health_checker.register_check(
+                "media_service", 
+                self._check_media_service
+            )
+            
+            self.health_checker.register_check(
+                "video_service",
+                self._check_video_service
+            )
+            
+self.logger.info(" Health checks configurados")
+            
+        except Exception as e:
+self.logger.error(f" Erro ao configurar health checks: {e}")
+    
+    def _check_content_service(self) -> Dict[str, Any]:
+        """Verifica saúde do ContentGenerationService."""
+        try:
+            # Verificar se componentes estão inicializados
+            if not all([
+                self.content_service.theme_generator,
+                self.content_service.script_generator,
+                self.content_service.translator,
+                self.content_service.tts_client,
+                self.content_service.script_validator
+            ]):
+                return {
+                    "status": "unhealthy",
+                    "message": "Missing dependencies"
+                }
+            
+            # Verificar LLM helpers se disponível
+            if self.content_service.llm_helpers:
+                try:
+                    # Testar conexão com cliente
+                    client = self.content_service.llm_helpers.client
+                    if not client:
+                        return {
+                            "status": "degraded",
+                            "message": "LLM client not available"
+                        }
+                except Exception:
+                    pass
+            
+            return {
+                "status": "healthy",
+                "message": "Content service operational",
+                "details": {
+                    "llm_enabled": self.content_service.llm_helpers is not None,
+                    "recent_themes_count": len(self.content_service._recent_themes)
+                }
+            }
+            
+        except Exception as e:
+            return {
+                "status": "unhealthy",
+                "message": f"Content service error: {str(e)}"
+            }
+    
+    def _check_media_service(self) -> Dict[str, Any]:
+        """Verifica saúde do MediaAcquisitionService."""
+        try:
+            if not all([
+                self.media_service.youtube_extractor,
+                self.media_service.semantic_analyzer,
+                self.media_service.broll_query_service,
+                self.media_service.clip_relevance_scorer
+            ]):
+                return {
+                    "status": "unhealthy",
+                    "message": "Missing dependencies"
+                }
+            
+            return {
+                "status": "healthy",
+                "message": "Media service operational",
+                "details": {
+                    "llm_broll_planner": self.media_service.llm_helpers is not None
+                }
+            }
+            
+        except Exception as e:
+            return {
+                "status": "unhealthy",
+                "message": f"Media service error: {str(e)}"
+            }
+    
+    def _check_video_service(self) -> Dict[str, Any]:
+        """Verifica saúde do VideoAssemblyService."""
+        try:
+            if not all([
+                self.video_service.video_processor,
+                self.video_service.caption_service
+            ]):
+                return {
+                    "status": "unhealthy",
+                    "message": "Missing dependencies"
+                }
+            
+            # Verificar se o composer factory funciona
+            try:
+                composer = self.video_service.video_composer_factory()
+                if not composer:
+                    return {
+                        "status": "degraded",
+                        "message": "Video composer factory failed"
+                    }
+            except Exception:
+                pass
+            
+            return {
+                "status": "healthy",
+                "message": "Video service operational"
+            }
+            
+        except Exception as e:
+            return {
+                "status": "unhealthy",
+                "message": f"Video service error: {str(e)}"
+            }
+    
+    async def check_system_health(self) -> Dict[str, Any]:
+        """
+        Verifica saúde completa do sistema.
+        
+        Returns:
+            Relatório de saúde com status de todos os componentes
+        """
+self.logger.info(" Verificando saúde do sistema...")
+        
+        # Executar todos os checks
+        results = await self.health_checker.run_all_checks()
+        
+        # Adicionar informações específicas do orchestrator
+        orchestrator_info = {
+            "services": {
+                "content_service": self.content_service is not None,
+                "media_service": self.media_service is not None,
+                "video_service": self.video_service is not None
+            },
+            "optimizations": {
+                "memory_optimization": MEMORY_OPTIMIZATIONS_AVAILABLE,
+                "graceful_degradation": self.graceful_degradation is not None
+            }
+        }
+        
+        # Construir relatório completo
+        report = {
+            "timestamp": datetime.now().isoformat(),
+            "orchestrator_info": orchestrator_info,
+            "health_checks": {name: check.to_dict() for name, check in results.items()},
+            "summary": self.health_checker.get_health_summary()
+        }
+        
+        # Log do resumo
+        summary = report["summary"]
+        icon = "✅" if summary["status"] == "healthy" else "⚠️" if summary["status"] == "degraded" else "❌"
+self.logger.info(f"{icon} Sistema {summary['status'].upper()}: {summary['message']}")
+        
+        return report
+
+    def _setup_graceful_degradation(self):
+        """Configura sistema de graceful degradation."""
+        try:
+            # Configurar fallbacks padrão
+            from src.core.graceful_degradation import setup_default_fallbacks
+            setup_default_fallbacks()
+            
+            # Registrar dependências principais para monitoramento
+            dependencies_to_monitor = [
+                ("openrouter", lambda: bool(hasattr(self, 'openrouter') and self.openrouter.client and hasattr(self.openrouter, 'api_key'))),
+                ("tts", lambda: self.content_service.tts_client is not None),
+                ("youtube", lambda: self.media_service.youtube_extractor is not None),
+                ("memory", lambda: not (self.memory_monitor and self.memory_monitor.suggest_cleanup())),
+                ("clip", lambda: self.media_service.clip_relevance_scorer is not None)
+            ]
+            
+            for dep_name, health_check in dependencies_to_monitor:
+                try:
+                    self.graceful_degradation.register_dependency(dep_name, health_check)
+                except Exception as e:
+self.logger.warning(f" Falha ao registrar dependência '{dep_name}': {e}")
+            
+            # Gerar relatório inicial
+            health_report = self.graceful_degradation.get_system_health_report()
+            available = health_report["summary"]["available"]
+            total = health_report["summary"]["total_dependencies"]
+            
+self.logger.info(f"Graceful degradation configurado: {available}/{total} dependências disponíveis")
+            
+        except Exception as e:
+self.logger.error(f" Erro na configuração do graceful degradation: {e}")
+
     def run(self, theme_category: ThemeCategory = ThemeCategory.ANIMALS) -> Dict[str, Any]:
-        """Executa o pipeline completo e retorna os resultados das etapas."""
-        self.logger.info("=" * 70)
-        self.logger.info("🎬 INICIANDO PIPELINE AISHORTS V2.0 - GERAÇÃO DE VÍDEO")
-        self.logger.info("=" * 70)
+        """
+        Executa o pipeline completo usando serviços especializados.
+        
+        Returns:
+            Dict[str, Any]: Resultado completo do pipeline em formato de dicionário
+        """
+self.logger.info("=" * 70)
+self.logger.info(" INICIANDO PIPELINE AISHORTS V2.0 - GERAÇÃO DE VÍDEO")
+self.logger.info("=" * 70)
+
+        # Verificar memória inicial
+        initial_stats = None
+        if self.memory_monitor:
+            initial_stats = self.memory_monitor.get_current_stats()
+self.logger.info(
+                f"💾 Memória inicial: {initial_stats.process_gb:.2f}GB "
+                f"({initial_stats.system_percent:.1f}% sistema)"
+            )
 
         start_time = time.time()
-        results: Dict[str, Any] = {}
+        pipeline_result = PipelineResult(
+            status="success",
+            theme={},
+            script={}
+        )
 
         try:
-            theme_obj, theme_result = self._generate_theme(theme_category)
-            results["theme"] = theme_result
-
-            script_obj, script_result = self._generate_script(theme_obj)
-            results["script"] = script_result
-
-            broll_queries = self.broll_query_service.generate_queries(
+            # 1) Gerar tema e script
+            theme_obj, theme_result = self.content_service.generate_theme(theme_category)
+            pipeline_result.theme = theme_result
+            
+            script_obj, script_result = self.content_service.generate_script(theme_obj)
+            pipeline_result.script = script_result
+            
+            # 2) Gerar queries de B-roll
+            broll_queries = self.media_service.broll_query_service.generate_queries(
                 script_result["content_en"]["plain_text"]
             )
-            results["script"]["broll_queries"] = broll_queries
+            pipeline_result.script["broll_queries"] = broll_queries
             if broll_queries:
-                self.logger.info("🎯 Queries de B-roll sugeridas: %s", broll_queries)
+self.logger.info(" Queries de B-roll sugeridas: %s", broll_queries)
             else:
-                self.logger.warning("⚠️ Falha ao gerar queries específicas de B-roll; usando fallback semântico")
-
-            translation_result, script_text_pt = self._translate_script(script_result)
-            results["script"]["content_pt"] = script_text_pt if translation_result["success"] else None
-            results["script"]["translation"] = translation_result
-
-            audio_result = self._synthesize_audio(script_text_pt)
-            results["audio"] = audio_result
-
-            captions = self.caption_service.build_captions(script_text_pt, audio_result["duration"])
-            results["captions"] = captions
+self.logger.warning(" Falha ao gerar queries específicas de B-roll; usando fallback semântico")
+            
+            # 3) Traduzir script
+            translation_result = self.content_service.translate_script(
+                script_result["content_en"]["plain_text"]
+            )
+            pipeline_result.script["content_pt"] = translation_result.translated_text
+            pipeline_result.script["translation"] = translation_result.to_dict()
+            
+            # 4) Sintetizar áudio
+            audio_result = self.content_service.synthesize_audio(translation_result.translated_text)
+            pipeline_result.audio = audio_result
+            
+            # 5) Gerar legendas
+            captions = self.video_service.caption_service.build_captions(
+                translation_result.translated_text, 
+                audio_result.duration
+            )
+            pipeline_result.captions = captions
             if captions:
-                self.logger.info("💬 Legendas geradas: %d segmentos", len(captions))
+self.logger.info(" Legendas geradas: %d segmentos", len(captions))
                 for preview in captions[:3]:
-                    self.logger.info(
+self.logger.info(
                         "   [%.2fs - %.2fs] %s",
                         preview["start_time"],
                         preview["end_time"],
                         preview["text"],
                     )
             else:
-                self.logger.warning("⚠️ Não foi possível gerar legendas sincronizadas")
-
-            broll_result = self._extract_broll(
+self.logger.warning(" Não foi possível gerar legendas sincronizadas")
+            
+            # 6) Extrair e analisar B-roll
+            broll_result = self.media_service.extract_broll(
                 theme_result["content_en"],
                 search_queries=broll_queries,
             )
-            results["broll"] = broll_result
-            self.logger.info(
+            pipeline_result.broll = broll_result
+self.logger.info(
                 "🎬 B-roll buscado com queries: %s",
-                broll_result.get("used_queries") or broll_result.get("queries"),
+                broll_result.queries_used,
             )
-
-            analysis_result = self._analyze_content(theme_result["content_en"])
-            results["analysis"] = analysis_result
-
-            sync_result = self._sync_audio_video(audio_result["file_path"], broll_result["videos"])
-            results["sync"] = sync_result
-
-            final_video_path = self._process_final_video(
-                broll_result["videos"],
-                audio_result["file_path"],
+            
+            # Verificar memória antes da análise (ponto crítico)
+            if self.memory_monitor:
+                self.memory_monitor.check_memory("antes_analise_semantica")
+            
+            analysis_result = self.media_service.analyze_content(theme_result["content_en"])
+            pipeline_result.analysis = analysis_result
+            
+            # Verificar memória após carregar modelos
+            if self.memory_monitor:
+                if not self.memory_monitor.check_memory("apos_analise_semantica"):
+self.logger.warning(" Memória alta após análise, tentando cleanup...")
+                    self.model_manager.cleanup_models()
+                    self.memory_monitor.force_garbage_collection()
+            
+            # 7) Sincronizar áudio e vídeo
+            sync_result = self.video_service.sync_audio_video(
+                audio_result.audio_path, 
+                broll_result.videos
+            )
+            pipeline_result.sync = sync_result
+            
+            # 8) Compor vídeo final
+            final_video_path = self.video_service.compose_final_video(
+                video_paths=broll_result.videos,
+                audio_path=audio_result.audio_path,
                 captions=captions,
+                sync_result=sync_result
             )
+            
             final_video_exists = bool(final_video_path and Path(final_video_path).exists())
-
-            results["final"] = {
+            
+            pipeline_result.final = {
                 "video_path": final_video_path,
-                "video_count": len(broll_result["videos"]),
+                "video_count": len(broll_result.videos),
                 "success": final_video_exists,
                 "captions": len(captions),
             }
-
+            
             if not final_video_exists:
-                self.logger.error("❌ Falha na composição final do vídeo. Arquivo não encontrado.")
-                return self._fail_results(results, start_time, "Final video was not generated")
-
+self.logger.error(" Falha na composição final do vídeo. Arquivo não encontrado.")
+                return self._create_failed_result(pipeline_result, start_time, "Final video was not generated")
+            
+            # Finalizar
             total_time = time.time() - start_time
-            results["total_time"] = total_time
-            results["status"] = "success"
-
-            self._log_summary(theme_result, script_result, audio_result, broll_result, analysis_result, final_video_path, total_time)
-            self._save_report(results)
-
-            return results
-
-        except Exception as error:
-            self.logger.error("❌ Pipeline falhou: %s", error)
-            return self._fail_results(results, start_time, str(error))
-
-    # --------------------------------------------------------------------- #
-    # Internals
-    # --------------------------------------------------------------------- #
-    def _generate_theme(self, category: ThemeCategory):
-        self.logger.info("🎯 ETAPA 1: Geração de Tema com IA...")
-        theme = self.theme_generator.generate_single_theme(category)
-
-        self.logger.info("✅ Tema gerado (EN): %s...", theme.content[:100])
-        self.logger.info("📊 Qualidade: %.2f", theme.quality_score)
-        self.logger.info("⏱️ Tempo: %.2fs", theme.response_time)
-        self.logger.info("📄 Tema completo (EN): %s", theme.content)
-        self.logger.info("✏️ Comprimento do tema: %d palavras", len(theme.content.split()))
-
-        result = {
-            "content_en": theme.content,
-            "category": theme.category.value,
-            "quality": theme.quality_score,
-            "response_time": theme.response_time,
-        }
-        return theme, result
-
-    def _generate_script(self, theme_obj):
-        self.logger.info("📝 ETAPA 2: Geração de roteiro em inglês...")
-        custom_requirements = None
-        max_attempts = 4
-        last_error = None
-
-        for attempt in range(1, max_attempts + 1):
-            try:
-                script = self.script_generator.generate_single_script(
-                    theme=theme_obj,
-                    custom_requirements=custom_requirements,
-                    target_platform="tiktok",
-                )
-
-                hook_text = script.hook.content if script.hook else ""
-                body_text = script.development.content if script.development else ""
-                conclusion_text = script.conclusion.content if script.conclusion else ""
-
-                estimated_duration_from_text = None
-                if conclusion_text and "ESTIMATED_DURATION" in conclusion_text:
-                    parts = conclusion_text.split("ESTIMATED_DURATION")
-                    conclusion_text = parts[0].strip()
-                    try:
-                        estimated_duration_from_text = float(parts[1].split(":")[-1].strip(" `"))
-                    except Exception:
-                        estimated_duration_from_text = None
-
-                if body_text.endswith("```"):
-                    body_text = body_text.rstrip("`").rstrip()
-                if conclusion_text.endswith("```"):
-                    conclusion_text = conclusion_text.rstrip("`").rstrip()
-
-                structured_text = "\n".join(
-                    filter(
-                        None,
-                        [
-                            f"HOOK: {hook_text}" if hook_text else "",
-                            f"BODY: {body_text}" if body_text else "",
-                            f"CONCLUSION: {conclusion_text}" if conclusion_text else "",
-                        ],
-                    )
-                ).strip()
-
-                plain_text = "\n".join(
-                    [line for line in [hook_text, body_text, conclusion_text] if line]
-                ).strip()
-
-                result = {
-                    "title": script.title,
-                    "total_duration": script.total_duration,
-                    "quality_score": script.quality_score,
-                    "engagement_score": script.engagement_score,
-                    "retention_score": script.retention_score,
-                    "generated_at": script.timestamp.isoformat(),
-                    "content_en": {
-                        "hook": hook_text,
-                        "body": body_text,
-                        "conclusion": conclusion_text,
-                        "structured_text": structured_text,
-                        "plain_text": plain_text,
-                    },
-                }
-                if estimated_duration_from_text:
-                    result["estimated_duration_from_text"] = estimated_duration_from_text
-
-                self.logger.info(
-                    "📝 Roteiro gerado (EN) - Score: %.2f, Duração estimada: %.1fs",
-                    script.quality_score,
-                    script.total_duration,
-                )
-                self.logger.info("   HOOK (EN): %s", hook_text)
-                self.logger.info("   BODY (EN): %s", body_text)
-                self.logger.info("   CONCLUSION (EN): %s", conclusion_text)
-                self.logger.info("📜 Script completo (EN):\n%s", structured_text)
-
-                if script.total_duration >= 45.0:
-                    return script, result
-
-                self.logger.warning(
-                    "⚠️ Roteiro curto (%.1fs) na tentativa %d. Refinando instruções e tentando novamente.",
-                    script.total_duration,
-                    attempt,
-                )
-                custom_requirements = [
-                    "Ensure the BODY contains at least 6 sentences totaling 140-160 words",
-                    "Keep HOOK under 12 words but make it punchy",
-                    "CONCLUSION must include a CTA with at least 25 words",
-                    "Return ESTIMATED_DURATION on its own line as ESTIMATED_DURATION: <seconds>",
-                    "Overall narration should take around 55-60 seconds when spoken",
-                ]
-                last_error = "script_too_short"
-
-            except Exception as error:
-                last_error = str(error)
-                self.logger.error("❌ Erro na geração do roteiro (tentativa %d): %s", attempt, error)
-                custom_requirements = [
-                    "Use three paragraphs: HOOK, BODY (6 sentences, 140-160 words), CONCLUSION (≥25 words)",
-                    "Return the ESTIMATED_DURATION on its own line",
-                ]
-
-        raise ScriptGenerationError(
-            f"Falha ao gerar roteiro consistente: {last_error}",
-            theme_content=theme_obj.content,
-            platform="tiktok",
-        )
-
-    def _translate_script(self, script_result: Dict[str, Any]):
-        plain_script_en = script_result["content_en"]["plain_text"]
-        translation_result = self.translator.translate(plain_script_en)
-
-        if translation_result.success:
-            script_text_pt = translation_result.translated_text or plain_script_en
-            self.logger.info("📝 Roteiro traduzido (PT-BR): %s", script_text_pt)
-            self.logger.info("✅ Roteiro traduzido para PT-BR com sucesso")
-        else:
-            script_text_pt = plain_script_en
-            self.logger.warning("⚠️ Tradução falhou, utilizando roteiro em inglês para TTS")
-            if translation_result.error:
-                self.logger.warning("Motivo da falha de tradução: %s", translation_result.error)
-
-        return {
-            "success": translation_result.success,
-            "response_time": translation_result.response_time,
-            "usage": translation_result.usage,
-            "error": translation_result.error,
-        }, script_text_pt
-
-    def _synthesize_audio(self, script_text_pt: str) -> Dict[str, Any]:
-        self.logger.info("🔊 ETAPA 2: Síntese de Áudio TTS...")
-        result = self.tts_client.text_to_speech(
-            script_text_pt,
-            f"narracao_{datetime.now().strftime('%H%M%S')}.wav",
-        )
-        if not result.get("success"):
-            raise RuntimeError(f"Falha na síntese de áudio: {result.get('error')}")
-
-        self.logger.info("✅ Áudio gerado: %s", result["audio_path"])
-        self.logger.info("⏱️ Duração: %.2fs", result["duration"])
-        self.logger.info("🎤 Voz: %s", result["voice"])
-
-        return {
-            "success": True,
-            "file_path": result["audio_path"],
-            "duration": result["duration"],
-            "voice": result["voice"],
-        }
-
-    def _extract_broll(self, theme_content: str, *, search_queries: Optional[List[str]] = None):
-        self.logger.info("🎬 ETAPA 3: Extração de B-roll do YouTube...")
-
-        keywords = self.semantic_analyzer.extract_keywords(theme_content) if theme_content else []
-        queries: List[str] = []
-        if search_queries:
-            queries.extend([q for q in search_queries if q])
-        fallback_query = " ".join(keywords[:3]).strip()
-        if fallback_query and fallback_query not in queries:
-            queries.append(fallback_query)
-        if not queries and theme_content:
-            queries.append(theme_content[:60])
-
-        self.logger.info("🔍 Estratégia de busca para B-roll: %s", queries)
-
-        downloaded_videos: List[str] = []
-        used_queries: List[str] = []
-        visited_ids: set[str] = set()
-        output_dir = Path("outputs/video")
-
-        for query in queries:
-            if len(downloaded_videos) >= 3:
-                break
-
-            candidates = self.youtube_extractor.search_videos(query, max_results=3)
-            if not candidates:
-                self.logger.warning("⚠️ Nenhum resultado para query '%s'", query)
-                continue
-
-            used_queries.append(query)
-
-            for video in candidates:
-                if len(downloaded_videos) >= 3:
-                    break
-
-                video_id = video.get("id")
-                if video_id and video_id in visited_ids:
-                    continue
-
-                duration = video.get("duration")
-                if duration and duration > 180:
-                    self.logger.info(
-                        "⏭️ Ignorando vídeo muito longo (%.1fs): %s",
-                        duration,
-                        video.get("title", "sem título"),
-                    )
-                    continue
-
-                try:
-                    real_path = self.youtube_extractor.download_video(video["url"], str(output_dir))
-                    downloaded_videos.append(real_path)
-                    if video_id:
-                        visited_ids.add(video_id)
-                    self.logger.info(
-                        "📥 Vídeo baixado (%d/3): %s",
-                        len(downloaded_videos),
-                        real_path,
-                    )
-                except Exception as error:
-                    self.logger.warning(
-                        "⚠️ Erro ao baixar '%s': %s",
-                        video.get("title", "sem título"),
-                        error,
-                    )
-
-            if len(downloaded_videos) >= 3:
-                break
-
-        if not downloaded_videos:
-            raise RuntimeError("Nenhum vídeo encontrado ou baixado com as queries fornecidas")
-
-        return {
-            "success": True,
-            "videos": downloaded_videos,
-            "queries": queries,
-            "keywords": keywords,
-            "used_queries": used_queries,
-        }
-
-    def _analyze_content(self, theme_content: str) -> Dict[str, Any]:
-        self.logger.info("🧠 ETAPA 4: Análise Semântica...")
-        keywords = self.semantic_analyzer.extract_keywords(theme_content)
-        category = self.semantic_analyzer.categorize_content(theme_content)
-
-        self.logger.info("✅ Keywords extraídas: %s", keywords)
-        self.logger.info("🏷️ Categoria: %s (%.2f)", category[0], category[1])
-
-        return {
-            "keywords": keywords,
-            "category": category[0],
-            "confidence": category[1],
-        }
-
-    def _sync_audio_video(self, audio_path: str, video_paths: List[str]) -> Dict[str, Any]:
-        self.logger.info("🎵 ETAPA 5: Sincronização Áudio-Vídeo...")
-        self.logger.info("✅ Configuração de sincronização concluída")
-        self.logger.info("🎵 Áudio: %s", audio_path)
-        self.logger.info("🎬 Vídeos: %d arquivos", len(video_paths))
-        return {
-            "success": True,
-            "audio_path": audio_path,
-            "video_paths": video_paths,
-        }
-
-    def _process_final_video(
-        self,
-        video_paths: List[str],
-        audio_path: str,
-        *,
-        captions: Optional[List[Dict[str, Any]]] = None,
-    ) -> Optional[str]:
-        self.logger.info("🎞️ ETAPA 6: Processamento Final com FinalVideoComposer...")
-
-        if not audio_path or not Path(audio_path).exists():
-            self.logger.error("❌ Áudio inexistente para composição: %s", audio_path)
-            return None
-        if not video_paths:
-            self.logger.error("❌ Nenhum vídeo B-roll disponível para composição final")
-            return None
-
-        segments: List[VideoSegment] = []
-        for path in video_paths:
-            path_obj = Path(path)
-            if not path_obj.exists():
-                self.logger.warning("⚠️ Vídeo ausente ignorado: %s", path)
-                continue
-
-            video_info = self.video_processor.get_video_info(path)
-            if video_info and video_info.get("duration"):
-                duration = float(video_info["duration"])
-            else:
-                self.logger.warning("⚠️ Duração desconhecida para %s, usando fallback de 5s", path)
-                duration = 5.0
-
-            segments.append(VideoSegment(path=str(path_obj), duration=duration))
-
-        if not segments:
-            self.logger.error("❌ Nenhum segmento de vídeo válido após validação")
-            return None
-
-        composer = self._composer_factory()
-        template_config: Optional[TemplateConfig] = composer.templates.get("professional")
-        if not template_config and composer.templates:
-            template_config = next(iter(composer.templates.values()))
-        if not template_config:
-            self.logger.error("❌ FinalVideoComposer não disponibilizou templates para composição")
-            return None
-
-        audio_duration = self._get_audio_duration(audio_path)
-        if audio_duration:
-            template_config = replace(template_config, duration=audio_duration)
-
-        metadata = {
-            "pipeline": "AiShortsOrchestrator",
-            "generated_at": datetime.now().isoformat(),
-            "video_segments": [segment.path for segment in segments],
-            "audio_path": audio_path,
-            "captions_count": len(captions or []),
-        }
-
-        try:
-            final_video_path = composer.compose_final_video(
-                audio_path=audio_path,
-                video_segments=segments,
-                template_config=template_config,
-                captions=captions,
-                output_path="outputs/final/video_final_aishorts.mp4",
-                metadata=metadata,
+            pipeline_result.total_time = total_time
+            
+            self._log_summary(
+                theme_result, 
+                script_result, 
+                audio_result.to_dict(), 
+                broll_result.to_dict(), 
+                analysis_result, 
+                final_video_path, 
+                total_time
             )
-            self.logger.info("✅ Vídeo final gerado: %s", final_video_path)
-            return final_video_path
+            
+            # Cleanup de memória
+            self._cleanup_memory(initial_stats)
+            
+            # Salvar relatório
+            self._save_report(pipeline_result.to_dict())
+            
+            return pipeline_result.to_dict()
+            
         except Exception as error:
-            self.logger.error("❌ ERRO NA COMPOSIÇÃO FINAL: %s", error)
-            print(f"❌ ERRO NA COMPOSIÇÃO FINAL: {error}")
-            return None
+self.logger.error(" Pipeline falhou: %s", error)
+            
+            # Cleanup em caso de erro
+            if self.model_manager:
+                self.model_manager.cleanup_models()
+            
+            return self._create_failed_result(pipeline_result, start_time, str(error))
 
-    # --------------------------------------------------------------------- #
-    # Helpers
-    # --------------------------------------------------------------------- #
+    def _create_failed_result(self, pipeline_result: PipelineResult, start_time: float, error: str) -> Dict[str, Any]:
+        """Cria resultado de falha do pipeline."""
+        pipeline_result.status = "failed"
+        pipeline_result.error = error
+        pipeline_result.total_time = time.time() - start_time
+        return pipeline_result.to_dict()
+    
+    def _cleanup_memory(self, initial_stats):
+        """Realiza cleanup de memória."""
+        # Cleanup de memória ao final
+        if self.model_manager:
+self.logger.info("🧹 Fazendo cleanup final de modelos...")
+            self.model_manager.cleanup_models()
+        
+        if self.memory_monitor and initial_stats:
+            final_stats = self.memory_monitor.get_current_stats()
+            memory_delta = final_stats.process_gb - initial_stats.process_gb
+self.logger.info(
+                f"💾 Memória final: {final_stats.process_gb:.2f}GB "
+                f"(Δ{memory_delta:+.2f}GB, {final_stats.system_percent:.1f}% sistema)"
+            )
+            
+            # Sugerir garbage collection se necessário
+            if self.memory_monitor.suggest_cleanup():
+                self.memory_monitor.force_garbage_collection()
+
     def _setup_directories(self):
+        """Cria diretórios necessários para o pipeline."""
         for dir_path in ["outputs/video", "outputs/audio", "outputs/final", "temp"]:
             Path(dir_path).mkdir(parents=True, exist_ok=True)
 
-    def _get_audio_duration(self, audio_path: str) -> Optional[float]:
-        try:
-            with contextlib.closing(wave.open(audio_path, "rb")) as wav_file:
-                frames = wav_file.getnframes()
-                framerate = wav_file.getframerate()
-                if framerate:
-                    return frames / float(framerate)
-        except (wave.Error, FileNotFoundError):
-            self.logger.warning("⚠️ Não foi possível ler duração do áudio %s", audio_path)
-        return None
-
     def _log_summary(self, theme_result, script_result, audio_result, broll_result, analysis_result, final_video_path, total_time):
-        self.logger.info("=" * 70)
-        self.logger.info("🏆 PIPELINE CONCLUÍDO COM SUCESSO!")
-        self.logger.info("=" * 70)
-        self.logger.info("⏱️ Tempo total: %.2fs", total_time)
-        self.logger.info("📊 Tema (qualidade): %.2f", theme_result["quality"])
-        self.logger.info(
+        """Registra resumo do pipeline executado com sucesso."""
+self.logger.info("=" * 70)
+self.logger.info(" PIPELINE CONCLUÍDO COM SUCESSO!")
+self.logger.info("=" * 70)
+self.logger.info("⏱ Tempo total: %.2fs", total_time)
+self.logger.info(" Tema (qualidade): %.2f", theme_result["quality"])
+self.logger.info(
             "📝 Roteiro (EN) - Duração estimada: %.1fs, Qualidade: %.2f",
             script_result["total_duration"],
             script_result["quality_score"],
         )
-        self.logger.info("🎵 Áudio (PT-BR): %.2fs", audio_result["duration"])
-        self.logger.info("🎬 B-roll: %d vídeos", len(broll_result["videos"]))
-        self.logger.info("🧠 Análise: %s", analysis_result["keywords"])
-        self.logger.info("📁 Saída: %s", final_video_path)
+self.logger.info(" Áudio (PT-BR): %.2fs", audio_result["duration"])
+self.logger.info(" B-roll: %d vídeos", len(broll_result["videos"]))
+self.logger.info("🧠 Análise: %s", analysis_result["keywords"])
+self.logger.info(" Saída: %s", final_video_path)
 
     def _save_report(self, results: Dict[str, Any]):
+        """Salva relatório detalhado da execução do pipeline."""
         report_path = f"outputs/pipeline_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
         with open(report_path, "w", encoding="utf-8") as file_handle:
             json.dump(results, file_handle, indent=2, ensure_ascii=False)
-        self.logger.info("📄 Relatório salvo: %s", report_path)
-
-    def _fail_results(self, results: Dict[str, Any], start_time: float, error: str) -> Dict[str, Any]:
-        results["status"] = "failed"
-        results["error"] = error
-        results["total_time"] = time.time() - start_time
-        return results
+self.logger.info(" Relatório salvo: %s", report_path)

@@ -119,11 +119,11 @@ class VideoProcessor:
             
             cap.release()
             
-            self.logger.info(f"Extraídos {extracted_count} frames de {video_path}")
+self.logger.info(f"Extraídos {extracted_count} frames de {video_path}")
             return frame_paths
             
         except Exception as e:
-            self.logger.error(f"Erro ao extrair frames: {e}")
+self.logger.error(f"Erro ao extrair frames: {e}")
             return []
     
     def resize_video(self, input_path: str, output_path: str, resolution: Optional[Tuple[int, int]] = None) -> bool:
@@ -157,11 +157,11 @@ class VideoProcessor:
                     remove_temp=True
                 )
             
-            self.logger.info(f"Vídeo redimensionado: {input_path} -> {output_path}")
+self.logger.info(f"Vídeo redimensionado: {input_path} -> {output_path}")
             return True
             
         except Exception as e:
-            self.logger.error(f"Erro ao redimensionar vídeo: {e}")
+self.logger.error(f"Erro ao redimensionar vídeo: {e}")
             return False
     
     def crop_video(self, input_path: str, output_path: str, x: int, y: int, width: int, height: int) -> bool:
@@ -190,11 +190,11 @@ class VideoProcessor:
                     audio_codec=self.config.get('audio_codec', 'aac')
                 )
             
-            self.logger.info(f"Vídeo recortado: {input_path} -> {output_path}")
+self.logger.info(f"Vídeo recortado: {input_path} -> {output_path}")
             return True
             
         except Exception as e:
-            self.logger.error(f"Erro ao recortar vídeo: {e}")
+self.logger.error(f"Erro ao recortar vídeo: {e}")
             return False
     
     def apply_filters(self, video_path: str, output_path: str, filters: Dict[str, Any]) -> bool:
@@ -249,11 +249,11 @@ class VideoProcessor:
                     audio_codec=self.config.get('audio_codec', 'aac')
                 )
             
-            self.logger.info(f"Filtros aplicados: {video_path} -> {output_path}")
+self.logger.info(f"Filtros aplicados: {video_path} -> {output_path}")
             return True
             
         except Exception as e:
-            self.logger.error(f"Erro ao aplicar filtros: {e}")
+self.logger.error(f"Erro ao aplicar filtros: {e}")
             return False
     
     def concatenate_videos(self, video_paths: List[str], output_path: str) -> bool:
@@ -276,7 +276,7 @@ class VideoProcessor:
                     clip = VideoFileClip(video_path)
                     clips.append(clip)
                 else:
-                    self.logger.warning(f"Vídeo não encontrado: {video_path}")
+self.logger.warning(f"Vídeo não encontrado: {video_path}")
             
             if not clips:
                 raise ValueError("Nenhum vídeo válido encontrado para concatenação")
@@ -297,11 +297,11 @@ class VideoProcessor:
                 clip.close()
             final_clip.close()
             
-            self.logger.info(f"Vídeos concatenados: {len(clips)} clips -> {output_path}")
+self.logger.info(f"Vídeos concatenados: {len(clips)} clips -> {output_path}")
             return True
             
         except Exception as e:
-            self.logger.error(f"Erro ao concatenar vídeos: {e}")
+self.logger.error(f"Erro ao concatenar vídeos: {e}")
             return False
     
     def get_video_info(self, video_path: str) -> Optional[Dict]:
@@ -333,7 +333,7 @@ class VideoProcessor:
             return info
             
         except Exception as e:
-            self.logger.error(f"Erro ao obter informações do vídeo: {e}")
+self.logger.error(f"Erro ao obter informações do vídeo: {e}")
             return None
     
     def create_video_from_images(self, image_paths: List[str], output_path: str, duration_per_image: float = 3.0) -> bool:
@@ -361,7 +361,7 @@ class VideoProcessor:
                     
                     clips.append(clip)
                 else:
-                    self.logger.warning(f"Imagem não encontrada: {img_path}")
+self.logger.warning(f"Imagem não encontrada: {img_path}")
             
             if not clips:
                 raise ValueError("Nenhuma imagem válida encontrada")
@@ -382,11 +382,11 @@ class VideoProcessor:
                 clip.close()
             final_clip.close()
             
-            self.logger.info(f"Vídeo criado a partir de {len(clips)} imagens")
+self.logger.info(f"Vídeo criado a partir de {len(clips)} imagens")
             return True
             
         except Exception as e:
-            self.logger.error(f"Erro ao criar vídeo a partir de imagens: {e}")
+self.logger.error(f"Erro ao criar vídeo a partir de imagens: {e}")
             return False
     
     def add_audio_to_video(self, video_path: str, audio_path: str, output_path: str) -> bool:
@@ -427,11 +427,11 @@ class VideoProcessor:
                     audio_codec=self.config.get('audio_codec', 'aac')
                 )
             
-            self.logger.info(f"Áudio adicionado: {video_path} + {audio_path} -> {output_path}")
+self.logger.info(f"Áudio adicionado: {video_path} + {audio_path} -> {output_path}")
             return True
             
         except Exception as e:
-            self.logger.error(f"Erro ao adicionar áudio: {e}")
+self.logger.error(f"Erro ao adicionar áudio: {e}")
             return False
 
 
@@ -450,16 +450,16 @@ if __name__ == "__main__":
         # Obter informações do vídeo
         info = processor.get_video_info(test_video)
         if info:
-            print(f"Informações do vídeo: {info}")
+print(f"Informações do vídeo: {info}")
         
         # Extrair frames
         frames = processor.extract_frames(test_video, "/tmp/frames", fps=0.5)
-        print(f"Frames extraídos: {len(frames)}")
+print(f"Frames extraídos: {len(frames)}")
         
         # Teste de redimensionamento
         resized_video = "/tmp/resized_video.mp4"
         success = processor.resize_video(test_video, resized_video, (1280, 720))
-        print(f"Redimensionamento: {'Sucesso' if success else 'Falha'}")
+print(f"Redimensionamento: {'Sucesso' if success else 'Falha'}")
         
     except Exception as e:
-        print(f"Erro durante o teste: {e}")
+print(f"Erro durante o teste: {e}")
